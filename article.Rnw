@@ -1,0 +1,446 @@
+\documentclass{article}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{bm}
+
+\usepackage[british]{babel}
+\usepackage[utf8]{inputenc}
+
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=blue, citecolor=blue,
+  urlcolor=blue}
+
+\usepackage[bottom]{footmisc}
+\usepackage{geometry}
+\geometry{lmargin=3cm, rmargin=3cm, tmargin=3cm, bmargin=3cm}
+
+% Algorithm
+\usepackage[english, vlined, ruled]{algorithm2e}
+\SetAlCapSty{}
+% \SetAlCapFnt{\footnotesize}
+% \SetAlCapNameFnt{\footnotesize}
+
+
+\usepackage{natbib}
+% \bibliographystyle{humannat}
+\bibliographystyle{agsm}
+
+\usepackage{lipsum}
+\usepackage{float}
+\usepackage{mathpazo}
+
+\makeatletter
+\def\and{%
+  \end{tabular}%
+  \hskip 0em \@plus.17fil \protect$\bullet$
+  \begin{tabular}[t]{c}}%
+\makeatother
+
+%-----------------------------------------------------------------------
+
+\title{Reparametrization of COM-Poisson Regression Models with
+  Applications in the Analysis of Experimental Data}
+
+\author{
+  Eduardo E. R. Junior\thanks{Corresponding author:
+    \href{mailto:jreduardo@usp.br}{\nolinkurl{jreduardo@usp.br}}}
+    \hspace*{.8mm}\thanks{Department of Exact Sciences, ESALQ-USP,
+    Piracicaba, São Paulo, Brazil} \and
+  Walmes M. Zeviani\thanks{Department of Statistics, UFPR, Curitiba,
+    Paraná, Brazil} \and
+  Wagner H. Bonat\footnotemark[3] \and
+  Clarice G. B. Demétrio\footnotemark[2]
+}
+
+\date{\today}
+
+<<setup, include=FALSE>>=
+
+library(knitr)
+library(xtable)
+options(digits = 3, OutDec = ".",
+        xtable.caption.placement = "top",
+        xtable.booktabs = TRUE,
+        xtable.sanitize.text.function = identity)
+opts_chunk$set(
+    warning = FALSE,
+    message = FALSE,
+    echo = FALSE,
+    results = "hide",
+    fig.width = 7,
+    fig.height = 5,
+    out.width = "1\\textwidth",
+    fig.align = "center",
+    fig.pos = "H",
+    dev.args = list(family = "Palatino"))
+
+source("./codes/lattice-panels.R")
+source("./codes/functions.R")
+
+# Colors for legends
+cols <- trellis.par.get("superpose.line")$col
+
+# Useful packages
+library(bbmle)
+library(plyr)
+library(tidyr)
+
+@
+
+%-----------------------------------------------------------------------
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\lipsum[1]
+\vspace{0.1cm}
+\noindent\textbf{keywords:} COM-Poisson, Over/Under-dispersion, Count data
+\end{abstract}
+
+\section{Introduction}
+\label{introduction}
+
+\section{Background}
+\label{background}
+
+\section{Reparametrization}
+\label{reparametrization}
+
+\section{Estimation and Inference}
+\label{estimation-and-inference}
+
+\section{Simulation study}
+\label{simulation-study}
+
+\section{Case studies}
+\label{case-studies}
+
+\subsection{Artificial defoliation in cotton phenology}
+
+\subsection{Soil moisture and potassium doses on soybean culture}
+
+\subsection{Assessing toxicity of pollutants in aquatic systems}
+
+\section{Concluding remarks}
+\label{conclusion}
+
+\citep{Zeviani2014}
+\citet{Hinde1998}
+\citep*{Bonat2016}
+
+\pagebreak
+
+<<load-simulation, cache=TRUE>>=
+
+# Configuration
+B <- 1000
+beta <- c("b0" = 2, "b1" = 0.5, "b21" = 0.8, "b22" = -0.8)
+phis <- c(0, -1.6, -1, 1.8)
+names(phis) <- sprintf("phi=%s", phis)
+
+sizes <- c(50, 100, 300, 1000)
+names(sizes) <- sprintf("n=%s", sizes)
+
+# Load results
+results <- readRDS("./codes/simulation.rds")
+
+@
+
+\begin{algorithm}
+  \Begin{
+  $\bm{\beta} = \begin{bmatrix} \beta_0 & \beta_1 & \beta_{21} &
+    \beta_{22} \end{bmatrix}^\top = \begin{bmatrix} 2.0 &
+    0.5 & 0.8 & -0.8 \end{bmatrix}^\top$\;
+  \For{$n \in \{50, 100, 300, 1000\}$}{
+    set $\bm{x}_1$ as a sequence, with $n$ elements, between $0$ and
+    $1$\;
+    set $\bm{x}_2$ as a repetition, with $n$ elements, of three
+    categories\;
+    compute $\bm{\mu}$ using $\bm{\mu} = \exp(\beta_0 + \beta_1 \bm{x}_1
+    +  \beta_{21} \bm{x}_{21} + \beta_{22} \bm{x}_{22})$, where
+    $\bm{x}_{21}$ and $\bm{x}_{22}$ are \textit{dummy} variable for
+    $\bm{x}_2$\;
+    \For{$\phi \in \{-1.6, -1.0, 0.0, 1.8\}$}{
+      \Repeat{$1000$ times}{
+        simule $\bm{y}$ from COM-Poisson distribution with $\bm{\mu}$
+        and $\phi$ parameters\;
+        fit COM-Poisson$_\mu$ regression model to $\bm{y}$ data with
+        $\bm{X} = \begin{bmatrix} \bm{1} & \bm{x}_1 & \bm{x}_{21} &
+          \bm{x}_{22} \end{bmatrix}$ design matrix\;
+        get $\hat{\bm{\theta}} = \begin{bmatrix} \hat{\phi} & \hat{\beta}_0 &
+          \hat{\beta}_1 & \hat{\beta}_{21} & \hat{\beta}_{22}
+        \end{bmatrix}^\top$\;
+        get confidence intervals for $\hat{\bm{\theta}}$ by quadratic
+        approximation at the maximum likelihood estimate
+        (assumes $\hat{\bm{\theta}} \sim \mathcal{N}(\hat{\bm{\theta}},
+        \sqrt{-\bm{v}})$, where $\bm{v}$ is a diagonal of the inverse of
+        the hessian matrix)\;
+      }
+    }
+  }
+}
+\caption{Steps in simulation study.}
+\end{algorithm}
+
+<<bias-data>>=
+
+#-----------------------------------------------------------------------
+# Compute bias
+aux <- ldply(lapply(results, function(x) {
+    ind <- names(x); names(ind) <- ind
+    out <- lapply(ind, function(y) {
+        bhat <- t(vapply(x[[y]], "[[", double(5), "coef"))
+        real <- matrix(c(phis[y], beta), byrow = TRUE,
+                       nrow = B, ncol = 5)
+        std <-  matrix(apply(bhat - real, 2, sd, na.rm = TRUE),
+                       byrow = TRUE, nrow = B, ncol = 5)
+        bhat - real
+        # (bhat - real) / std
+    })
+    ldply(out, .id = "phi")
+}), .id = "n")
+
+# Organize the results
+aux <- na.omit(aux)
+bias <- gather(aux, param, bias, phi2:b22, factor_key = TRUE)
+bias$phi <- ordered(bias$phi, c("phi=-1.6", "phi=-1", "phi=0",
+                                "phi=1.8"))
+
+@
+
+<<bias-plot, fig.height=5, fig.width=8, fig.cap="Distributions of raw bias by differents sample sizes and dispersion levels.">>=
+
+# Distributions of bias
+fl <- parse(text = gsub("=", "==", levels(bias$phi)))
+yl <- parse(text = c("hat(phi)",
+                     paste0("hat(beta)[", c(0, 1, 21, 22), "]")))
+
+bwplot(param ~ bias | phi, groups = n, data = bias,
+       box.width = 0.15,
+       pch = "|",
+       grid = TRUE,
+       as.table = TRUE,
+       layout = c(4, 1),
+       xlab = "Bias",
+       fill = colorRampPalette(c("gray80",  "gray20"))(4),
+       strip = strip.custom(factor.levels = fl),
+       scales = list(y = list(labels = yl)),
+       panel = panel.superpose,
+       whisker.width = 0.5,
+       auto.key = list(
+           column = 4,
+           rectangles = TRUE,
+           points = FALSE,
+           title = "Sample size",
+           cex.title = 1
+       ),
+       par.settings = list(
+           plot.symbol = list(pch = 20, cex = 0.5)
+       ),
+       panel.groups = function(x, y, group.number, ...) {
+           my.panel.bwplot(x, y + (group.number - 2.5) / 5, ...)
+           panel.abline(v = 0, lty = 2)
+       })
+
+@
+
+<<cibias-plot, fig.height=4.5, fig.width=8.5, fig.cap="Average bias and confidence intervals by differents sample sizes and dispersion levels.">>=
+
+# Confidence interval for bias
+ci <- function(x) {
+    ci <- mean(x) + c(-1, 0, 1) * qnorm(0.975) * sd(x)
+    names(ci) <- c("lwr", "fit", "upr")
+    ci
+}
+cidata <- aggregate(bias ~ n + phi + param, data = bias, ci)
+
+key <- list(
+    type = "o",
+    divide = 1,
+    columns = 4,
+    title = "Sample size",
+    cex.title = 1.1,
+    lines = list(pch = c(21:24), cex = 0.8),
+            text = list(names(sizes))
+)
+
+fl <- parse(text = gsub("=", "==", levels(bias$phi)))
+yl <- parse(text = c("hat(phi)",
+                     paste0("hat(beta)[", c(0, 1, 21, 22), "]")))
+
+xyplot(param ~ bias | phi, groups = n, data = bias,
+       panel = panel.superpose,
+       layout = c(4, 1),
+       key = key,
+       strip = strip.custom(factor.levels = fl),
+       scales = list(y = list(labels = yl)),
+       ylab = "",
+       jitter.y = TRUE,
+       factor = 0.1,
+       gap = 0.3,
+       alpha = 0.6,
+       col = "gray80",
+       cex = 0.7,
+       panel.groups = function(x, y, group.number,
+                               subscripts, gap, ...){
+           noise <- centfac(factor(levels(bias$n)), space = gap)
+           noise <- sort(noise)
+           panel.xyplot(x, y + noise[group.number], ...)
+       }) +
+    as.layer(
+        segplot(param ~ bias[, "lwr"] + bias[, "upr"] | phi,
+                centers = bias[, "fit"],
+                data = cidata,
+                draw = FALSE,
+                horizontal = TRUE,
+                xlab = "Bias",
+                layout = c(4, 1),
+                groups = n, gap = 0.3,
+                key = key,
+                pch = 21:24,
+                cex = 0.7,
+                lwd = 2,
+                panel = function(...) {
+                    panel.groups.segplot(...)
+                    panel.abline(v = 0, lty = 2)
+                    panel.abline(h = 1:5, col = "lightgray")
+                })
+    )
+
+@
+
+<<coverage-data>>=
+
+#-----------------------------------------------------------------------
+# Compute coverage rate
+aux <- ldply(lapply(results, function(x) {
+    ind <- names(x); names(ind) <- ind
+    out <- lapply(ind, function(y) {
+        ind <- lapply(x[[y]], function(z) {
+            real <- c(phis[[y]], beta)
+            cint <- z[["cint"]]
+            ind <- as.integer(cint[, 1] < real & cint[, 2] > real)
+            names(ind) <- c("phi2", names(beta))
+            ind
+        })
+        do.call("rbind", ind)
+    })
+    ldply(out, .id = "phi")
+}), .id = "n")
+
+# Organize the results
+aux <- na.omit(aux)
+coverage <- gather(aux, param, coverage, phi2:b22, factor_key = TRUE)
+coverage$phi <- ordered(coverage$phi, c("phi=-1.6", "phi=-1", "phi=0",
+                                        "phi=1.8"))
+coverage$n <- as.numeric(gsub("n=([0-9]+)", "\\1", coverage$n))
+covdata <- aggregate(coverage ~ n + phi + param, data = coverage,
+                     function(x) sum(x == 1) / length(x))
+
+@
+
+<<coverage-plot, fig.height=4, fig.width=9, fig.cap="Coverage rate based on confidence intervals obtained by quadratic approximation for differents sample sizes and dispersion levels.">>=
+
+fl <- parse(text = gsub("=", "==", levels(bias$phi)))
+yl <- parse(text = c("hat(phi)",
+                     paste0("hat(beta)[", c(0, 1, 21, 22), "]")))
+xyplot(coverage ~ n | param,
+       type = c("g", "p", "l"),
+       groups = phi,
+       data = covdata,
+       pch = 19,
+       lwd = 1.5,
+       layout = c(NA, 1),
+       xlab = "Sample size",
+       ylab = "Coverage rate",
+       par.settings = list(
+           superpose.symbol = list(pch = 19),
+           layout.heights = list(strip = 1.5)
+       ),
+       auto.key = list(
+           column = 4,
+           lines = TRUE,
+           text = fl
+       ),
+       strip = strip.custom(
+           factor.levels = yl
+       ),
+       panel = function(x, y, ...) {
+           panel.xyplot(x, y, ...)
+           panel.abline(h = 0.95, lty = 2)
+       })
+
+@
+
+<<cint-data, cache=TRUE>>=
+
+#-----------------------------------------------------------------------
+# Compute coefficients intervals
+aux <- ldply(lapply(results, function(x) {
+    ind <- names(x); names(ind) <- ind
+    out <- lapply(ind, function(y) {
+        da <- lapply(x[[y]], function(z) {
+            cint <- z[["cint"]]
+            da <- data.frame(cint)
+            da$param <- rownames(cint)
+            da$real <- c(phis[y], beta)
+            da$ind <- with(da, as.integer(lwr < real & upr > real))
+            da
+        })
+        names(da) <- seq(da)
+        ldply(da, .id = "i")
+    })
+    ldply(out, .id = "phi")
+}), .id = "n")
+
+cidata <- na.omit(aux)
+cidata$scenario <- ordered(
+    with(cidata, paste(n, phi, sep = "\n")),
+    unique(with(cidata, paste(n, phi, sep = "\n"))))
+
+@
+
+<<cint-plot, cache=TRUE, fig.height=12, out.height="0.95\\textheight", fig.width=8, fig.cap="Confidence intervals for the estimators for each simulated dataset. Black segments are intervals that don't cover the true valor of the parameter.">>=
+
+fl <- do.call(c, lapply(strsplit(gsub("=", "==", levels(cidata$scenario)),
+                      split = "\n"),
+             function(x) {
+                 # parse(text = sprintf("atop(%s, %s)", x[1], x[2]))
+                 parse(text = sprintf("phantom()[%s]^{%s}", x[1], x[2]))
+               }))
+yl <- parse(text = c(paste0("beta[", c(0, 1, 21, 22), "]"), "phi"))
+
+useOuterStrips(
+    segplot(i ~ lwr + upr | param + scenario,
+            data = cidata,
+            draw = FALSE,
+            scales = list(relation = "free", draw = FALSE),
+            horizontal = FALSE,
+            lattice.options = list(
+                layout.widths = list(strip.left = list(x = 2.5)),
+                layout.heights = list(strip = list(x = 1.2))
+            ),
+            panel = function(x, y, z, subscripts, ...) {
+                col <- ifelse(cidata$ind, "gray60", "black")
+                panel.segplot(x, y, z, subscripts,
+                              col = col[subscripts],
+                              ...)
+                panel.abline(h = cidata$real[subscripts], lty = 2)
+            }),
+    strip.left = strip.custom(
+        factor.levels = fl,
+        par.strip.text = list(cex = 1.5)
+    ),
+    strip = strip.custom(
+       factor.levels =  yl
+    )
+)
+
+@
+
+%-----------------------------------------------------------------------
+\bibliography{references.bib}
+
+\end{document}
