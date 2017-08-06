@@ -1,126 +1,126 @@
 est	des	rept	ncap
-vegetativo	0	1	10
-vegetativo	0	2	9
-vegetativo	0	3	8
-vegetativo	0	4	8
-vegetativo	0	5	10
-vegetativo	0.25	1	11
-vegetativo	0.25	2	9
-vegetativo	0.25	3	10
-vegetativo	0.25	4	10
-vegetativo	0.25	5	10
-vegetativo	0.5	1	8
-vegetativo	0.5	2	8
-vegetativo	0.5	3	10
-vegetativo	0.5	4	8
-vegetativo	0.5	5	9
-vegetativo	0.75	1	9
-vegetativo	0.75	2	7
-vegetativo	0.75	3	7
-vegetativo	0.75	4	8
-vegetativo	0.75	5	9
-vegetativo	1	1	8
-vegetativo	1	2	6
-vegetativo	1	3	6
-vegetativo	1	4	5
-vegetativo	1	5	6
-botão floral	0	1	7
-botão floral	0	2	8
-botão floral	0	3	8
-botão floral	0	4	9
-botão floral	0	5	10
-botão floral	0.25	1	9
-botão floral	0.25	2	12
-botão floral	0.25	3	7
-botão floral	0.25	4	10
-botão floral	0.25	5	9
-botão floral	0.5	1	8
-botão floral	0.5	2	9
-botão floral	0.5	3	9
-botão floral	0.5	4	10
-botão floral	0.5	5	8
-botão floral	0.75	1	11
-botão floral	0.75	2	10
-botão floral	0.75	3	7
-botão floral	0.75	4	8
-botão floral	0.75	5	8
-botão floral	1	1	7
-botão floral	1	2	7
-botão floral	1	3	7
-botão floral	1	4	7
-botão floral	1	5	8
-florescimento	0	1	10
-florescimento	0	2	9
-florescimento	0	3	8
-florescimento	0	4	12
-florescimento	0	5	8
-florescimento	0.25	1	7
-florescimento	0.25	2	5
-florescimento	0.25	3	5
-florescimento	0.25	4	7
-florescimento	0.25	5	5
-florescimento	0.5	1	6
-florescimento	0.5	2	5
-florescimento	0.5	3	7
-florescimento	0.5	4	4
-florescimento	0.5	5	7
-florescimento	0.75	1	8
-florescimento	0.75	2	5
-florescimento	0.75	3	7
-florescimento	0.75	4	6
-florescimento	0.75	5	4
-florescimento	1	1	5
-florescimento	1	2	5
-florescimento	1	3	4
-florescimento	1	4	4
-florescimento	1	5	5
-maça	0	1	8
-maça	0	2	10
-maça	0	3	7
-maça	0	4	8
-maça	0	5	10
-maça	0.25	1	9
-maça	0.25	2	6
-maça	0.25	3	6
-maça	0.25	4	8
-maça	0.25	5	6
-maça	0.5	1	9
-maça	0.5	2	7
-maça	0.5	3	11
-maça	0.5	4	8
-maça	0.5	5	9
-maça	0.75	1	6
-maça	0.75	2	6
-maça	0.75	3	6
-maça	0.75	4	6
-maça	0.75	5	7
-maça	1	1	3
-maça	1	2	3
-maça	1	3	2
-maça	1	4	4
-maça	1	5	3
-capulho	0	1	11
-capulho	0	2	7
-capulho	0	3	9
-capulho	0	4	12
-capulho	0	5	11
-capulho	0.25	1	9
-capulho	0.25	2	13
-capulho	0.25	3	8
-capulho	0.25	4	10
-capulho	0.25	5	10
-capulho	0.5	1	9
-capulho	0.5	2	7
-capulho	0.5	3	7
-capulho	0.5	4	9
-capulho	0.5	5	9
-capulho	0.75	1	8
-capulho	0.75	2	8
-capulho	0.75	3	10
-capulho	0.75	4	8
-capulho	0.75	5	10
-capulho	1	1	9
-capulho	1	2	8
-capulho	1	3	10
-capulho	1	4	8
-capulho	1	5	10
+vegetative	0	1	10
+vegetative	0	2	9
+vegetative	0	3	8
+vegetative	0	4	8
+vegetative	0	5	10
+vegetative	0.25	1	11
+vegetative	0.25	2	9
+vegetative	0.25	3	10
+vegetative	0.25	4	10
+vegetative	0.25	5	10
+vegetative	0.5	1	8
+vegetative	0.5	2	8
+vegetative	0.5	3	10
+vegetative	0.5	4	8
+vegetative	0.5	5	9
+vegetative	0.75	1	9
+vegetative	0.75	2	7
+vegetative	0.75	3	7
+vegetative	0.75	4	8
+vegetative	0.75	5	9
+vegetative	1	1	8
+vegetative	1	2	6
+vegetative	1	3	6
+vegetative	1	4	5
+vegetative	1	5	6
+flower bud	0	1	7
+flower bud	0	2	8
+flower bud	0	3	8
+flower bud	0	4	9
+flower bud	0	5	10
+flower bud	0.25	1	9
+flower bud	0.25	2	12
+flower bud	0.25	3	7
+flower bud	0.25	4	10
+flower bud	0.25	5	9
+flower bud	0.5	1	8
+flower bud	0.5	2	9
+flower bud	0.5	3	9
+flower bud	0.5	4	10
+flower bud	0.5	5	8
+flower bud	0.75	1	11
+flower bud	0.75	2	10
+flower bud	0.75	3	7
+flower bud	0.75	4	8
+flower bud	0.75	5	8
+flower bud	1	1	7
+flower bud	1	2	7
+flower bud	1	3	7
+flower bud	1	4	7
+flower bud	1	5	8
+blossom	0	1	10
+blossom	0	2	9
+blossom	0	3	8
+blossom	0	4	12
+blossom	0	5	8
+blossom	0.25	1	7
+blossom	0.25	2	5
+blossom	0.25	3	5
+blossom	0.25	4	7
+blossom	0.25	5	5
+blossom	0.5	1	6
+blossom	0.5	2	5
+blossom	0.5	3	7
+blossom	0.5	4	4
+blossom	0.5	5	7
+blossom	0.75	1	8
+blossom	0.75	2	5
+blossom	0.75	3	7
+blossom	0.75	4	6
+blossom	0.75	5	4
+blossom	1	1	5
+blossom	1	2	5
+blossom	1	3	4
+blossom	1	4	4
+blossom	1	5	5
+boll	0	1	8
+boll	0	2	10
+boll	0	3	7
+boll	0	4	8
+boll	0	5	10
+boll	0.25	1	9
+boll	0.25	2	6
+boll	0.25	3	6
+boll	0.25	4	8
+boll	0.25	5	6
+boll	0.5	1	9
+boll	0.5	2	7
+boll	0.5	3	11
+boll	0.5	4	8
+boll	0.5	5	9
+boll	0.75	1	6
+boll	0.75	2	6
+boll	0.75	3	6
+boll	0.75	4	6
+boll	0.75	5	7
+boll	1	1	3
+boll	1	2	3
+boll	1	3	2
+boll	1	4	4
+boll	1	5	3
+boll open	0	1	11
+boll open	0	2	7
+boll open	0	3	9
+boll open	0	4	12
+boll open	0	5	11
+boll open	0.25	1	9
+boll open	0.25	2	13
+boll open	0.25	3	8
+boll open	0.25	4	10
+boll open	0.25	5	10
+boll open	0.5	1	9
+boll open	0.5	2	7
+boll open	0.5	3	7
+boll open	0.5	4	9
+boll open	0.5	5	9
+boll open	0.75	1	8
+boll open	0.75	2	8
+boll open	0.75	3	10
+boll open	0.75	4	8
+boll open	0.75	5	10
+boll open	1	1	9
+boll open	1	2	8
+boll open	1	3	10
+boll open	1	4	8
+boll open	1	5	10
