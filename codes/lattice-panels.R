@@ -342,3 +342,25 @@ panel.groups.segplot <- function (x, y, z, centers, groups, gap = NULL,
     panel.segplot(x, y, z, centers = centers,
                   subscripts = subscripts, ...)
 }
+
+panel.beeswarm <- function (x, y, subscripts, spread, ...) {
+    xx <- x
+    yy <- y
+    aux <- by(cbind(yy, xx, subscripts),
+              INDICES = xx,
+              FUN = function(i) {
+                  or <- order(i[, 1])
+                  ys <- i[or, 1]
+                  yt <- table(ys)
+                  dv <- sapply(unlist(yt), FUN = function(j) {
+                      seq(from = 1, to = j, length.out = j) - (j + 1)/2
+                  })
+        if (!is.list(dv)) {
+            dv <- as.list(dv)
+        }
+        xs <- i[or, 2] + spread * do.call(c, dv)
+        cbind(x = xs, y = ys, subscripts = subscripts[or])
+    })
+    aux <- do.call(rbind, aux)
+    panel.xyplot(aux[, 1], aux[, 2], subscripts = aux[, 3], ...)
+}
