@@ -73,7 +73,9 @@ opts_chunk$set(
     out.width = "1\\textwidth",
     fig.align = "center",
     fig.pos = "H",
-    dev.args = list(family = "Palatino"))
+    # dev = "tikz"
+    dev.args = list(family = "Palatino")
+    )
 
 source("./codes/lattice-panels.R")
 source("./codes/functions.R")
@@ -99,56 +101,64 @@ library(tidyr)
 \noindent\textbf{keywords:} COM-Poisson, Over/Under-dispersion, Count data
 \end{abstract}
 
-\section{Introduction}
-\label{introduction}
+%=======================================================================
+% Table of contents
+%=======================================================================
 
-\section{Background}
-\label{background}
+% \section{Introduction}
+% \label{introduction}
+%
+% \section{Background}
+% \label{background}
+%
+% \section{Reparametrization}
+% \label{reparametrization}
+%
+% \section{Estimation and Inference}
+% \label{estimation-and-inference}
+%
+% \section{Simulation study}
+% \label{simulation-study}
+%
+% \section{Case studies}
+% \label{case-studies}
+%
+% \subsection{Artificial defoliation in cotton phenology}
+%
+% \subsection{Soil moisture and potassium doses on soybean culture}
+%
+% \subsection{Assessing toxicity of pollutants in aquatic systems}
+%
+% \section{Concluding remarks}
+% \label{conclusion}
 
-\section{Reparametrization}
-\label{reparametrization}
+%=======================================================================
 
-\section{Estimation and Inference}
-\label{estimation-and-inference}
+\pagebreak
 
 \section{Simulation study}
 \label{simulation-study}
 
-\section{Case studies}
-\label{case-studies}
-
-\subsection{Artificial defoliation in cotton phenology}
-
-\subsection{Soil moisture and potassium doses on soybean culture}
-
-\subsection{Assessing toxicity of pollutants in aquatic systems}
-
-\section{Concluding remarks}
-\label{conclusion}
-
-\citep{Zeviani2014}
-\citet{Hinde1998}
-\citep*{Bonat2016}
-
-\pagebreak
-
-<<load-simulation, cache=TRUE>>=
-
-# Configuration
-B <- 1000
-beta <- c("b0" = 2, "b1" = 0.5, "b21" = 0.8, "b22" = -0.8)
-phis <- c(0, -1.6, -1, 1.8)
-names(phis) <- sprintf("phi=%s", phis)
-
-sizes <- c(50, 100, 300, 1000)
-names(sizes) <- sprintf("n=%s", sizes)
-
-# Load results
-results <- readRDS("./codes/simulation.rds")
-
-@
+In this section we conducted a simulation study to assess the properties
+of the proposed model and estimators0. We considered average counts varying
+from 3 to 27 according to a regression model structure with a continous
+variable and a categorical variable with three levels. With respect to
+the precision parameter $\phi$, we fixed it to four values $-1.6$,
+$-1.0$, $0.0$ and $1.8$, in order to have strong overdispersed, moderate
+overdispersed, equidispersed and underdispersed counts respectively. For
+each value of precision parameter, we considered four different sample
+sizes, 50, 100, 300 and 1000, generating 1000 datasets in each case. The
+\autoref{alg:simulation} shows the details of the steps in simulation
+study. In \autoref{fig:bias-plot} we show the bias of the estimators for
+each scenario (combination between values of the dispersion parameter
+and samples sizes) together with a confidence interval calculated as
+average bias plus and minus $\Phi(0.975)$ times the standard error. The
+scales are standardized for each parameter by dividing the bias by the
+standard error obtained for the sample of size 50.
 
 \begin{algorithm}
+\caption{Steps in simulation study.}
+\label{alg:simulation}
   \Begin{
   $\bm{\beta} = \begin{bmatrix} \beta_0 & \beta_1 & \beta_{21} &
     \beta_{22} \end{bmatrix}^\top = \begin{bmatrix} 2.0 &
@@ -181,23 +191,47 @@ results <- readRDS("./codes/simulation.rds")
     }
   }
 }
-\caption{Steps in simulation study.}
 \end{algorithm}
 
-<<bias-data>>=
+<<load-simulation, cache=TRUE>>=
+
+# Configuration
+B <- 1000
+beta <- c("b0" = 2, "b1" = 0.5, "b21" = 0.8, "b22" = -0.8)
+phis <- c(0, -1.6, -1, 1.8)
+names(phis) <- sprintf("phi=%s", phis)
+
+sizes <- c(50, 100, 300, 1000)
+names(sizes) <- sprintf("n=%s", sizes)
+
+# Load results
+results <- readRDS("./codes/simulation.rds")
+
+@
+
+<<bias-data, cache=TRUE>>=
 
 #-----------------------------------------------------------------------
-# Compute bias
+# Compute standardized bias
+std <- lapply(results["n=50"], function(x) {
+    ind <- names(x); names(ind) <- ind
+    lapply(ind, function(y) {
+        bhat <- t(vapply(x[[y]], "[[", double(5), "coef"))
+        real <- matrix(c(phis[y], beta), byrow = TRUE,
+                       nrow = B, ncol = 5)
+        matrix(apply(bhat - real, 2, sd, na.rm = TRUE),
+               byrow = TRUE, nrow = B, ncol = 5)
+    })
+})
+
 aux <- ldply(lapply(results, function(x) {
     ind <- names(x); names(ind) <- ind
     out <- lapply(ind, function(y) {
         bhat <- t(vapply(x[[y]], "[[", double(5), "coef"))
         real <- matrix(c(phis[y], beta), byrow = TRUE,
                        nrow = B, ncol = 5)
-        std <-  matrix(apply(bhat - real, 2, sd, na.rm = TRUE),
-                       byrow = TRUE, nrow = B, ncol = 5)
-        bhat - real
-        # (bhat - real) / std
+        # (bhat - real)                 # raw bias
+        (bhat - real) / std[[1]][[y]] # standardized bias
     })
     ldply(out, .id = "phi")
 }), .id = "n")
@@ -210,45 +244,20 @@ bias$phi <- ordered(bias$phi, c("phi=-1.6", "phi=-1", "phi=0",
 
 @
 
-<<bias-plot, fig.height=5, fig.width=8, fig.cap="Distributions of raw bias by differents sample sizes and dispersion levels.">>=
+The results in \autoref{fig:bias-plot} show that for all dispersed
+levels, both the expected bias and standard error tend to 0 as the
+sample size is increased. The estimators for the regression parameters
+are unbiased, consistency and their empirical distributions are
+symmetric. For the precision parameter, the estimator is asymptotically
+unbiased, in small samples the parameter is overestimated and the
+empirical distribution is right-skewed. \autoref{fig:coverage-plot}
+presents the confidence interval coverage rate based on quadratic
+approximation at the maximum likelihood estimate by sample size and
+dispersed levels.
 
-# Distributions of bias
-fl <- parse(text = gsub("=", "==", levels(bias$phi)))
-yl <- parse(text = c("hat(phi)",
-                     paste0("hat(beta)[", c(0, 1, 21, 22), "]")))
+<<bias-plot, cache=TRUE, fig.height=5, fig.width=8, fig.cap="Distributions of standardized bias (gray points) and average with confidence intervals (black segments) by differents sample sizes and dispersion levels.">>=
 
-bwplot(param ~ bias | phi, groups = n, data = bias,
-       box.width = 0.15,
-       pch = "|",
-       grid = TRUE,
-       as.table = TRUE,
-       layout = c(4, 1),
-       xlab = "Bias",
-       fill = colorRampPalette(c("gray80",  "gray20"))(4),
-       strip = strip.custom(factor.levels = fl),
-       scales = list(y = list(labels = yl)),
-       panel = panel.superpose,
-       whisker.width = 0.5,
-       auto.key = list(
-           column = 4,
-           rectangles = TRUE,
-           points = FALSE,
-           title = "Sample size",
-           cex.title = 1
-       ),
-       par.settings = list(
-           plot.symbol = list(pch = 20, cex = 0.5)
-       ),
-       panel.groups = function(x, y, group.number, ...) {
-           my.panel.bwplot(x, y + (group.number - 2.5) / 5, ...)
-           panel.abline(v = 0, lty = 2)
-       })
-
-@
-
-<<cibias-plot, fig.height=4.5, fig.width=8.5, fig.cap="Average bias and confidence intervals by differents sample sizes and dispersion levels.">>=
-
-# Confidence interval for bias
+# Distributions of bias and average with confidence intervals
 ci <- function(x) {
     ci <- mean(x) + c(-1, 0, 1) * qnorm(0.975) * sd(x)
     names(ci) <- c("lwr", "fit", "upr")
@@ -277,6 +286,7 @@ xyplot(param ~ bias | phi, groups = n, data = bias,
        strip = strip.custom(factor.levels = fl),
        scales = list(y = list(labels = yl)),
        ylab = "",
+       xlab = "Standardized Bias",
        jitter.y = TRUE,
        factor = 0.1,
        gap = 0.3,
@@ -295,7 +305,6 @@ xyplot(param ~ bias | phi, groups = n, data = bias,
                 data = cidata,
                 draw = FALSE,
                 horizontal = TRUE,
-                xlab = "Bias",
                 layout = c(4, 1),
                 groups = n, gap = 0.3,
                 key = key,
@@ -305,10 +314,9 @@ xyplot(param ~ bias | phi, groups = n, data = bias,
                 panel = function(...) {
                     panel.groups.segplot(...)
                     panel.abline(v = 0, lty = 2)
-                    panel.abline(h = 1:5, col = "lightgray")
+                    panel.abline(h = 1:5, col = "lightgray", lty = 2)
                 })
     )
-
 @
 
 <<coverage-data>>=
@@ -341,6 +349,14 @@ covdata <- aggregate(coverage ~ n + phi + param, data = coverage,
 
 @
 
+The coverage rates in \autoref{fig:coverage-plot} show that for the
+regression parameters the empirical coverage rates are close to the
+nominal level of 95\% for sample sizes greater than 100 and all
+dispersed levels. For the precision parameter the empirical coverage
+rates are slightly lower than the nominal level, however, they become
+closer for large samples. The worst scenario is when we have small
+sample size and strong overdispersed counts.
+
 <<coverage-plot, fig.height=4, fig.width=9, fig.cap="Coverage rate based on confidence intervals obtained by quadratic approximation for differents sample sizes and dispersion levels.">>=
 
 fl <- parse(text = gsub("=", "==", levels(bias$phi)))
@@ -371,72 +387,6 @@ xyplot(coverage ~ n | param,
            panel.xyplot(x, y, ...)
            panel.abline(h = 0.95, lty = 2)
        })
-
-@
-
-<<cint-data, cache=TRUE>>=
-
-#-----------------------------------------------------------------------
-# Compute coefficients intervals
-aux <- ldply(lapply(results, function(x) {
-    ind <- names(x); names(ind) <- ind
-    out <- lapply(ind, function(y) {
-        da <- lapply(x[[y]], function(z) {
-            cint <- z[["cint"]]
-            da <- data.frame(cint)
-            da$param <- rownames(cint)
-            da$real <- c(phis[y], beta)
-            da$ind <- with(da, as.integer(lwr < real & upr > real))
-            da
-        })
-        names(da) <- seq(da)
-        ldply(da, .id = "i")
-    })
-    ldply(out, .id = "phi")
-}), .id = "n")
-
-cidata <- na.omit(aux)
-cidata$scenario <- ordered(
-    with(cidata, paste(n, phi, sep = "\n")),
-    unique(with(cidata, paste(n, phi, sep = "\n"))))
-
-@
-
-<<cint-plot, cache=TRUE, fig.height=12, out.height="0.95\\textheight", fig.width=8, fig.cap="Confidence intervals for the estimators for each simulated dataset. Black segments are intervals that don't cover the true valor of the parameter.">>=
-
-fl <- do.call(c, lapply(strsplit(gsub("=", "==", levels(cidata$scenario)),
-                      split = "\n"),
-             function(x) {
-                 # parse(text = sprintf("atop(%s, %s)", x[1], x[2]))
-                 parse(text = sprintf("phantom()[%s]^{%s}", x[1], x[2]))
-               }))
-yl <- parse(text = c(paste0("beta[", c(0, 1, 21, 22), "]"), "phi"))
-
-useOuterStrips(
-    segplot(i ~ lwr + upr | param + scenario,
-            data = cidata,
-            draw = FALSE,
-            scales = list(relation = "free", draw = FALSE),
-            horizontal = FALSE,
-            lattice.options = list(
-                layout.widths = list(strip.left = list(x = 2.5)),
-                layout.heights = list(strip = list(x = 1.2))
-            ),
-            panel = function(x, y, z, subscripts, ...) {
-                col <- ifelse(cidata$ind, "gray60", "black")
-                panel.segplot(x, y, z, subscripts,
-                              col = col[subscripts],
-                              ...)
-                panel.abline(h = cidata$real[subscripts], lty = 2)
-            }),
-    strip.left = strip.custom(
-        factor.levels = fl,
-        par.strip.text = list(cex = 1.5)
-    ),
-    strip = strip.custom(
-       factor.levels =  yl
-    )
-)
 
 @
 
