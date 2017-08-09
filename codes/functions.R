@@ -226,7 +226,7 @@ getAnova <- function(..., print = TRUE) {
         F <- c(NA, -diff(dev))/(dnp * sigma)
         pvs <- pf(F, df1 = dnp, df2 = df.sigma, lower.tail = FALSE)
         tab <- cbind(
-            "np" = nps,
+            "np" = nps + 1,
             "dev" = dev,
             "AIC" = aic,
             "F" = F,
@@ -275,7 +275,7 @@ getCoefs <- function(model, digits = 3, rownames = NULL) {
     if (!is.null(rownames)) {
         rownames(est) <- rownames
     }
-    colnames(est) <- c("Est", "Est/EP")
+    colnames(est) <- c("Est", "Est/SE")
     return(est)
 }
 
