@@ -41,7 +41,6 @@
 \makeatother
 
 %-----------------------------------------------------------------------
-
 \title{Reparametrization of COM-Poisson Regression Models with
   Applications in the Analysis of Experimental Data}
 
@@ -106,40 +105,158 @@ library(dplyr)
 \noindent\textbf{keywords:} COM-Poisson, Over/Under-dispersion, Count data
 \end{abstract}
 
-%=======================================================================
-% Table of contents
-%=======================================================================
-
-% \section{Introduction}
-% \label{introduction}
-%
-% \section{Background}
-% \label{background}
-%
-% \section{Reparametrization}
-% \label{reparametrization}
-%
-% \section{Estimation and Inference}
-% \label{estimation-and-inference}
-%
-% \section{Simulation study}
-% \label{simulation-study}
-%
-% \section{Case studies}
-% \label{case-studies}
-%
-% \subsection{Artificial defoliation in cotton phenology}
-%
-% \subsection{Soil moisture and potassium doses on soybean culture}
-%
-% \subsection{Assessing toxicity of pollutants in aquatic systems}
-%
-% \section{Concluding remarks}
-% \label{conclusion}
-
-%=======================================================================
-
 \pagebreak
+
+\section{Introduction}
+\label{introduction}
+
+\section{Background}
+\label{background}
+
+The COM-Poisson distribution generalizes the Poisson distribution in
+terms of the ratio between the probabilities of two consecutive values,
+with addition of a precision parameter \cite{Sellers2010}. Let $Y$ a
+COM-Poisson random variable, then
+$$\frac{\Pr(Y=y-1)}{\Pr(Y=y)} = \frac{y^\nu}{\lambda}$$ while for the
+Poisson distribution this ratio is $\frac{y}{\lambda}$. This allows the
+distribution for overdispersion or underdispersion. The probability mass
+function for the COM-Poisson random variables takes the form
+\begin{equation}
+  \label{eqn:pmf-cmp}
+  \Pr(Y=y \mid \lambda, \nu) = \frac{\lambda^y}{(y!)^\nu Z(\lambda, \nu)},
+  \qquad y = 0, 1, 2, \ldots
+\end{equation},
+where $\lambda > 0$, $\nu \geq 0$ and $Z(\lambda, \nu) =
+\sum_{j=0}^\infty \frac{\lambda^j}{(j!)^\nu}$ is a normalizing
+constant.
+
+The $Z(\lambda, \nu)$ series diverges theorically only when $\nu=0$ and
+$\lambda \geq 1$, but numerically for small values of $\nu$ combined
+with large of $\lambda$, the sum is so huge it causes
+\textit{overflow}. \autoref{tab:convergenceZ} shows the calculated
+normalizing constants using a thousand increments, that is,
+$\sum_{j=0}^{1000}\lambda^j/(j!)^\nu$ for differents of $\lambda$ and
+$\phi$ $\lambda$ e $\nu$ \footnote{For $\lambda=1$ e $\nu=0$ we show Inf,
+  although the numerically value is $1000$, since the series clearly
+  diverges.}.
+
+<<convergenceZ, echo=FALSE, results="asis">>=
+
+#-----------------------------------------------------------------------
+# Convergence of Z(lambda, nu) constant
+computeZ <- function(lambda, nu, maxit = 1e4, tol = 1e-5) {
+    z <- vector("numeric", maxit)
+    j = 1
+    z[j] <- exp(j * log(lambda) - nu * lfactorial(j))
+    while (abs(z[j] - 0) > tol && j <= maxit) {
+        j = j + 1
+        z[j] <- exp(j * log(lambda) - nu * lfactorial(j))
+    }
+    if (lambda == 1 & nu == 0) z <- Inf
+    return(sum(z, na.rm = TRUE) + 1)
+}
+
+grid <- expand.grid(
+    lambda = c(0.5, 1, 5, 10, 30, 50),
+    nu = seq(0, 1, length.out = 11))
+grid$z <- apply(grid, 1, function(par) {
+    computeZ(lambda = par[1], nu = par[2], maxit = 1e4)
+})
+
+xt <- xtabs(z ~ nu + lambda, data = grid)
+caption <- paste(
+    "Values for $Z(\\lambda, \\nu)$ constant (calculated numerically)",
+    "for values of $\\lambda$ (0.5 to 50) and $\\phi$ (0 to 1)")
+
+# Remove excessive scientific notation
+xt2 <- gsub("e\\+00", "    ", format(xt))
+xt2 <- gsub("\\|([0-9].{2}) \\|", "\\|**\\1** \\|", xt2)
+print(xtable(xt2, digits = -2,
+             caption = caption,
+             align = "C|CCCCCC",
+             # align = "ccccccc",
+             label = "tab:convergenceZ"),
+      include.colnames = FALSE,
+      tabular.environment = "tabularx",
+      width = "\\textwidth",
+      add.to.row = list(
+          pos = list(0, 0),
+          command = c(
+              " \\multicolumn{7}{c}{$\\bm{\\lambda}$} \\\\\n",
+              "$\\bm{\\nu}$ & 0,5 & 1 & 5 & 10 & 30 & 50 \\\\\n")
+      ))
+
+@
+
+An undesirable feature of COM-Poisson distribution is that the moments
+cannot be solved in closed form. \citet{Shmueli2005} and
+\citet{Sellers2010} using an asymptotic approximation for
+$Z(\lambda,\nu)$, shows that an approximate forms can be closed by
+\begin{equation}
+  \label{eqn:mean-aprox}
+  E(Y) \approx \lambda^{1/\nu} - \frac{\nu - 1}{2\nu} \qquad
+  \textrm{and} \qquad
+  \textrm{var}(Y) \approx \frac{\lambda^{1/\nu}}{\nu}\,,
+\end{equation} which is particularly accurate for  $\nu \leq 1$ or
+$\lambda > 10$. The authors also shows that the mean-variance
+relationship can be appproximate by $\frac{1}{\nu}E(Y)$. In
+\autoref{reparametrization} we assess the approximations.
+
+A regression formulation for COM-Poisson models was proposed by
+\citet{Sellers2010}, using the original parametrization. In this case,
+the COM-Poisson regression is $\eta(E(Y_i)) = \log(\lambda_i)$ and the
+relationship between $E(Y_i)$ and $\bm{x}_i$ is modeled
+inderectly. \citet{Huang2017} shows how the means of COM-Poisson
+distributions can be modelled directly. in the \autoref{eqn:pmf-cmp},
+\Citeauthor{Huang2017} proposes that the parameter $\lambda$ is a
+function of $\mu$ and $\nu$, given by the solution to
+\begin{equation*}
+  \sum_{j=0}^{\infty} (j - \mu) \frac{\lambda^j}{(y!)^\nu} = 0\,.
+\end{equation*}
+Thus the mean-parametrized COM-Poisson regression is $\eta(E(Y_i)) =
+\log(\mu_i)$. In this article, we presented a alternative
+mean-parametrization of COM-Poisson models to avoid the limitations of
+original parametrization and complexity of \Citeauthor{Huang2017}
+parametrization.
+
+\section{Reparametrization}
+\label{reparametrization}
+
+<<data-approx, include=FALSE, cache=TRUE>>=
+
+#-----------------------------------------------------------------------
+# Study the approximation
+
+#-------------------------------------------
+# Mean and variance relationship
+aux <- expand.grid(
+    mu = seq(2, 30, length.out = 50),
+    phi = seq(log(0.3), log(2.5), length.out = 50))
+
+moments <- mapply(FUN = calc_moments,
+                  mu = aux$mu,
+                  phi = aux$phi,
+                  MoreArgs = list(sumto = 300),
+                  SIMPLIFY = FALSE)
+grid <- cbind(aux, t(do.call(cbind, moments)))
+grid <- transform(grid, va = mu / exp(phi))
+
+#-------------------------------------------
+# COM-Poisson probabilities
+parg <- expand.grid(mu = c(5, 15), phi = log(c(0.5, 1, 2.5)))
+y <- 0:30
+py <- mapply(FUN = dcmp,
+             mu = parg$mu,
+             phi = parg$phi,
+             MoreArgs = list(y = y, sumto = 100),
+             SIMPLIFY = FALSE)
+parg <- cbind(parg[rep(1:nrow(parg), each = length(y)), ],
+              y = y, py = unlist(py))
+
+@
+
+\section{Estimation and Inference}
+\label{estimation-and-inference}
 
 \section{Simulation study}
 \label{simulation-study}
@@ -1352,7 +1469,8 @@ print(xtable(corr.ovos,
 
 @
 
-
+\section{Concluding remarks}
+\label{conclusion}
 
 %-----------------------------------------------------------------------
 \newpage
