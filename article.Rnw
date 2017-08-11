@@ -193,7 +193,7 @@ cannot be solved in closed form. \citet{Shmueli2005} and
 \citet{Sellers2010} using an asymptotic approximation for
 $Z(\lambda,\nu)$, shows that an approximate forms can be closed by
 \begin{equation}
-  \label{eqn:mean-aprox}
+  \label{eqn:mean-approx}
   E(Y) \approx \lambda^{1/\nu} - \frac{\nu - 1}{2\nu} \qquad
   \textrm{and} \qquad
   \textrm{var}(Y) \approx \frac{\lambda^{1/\nu}}{\nu}\,,
@@ -222,6 +222,23 @@ parametrization.
 \section{Reparametrization}
 \label{reparametrization}
 
+The poposed reparametrization of COM-Poisson models is based on
+mean approximation (\autoref{eqn:mean-approx}). We introduced new
+parameter $\mu$, using the mean approximation
+\begin{equation}
+  \label{eqn:repar-cmp}
+  \mu = h(\lambda, \nu) = \lambda^{1/\nu} - \frac{\nu - 1}{2\nu}
+  \quad \Rightarrow \quad
+  \lambda = h^{-1}(\mu, \nu) = \left (\mu +
+    \frac{(\nu - 1)}{2\nu} \right )^\nu.
+\end{equation}
+Precision parameter is taken on the log scale to avoid restrictions on the
+parameter space, $\phi = \log(\nu), \phi \in \mathbb{R}$. The
+interpretation of $\phi$ are the same to $\nu$, but in other scale. For
+$\phi<0$ we have overdispersed case and $\phi>0$ overdispersed, relatives
+to Poisson distribution. $\phi=0$ represents the special case that the
+COM-Poisson comes down to Poisson.
+
 <<data-approx, include=FALSE, cache=TRUE>>=
 
 #-----------------------------------------------------------------------
@@ -241,9 +258,129 @@ moments <- mapply(FUN = calc_moments,
 grid <- cbind(aux, t(do.call(cbind, moments)))
 grid <- transform(grid, va = mu / exp(phi))
 
+@
+
+In order to assess the accuracy of the moments approximations (
+\autoref{eqn:mean-approx}) we presented the quadratic erros of moments
+approximations in \autoref{fig:approx-plot}(a) and
+\ref{fig:approx-plot}(b). Quadratic erros are obtained by $[\mu -
+E(Y)]^2$ for expectation and by $\left[ \frac{\mu}{\exp(\phi)} V(Y)
+  \right ]^2$, where
+$E(Y)$ and $V(Y)$ are numerically calculated using the moments
+definition and dotted lines represents the regions $\nu \leq 1$ and
+$\lambda > 10^\nu$ in the $(\mu\,,\phi)$ scale.
+
+<<approx-plot, fig.height=3, fig.width=8, fig.cap="Quadratic errors for expectation (a) and variance (b) approximation, dotted lines representing the restriction for good approximations by \\cite{Shmueli2005}. Mean-variance relationship (c), dotted line represents $E(Y)=V(Y)$.">>=
+
+#-------------------------------------------
+# Errors in approximations for E[Y] and V[Y]
+grid <- transform(grid,
+                  emu = (mu - mean)^2,
+                  eva = (va - var)^2)
+
+myreg <- colorRampPalette(c("gray90",  "gray20"))
+xy1 <- levelplot(emu ~ phi + mu, data = grid,
+                 aspect = "fill",
+                 col.regions = myreg(100),
+                 xlab = expression(phi),
+                 ylab = expression(mu),
+                 sub = "(a)",
+                 colorkey = list(space = "top"),
+                 par.settings = ps2,
+                 panel = function(x, y, z, ...) {
+                     panel.levelplot(x, y, z, ...)
+                     panel.curve(10 - (exp(x) - 1)/(2 * exp(x)),
+                                 lty = 2)
+                     panel.abline(v = 0, lty = 2)
+                 })
+
+xy2 <- levelplot(eva ~ phi + mu, data = grid,
+                 aspect = "fill",
+                 col.regions = myreg(100),
+                 xlab = expression(phi),
+                 ylab = expression(mu),
+                 sub = "(b)",
+                 colorkey = list(space = "top"),
+                 par.settings = ps2,
+                 panel = function(x, y, z, ...) {
+                     panel.levelplot(x, y, z, ...)
+                     panel.curve(10 - (exp(x) - 1)/(2 * exp(x)),
+                                 lty = 2)
+                     panel.abline(v = 0, lty = 2)
+                 })
+
+#-------------------------------------------
+# Mean-variance relantionship
+xy3 <- xyplot(var ~ mean,
+              groups = phi,
+              data = grid,
+              type = "l",
+              lwd = 2,
+              axis = axis.grid,
+              xlab = expression(E(X)),
+              ylab = expression(V(X)),
+              sub = "(c)",
+              legend = list(
+                  top = list(
+                      fun = draw.colorkey,
+                      args = list(
+                          key = list(
+                              space = "top",
+                              col = myreg(length(unique(grid$phi))),
+                              at = unique(grid$phi),
+                              draw = FALSE)))),
+              par.settings = modifyList(
+                  ps2, list(superpose.line = list(
+                                col = myreg(length(unique(grid$phi))))
+                            )
+              ),
+              panel = function(x, y, ...) {
+                  panel.xyplot(x, y, ...)
+                  panel.curve(1*x, min(x), max(x), lty = 2)
+              },
+              page = function(...) {
+                  grid.text(expression(phi),
+                            just = "bottom",
+                            x = unit(0.15, "npc"),
+                            y = unit(0.83, "npc"))
+              })
+
+print(xy1, split = c(1, 1, 3, 1), more = TRUE)
+print(xy2, split = c(2, 1, 3, 1), more = TRUE)
+print(xy3, split = c(3, 1, 3, 1), more = TRUE)
+
+@
+
+The results in \autoref{fig:approx-plot} shows that the mean
+approximation is accurate, see maximum quadratic errors is
+\Sexpr{max(grid[["emu"]])}. For the variance approximation the maximum
+is \Sexpr{max(grid[["eva"]])} and this occurs to negative values of
+$\phi$.  Interestingly, the errors are bigger to negative values of
+$\phi$ and appear to have no relation with $\mu$ against the regions
+gives by \citet{Shmueli2005} ($\phi \leq 0$ and
+$\mu > 10 - \frac{\exp(\phi) - 1}{2\exp(\phi)}$). The relationship
+between mean and variance is linear with slope controlled by precision
+parameter $\phi$ (\autoref{fig:approx-plot}(c)).
+
+The results presented in \autoref{fig:approx-plot}(a) support the
+proposed reparametrization. Replacing $\lambda$ and $\nu$ as function of
+$\mu$ and $\phi$ in \autoref{eqn:pmf-cmp} the reparametrized
+distribution takes the form
+\begin{equation}
+  \label{eqn:pmf-cmpmu}
+  \Pr(Y=y \mid \mu, \phi) =
+  \left ( \mu +\frac{ e^\phi-1}{2e^\phi} \right )^{ye^\phi}
+  \frac{(y!)^{-e^\phi}}{Z(\mu, \phi)},
+  \qquad y = 0, 1, 2, \ldots\,
+\end{equation} where $\mu > 0$. We denotes this distribution as
+COM-Poisson$_\mu$. In \autoref{fig:pmf-cmp} we show the shapes of
+COM-Poisson$_\mu$ distribution.
+
+<<pmf-cmp, fig.height=3, fig.width=7, fig.cap="Shapes of the COM-Poisson distribution for different parameter values.">>=
+
 #-------------------------------------------
 # COM-Poisson probabilities
-parg <- expand.grid(mu = c(5, 15), phi = log(c(0.5, 1, 2.5)))
+parg <- expand.grid(mu = c(2, 8, 15), phi = c(-0.7, 0, 0.7))
 y <- 0:30
 py <- mapply(FUN = dcmp,
              mu = parg$mu,
@@ -252,6 +389,41 @@ py <- mapply(FUN = dcmp,
              SIMPLIFY = FALSE)
 parg <- cbind(parg[rep(1:nrow(parg), each = length(y)), ],
               y = y, py = unlist(py))
+
+leg_phi <- parse(
+    text = paste("phi == \"",
+                 formatC(unique(parg$phi), 1, format = "f"),
+                 "\""))
+barchart(py ~ y | factor(mu),
+         groups = factor(phi),
+         data = parg,
+         horizontal = FALSE,
+         layout = c(NA, 1),
+         as.table = TRUE,
+         axis = axis.grid,
+         origin = 0,
+         xlim = extendrange(y, f = 0.01),
+         border = "transparent",
+         scales = list(x = list(at = pretty(y))),
+         ylab = expression(P(Y==y)),
+         xlab = expression(y),
+         par.settings = list(
+             superpose.polygon = list(
+                 col = c("gray40", "gray60", "gray10")),
+             superpose.line = list(
+                 col = c("gray40", "gray60", "gray10"),
+                 lwd = 2)
+         ),
+         auto.key = list(
+             columns = 3,
+             rectangles = FALSE,
+             lines = TRUE,
+             text = leg_phi
+         ),
+         strip = strip.custom(
+             strip.names = TRUE,
+             var.name = expression(mu == ""),
+             sep = ""))
 
 @
 
