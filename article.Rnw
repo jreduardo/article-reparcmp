@@ -430,6 +430,62 @@ barchart(py ~ y | factor(mu),
 \section{Estimation and Inference}
 \label{estimation-and-inference}
 
+In this section we shall describe the estimation and inference methods
+adopted in this paper. The two forms of COM-Poisson models are fitted by
+maximization of the log-likelihood function. The log-likelihood function
+based on a set of independent observation $y_i$, $i=1,2,\ldots,n$ for
+COM-Poisson$_\mu$ has the following form,
+\begin{equation}
+  \label{eqn:ll-rcmp}
+  \ell = \ell(\bm{\beta}, \phi \mid \bm{y}) =
+  e^\phi \left [
+    \sum_{i=1}^n y_i
+    \log \left( \mu_i + \frac{e^\phi-1}{2e^\phi} \right ) -
+    \sum_{i=1}^n \log(y_i!) \right ] -
+  \sum_{i=1}^n \log(Z_i(\mu_i, \phi)),
+\end{equation}
+where $\mu_i = \exp(\bm{x}_i^\top\bm{\beta})$, with
+$\bm{x}_i^\top = (x_{i1},\, x_{i2},\, \ldots,\, x_{ip})$ the vector of
+known covariates for the $i$-th observation, and $(\bm{\beta},\, \phi)
+\in \mathbb{R}^{p+1}$. The normalizing contant $Z_i(\mu_i, \phi)$ is
+given by
+\begin{equation*}
+  Z_i(\mu_i, \phi) = \sum_{j=0}^\infty \left [ \left (
+    \mu_i + \frac{e^\phi - 1}{2e^\phi} \right )^{je^\phi}
+  \frac{1}{(j!)^{e^\phi}} \right ]
+\end{equation*}
+To compute the log-likelihood function we need the calculation of an
+infinite series for each observation, which makes the computation
+expensive for parametric space regions that the convergence of sum is
+slow.
+
+Parameter estimation requires numerical maximization of
+\autoref{eqn:ll-rcmp}. Since $\ell$ derivatives cannot be solved in
+closed forms, we adopted the BFGS algorithm \cite{Nocedal1995} that uses
+numerical estimate for the hessian matrix
+$\mathcal{H}(\bm{\theta})$. Standard errors for regression coefficients
+are obtained based on the observed information matrix
+$\mathcal{I}(\bm{\theta})$, where
+$\mathcal{I}(\bm{\theta}) = -\mathcal{H}(\bm{\theta})$ numerically
+calculated by BFGS algorithm. Confidence intervals for $\hat{\mu}_i$ are
+obtained by using the delta method \citep[p. 89]{Pawitan2001}.
+
+The parameter estimation for COM-Poisson model in the original
+parametrization is analogous to presented for COM-Poisson$_\mu$, however
+considering \autoref{eqn:ll-rcmp} in terms of $\lambda$. Even for the
+standard COM-Poisson distribution, the precision parameter is taked on
+the log scale, to avoid restriction of the parametric space.
+
+Values of the maximized log-likelihood, the Akaike criterion (AIC) and
+Bayesian criterion (BIC) are computed to compare the parametric
+models. As a baseline model, in the applications we fitted the
+quasi-Poisson model \citep{Wedderburn1974}. This approach is based on
+second-moment assumption that allows more flexibility to model. In this
+case the variance of the response variable is fixed by a additional
+parameter $\sigma$, $\textrm{var}(Y_i)=\sigma \mu_i$. These models are
+fitted in software R \citep{Rcore2017} by function \texttt{glm(...,
+  family = quasipoisson)}.
+
 \section{Simulation study}
 \label{simulation-study}
 
