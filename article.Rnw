@@ -1,4 +1,4 @@
-\documentclass{article}
+\documentclass[a4paper]{article}
 
 \usepackage{amssymb}
 \usepackage{amsfonts}
@@ -52,7 +52,7 @@
   Walmes M. Zeviani\thanks{Department of Statistics, UFPR, Curitiba,
     Paraná, Brazil} \and
   Wagner H. Bonat\footnotemark[3] \and
-  Clarice G. B. Demétrio\footnotemark[2]
+  Clarice G. B. Dem\'{e}trio\footnotemark[2]
 }
 
 \date{\today}
@@ -110,6 +110,97 @@ library(dplyr)
 \section{Introduction}
 \label{introduction}
 
+Count data are variables that assume non-negative integer values and
+representing the number of times an event occurs in the observation
+unit. This kind of data are common in experimental research such as
+number of grains produced by a plant, number of fruits produced by a
+tree, number of insects on a particular cell, among others. Since the
+seminal paper by \citet{Nelder1972} introduced the class of generalized
+linear models (GLM), analysis of count data often consider the Poisson
+regression model. These models provide a suitable distribution for a
+counting random variable and an efficient Newton scoring algorithm are
+used to fit them. Furthermore, the theoretical background for GLMs is
+well established in the class of dispersion models \citep{Jorgensen1997}
+as a generalization of the exponential family of distributions.
+
+In spite of the advantages of the GLM framework, the Poisson
+distribution has only one parameter, which represents the mean, and
+also, the variance. This relationship is referred as equidispersion.
+However, this assumption can be unsuitable to many situations and when
+the Poisson model is applied in these cases the standard errors for the
+parameters estimates are inconsistent \citep{Winkelmann1995}.
+
+In practice, overdispersion, when the variance greater than the mean, is
+largely reported in the literature and may occur due to the absence of
+relevant covariates, heterogeneity of sampling units, different domain
+not considered and excess of zero \citep{Hinde1998}. Lesser reported,
+but that has received attention from the statistical community, is a
+underdispersion case, when the variance is less than the mean. The
+process that reduce the variability are not as well known that lead to
+extra variability. For the same reason, there a few approaches to deal
+underdispersed cases. The explanatory mechanisms to underdispersion may
+be related to Poisson process. When the time between events is not
+exponential distributed, the number of events can be over or
+underdispersed, this motivated the class of duration dependence models
+\citep{Winkelmann1995}. Other possibity to explain underdispersion are
+order statistics. Suppose $Y_i$ is Poisson distributed then maximum of
+$Y_i$ is underdispersed.
+
+The strategies for constructing alternative count distributions are
+related with the causes of the non-equidispersion. Particular to
+overdispersion case Poisson mixed models are widely applied. One popular
+example of this approach is the negative-binomial model, where the
+natural is assumed to follow a gamma distribution. However, other
+distributions for the random effects may be considered, for example the
+model Poisson-Tweedie \citep{Bonat2017} and
+Poisson-Inverse-Gaussian. For underdispersion, the Gamma-Count
+distribution assumes a gamma distribution for the time between events in
+Poisson process, thus it can deal with dispersed counts
+\citep{Zeviani2014}. The COM-Poisson distribution is given by a
+generalization the Poisson distribution allowed for a non-linear
+decrease in ratios of successive probabilities \citep{Shmueli2005}.
+
+The COM-Poisson is a member of the exponential family, has the Poisson
+and geometric distributions as special cases and the Bernoulli
+distribution as a limiting case. It can deal with both under and
+overdispersed count data. Some recently applications of the COM-Poisson
+distribution are related by \citet{Lord2010} for analysis of traffic
+crash data, \citet{Sellers2010} to model airfreight breakage and book
+purchases and \citet{Huang2017} with analysis of attendance data,
+takeover birds and cotton bolls count. The main disadvantage of
+COM-Poisson distribution is that the location parameter does not
+represent the average making difficult interpretation in a regression
+structure. \citep{Huang2017} proposed a mean-parametrization COM-Poisson
+distribution to avoid this issue, in this approach the mean parameter is
+obtained by solving the root of an equation defined as a infinite sum.
+
+The main goal of this article is to proposed a novel COM-Poisson
+parametrization based on mean approximation given by
+\citet{Shmueli2005}. In this parametrization the probability mass
+function is wrote with $\mu$ and $\phi$ as function of original
+parameters, where $\mu$ is the mean and $\phi$ is the precision or
+dispersion parameter. Opposite the original parametrization, the
+proposed parametrization leads to interpretability of the parameters in
+a regression model and it is more simple than mean-parametrization gives
+by \cite{Huang2017} because in this case it is not necessary find $\mu$
+as the root of an equation involving an infinite sum. In simulation
+study we show the properties about maximum likelihood estimators in
+proposed and
+
+This paper is organized as follows. In \autoref{background} we present
+the COM-Poisson distribution and \cite{Huang2017} parametrization. The
+proposed reparametrization and assessment of moments approximations is
+considered in the \autoref{reparametrization}. In the
+\autoref{estimation-and-inference} we show the estimation and inference
+methods based on likelihood function whose properties are assess in
+\autoref{simulation-study} by simulations. Applications of
+reparametrized COM-Poisson regression model are illustrated in
+\autoref{case-studies} with three case studies. The analysis are
+performed using the software R \citep{Rcore2017}. The source code and
+data sets are avaliable in supplementary material\footnote{Available on
+  \texttt{\url{http://www.leg.ufpr.br/~eduardojr/papercompanions}}
+  \label{papercompanion}.}.
+
 \section{Background}
 \label{background}
 
@@ -130,15 +221,14 @@ where $\lambda > 0$, $\nu \geq 0$ and $Z(\lambda, \nu) =
 \sum_{j=0}^\infty \frac{\lambda^j}{(j!)^\nu}$ is a normalizing
 constant.
 
-The $Z(\lambda, \nu)$ series diverges theorically only when $\nu=0$ and
-$\lambda \geq 1$, but numerically for small values of $\nu$ combined
+The $Z(\lambda, \nu)$ series diverges theoretically only when $\nu=0$
+and $\lambda \geq 1$, but numerically for small values of $\nu$ combined
 with large of $\lambda$, the sum is so huge it causes
 \textit{overflow}. \autoref{tab:convergenceZ} shows the calculated
 normalizing constants using a thousand increments, that is,
-$\sum_{j=0}^{1000}\lambda^j/(j!)^\nu$ for differents of $\lambda$ and
-$\phi$ $\lambda$ e $\nu$ \footnote{For $\lambda=1$ e $\nu=0$ we show Inf,
-  although the numerically value is $1000$, since the series clearly
-  diverges.}.
+$\sum_{j=0}^{1000}\lambda^j/(j!)^\nu$ for different of $\lambda$ and
+$\phi$ \footnote{For $\lambda=1$ e $\nu=0$ we show Inf, although the
+  numerically value is $1000$, since the series clearly diverges.}.
 
 <<convergenceZ, echo=FALSE, results="asis">>=
 
@@ -199,14 +289,14 @@ $Z(\lambda,\nu)$, shows that an approximate forms can be closed by
   \textrm{var}(Y) \approx \frac{\lambda^{1/\nu}}{\nu}\,,
 \end{equation} which is particularly accurate for  $\nu \leq 1$ or
 $\lambda > 10$. The authors also shows that the mean-variance
-relationship can be appproximate by $\frac{1}{\nu}E(Y)$. In
+relationship can be approximate by $\frac{1}{\nu}E(Y)$. In
 \autoref{reparametrization} we assess the approximations.
 
 A regression formulation for COM-Poisson models was proposed by
 \citet{Sellers2010}, using the original parametrization. In this case,
 the COM-Poisson regression is $\eta(E(Y_i)) = \log(\lambda_i)$ and the
-relationship between $E(Y_i)$ and $\bm{x}_i$ is modeled
-inderectly. \citet{Huang2017} shows how the means of COM-Poisson
+relationship between $E(Y_i)$ and $\bm{x}_i$ is modelled
+indirectly. \citet{Huang2017} shows how the means of COM-Poisson
 distributions can be modelled directly. in the \autoref{eqn:pmf-cmp},
 \Citeauthor{Huang2017} proposes that the parameter $\lambda$ is a
 function of $\mu$ and $\nu$, given by the solution to
@@ -222,7 +312,7 @@ parametrization.
 \section{Reparametrization}
 \label{reparametrization}
 
-The poposed reparametrization of COM-Poisson models is based on
+The proposed reparametrization of COM-Poisson models is based on
 mean approximation (\autoref{eqn:mean-approx}). We introduced new
 parameter $\mu$, using the mean approximation
 \begin{equation}
@@ -261,9 +351,9 @@ grid <- transform(grid, va = mu / exp(phi))
 @
 
 In order to assess the accuracy of the moments approximations (
-\autoref{eqn:mean-approx}) we presented the quadratic erros of moments
+\autoref{eqn:mean-approx}) we presented the quadratic errors of moments
 approximations in \autoref{fig:approx-plot}(a) and
-\ref{fig:approx-plot}(b). Quadratic erros are obtained by $[\mu -
+\ref{fig:approx-plot}(b). Quadratic errors are obtained by $[\mu -
 E(Y)]^2$ for expectation and by $\left[ \frac{\mu}{\exp(\phi)} V(Y)
   \right ]^2$, where
 $E(Y)$ and $V(Y)$ are numerically calculated using the moments
@@ -447,7 +537,7 @@ COM-Poisson$_\mu$ has the following form,
 where $\mu_i = \exp(\bm{x}_i^\top\bm{\beta})$, with
 $\bm{x}_i^\top = (x_{i1},\, x_{i2},\, \ldots,\, x_{ip})$ the vector of
 known covariates for the $i$-th observation, and $(\bm{\beta},\, \phi)
-\in \mathbb{R}^{p+1}$. The normalizing contant $Z_i(\mu_i, \phi)$ is
+\in \mathbb{R}^{p+1}$. The normalizing constant $Z_i(\mu_i, \phi)$ is
 given by
 \begin{equation*}
   Z_i(\mu_i, \phi) = \sum_{j=0}^\infty \left [ \left (
@@ -462,7 +552,7 @@ slow.
 Parameter estimation requires numerical maximization of
 \autoref{eqn:ll-rcmp}. Since $\ell$ derivatives cannot be solved in
 closed forms, we adopted the BFGS algorithm \cite{Nocedal1995} that uses
-numerical estimate for the hessian matrix
+numerical estimate for the Hessian matrix
 $\mathcal{H}(\bm{\theta})$. Standard errors for regression coefficients
 are obtained based on the observed information matrix
 $\mathcal{I}(\bm{\theta})$, where
@@ -473,7 +563,7 @@ obtained by using the delta method \citep[p. 89]{Pawitan2001}.
 The parameter estimation for COM-Poisson model in the original
 parametrization is analogous to presented for COM-Poisson$_\mu$, however
 considering \autoref{eqn:ll-rcmp} in terms of $\lambda$. Even for the
-standard COM-Poisson distribution, the precision parameter is taked on
+standard COM-Poisson distribution, the precision parameter is taken on
 the log scale, to avoid restriction of the parametric space.
 
 Values of the maximized log-likelihood, the Akaike criterion (AIC) and
@@ -491,7 +581,7 @@ fitted in software R \citep{Rcore2017} by function \texttt{glm(...,
 
 In this section we conducted a simulation study to assess the properties
 of the proposed model and estimators0. We considered average counts varying
-from 3 to 27 according to a regression model structure with a continous
+from 3 to 27 according to a regression model structure with a continuous
 variable and a categorical variable with three levels. With respect to
 the precision parameter $\phi$, we fixed it to four values $-1.6$,
 $-1.0$, $0.0$ and $1.8$, in order to have strong overdispersed, moderate
@@ -524,7 +614,7 @@ standard error obtained for the sample of size 50.
     $\bm{x}_2$\;
     \For{$\phi \in \{-1.6, -1.0, 0.0, 1.8\}$}{
       \Repeat{$1000$ times}{
-        simule $\bm{y}$ from COM-Poisson distribution with $\bm{\mu}$
+        simulate $\bm{y}$ from COM-Poisson distribution with $\bm{\mu}$
         and $\phi$ parameters\;
         fit COM-Poisson$_\mu$ regression model to $\bm{y}$ data with
         $\bm{X} = \begin{bmatrix} \bm{1} & \bm{x}_1 & \bm{x}_{21} &
@@ -536,7 +626,7 @@ standard error obtained for the sample of size 50.
         approximation at the maximum likelihood estimate
         (assumes $\hat{\bm{\theta}} \sim \mathcal{N}(\hat{\bm{\theta}},
         \sqrt{-\bm{v}})$, where $\bm{v}$ is a diagonal of the inverse of
-        the hessian matrix)\;
+        the Hessian matrix)\;
       }
     }
   }
@@ -748,14 +838,14 @@ data analysis obtained of the experimental research. We considered as
 alternative models for the analysis the standard Poisson model, the
 COM-Poisson model in two forms (original and mean parametrization) and
 Quasi-Poisson model, based on second-moment assumptions. The data sets
-and \texttt{R} codes for their analysis are available on online
+and \texttt{R} codes for their analysis are available on on-line
 supplements.
 
 \subsection{Artificial defoliation in cotton phenology}
 \label{case-cotton}
 
 This example relates to cotton plants (\textit{Gossypium hirsutum})
-submetted to five levels of artificial defoliation (\texttt{des}) and
+submitted to five levels of artificial defoliation (\texttt{des}) and
 observed on five growth stages (\texttt{est}). The purpose of this
 research was to study the effect of defoliation levels at different
 growth stages of cotton plants on the observed number of bolls
@@ -875,22 +965,22 @@ print.xtable(xtable(est.ncap, digits = 4,
 The results presented in \autoref{tab:coef-cotton} show that the
 goodness-of-fit measures (maximum log-likelihood, AIC and BIC) are quite
 similar between COM-Poisson and COM-Poisson$_\mu$. This shows that the
-reparametrization doesn't change the model fit, as expected. The Poisson
+reparametrization does not change the model fit, as expected. The Poisson
 model is clearly unsuitable, being overly conservative. The difference
 between the log-likelihoods of the Poisson and COM-Poisson$_\mu$ models
 is \Sexpr{lrt.ncap[2, 4]}. Comparing this value with the chi-square
 distribution, with one degree of freedom, we have these models are
-significantly differents ($\phi \neq 0$). The estimated value of
+significantly different ($\phi \neq 0$). The estimated value of
 precision parameter, $\hat{\phi}$ is \Sexpr{co1[1]}, indicating
 underdispersion.
 
 \autoref{tab:coef-cotton} also shows the advantage of COM-Poisson$_\mu$
-(reparametrized), since the estimates are quite similiar to obtained by
+(reparametrized), since the estimates are quite similar to obtained by
 the Poisson model, whereas estimates obtained by the COM-Poisson model
 in original parametrization are on a non-interpretable scale. The ratios
 between estimates and their respective standard deviations for the
 COM-Poisson models are very close to ratios obtained by quasi-Poisson
-model. However, it is importante to note that COM-Poisson model is a
+model. However, it is important to note that COM-Poisson model is a
 full parametric approach, that is, there is a probability distribution
 associate to counts.
 
@@ -996,10 +1086,10 @@ In order to assess the orthogonality between $\bm{\mu}$ and $\phi$ in
 the COM-Poisson$_\mu$ parametrization, \autoref{tab:corr-cotton}
 presents the empirical correlations between precision and regression
 parameters, obtained by variance and covariance matrix. The correlations
-are pratically null considering the COM-Poisson$_\mu$, whereas to the
+are practically null considering the COM-Poisson$_\mu$, whereas to the
 original parametrization they are quite high. This reflects a better
 performance of the maximization algorithm in mean-parametrization model,
-in this case COM-Poisso$_\mu$ fit was \Sexpr{time12[3] * 100 /
+in this case COM-Poisson$_\mu$ fit was \Sexpr{time12[3] * 100 /
   time11[3]}\% slower then COM-Poisson model.
 
 <<corr-cotton, results="asis">>=
@@ -1028,20 +1118,20 @@ print(xtable(corr.ncap,
 
 @
 
-\subsection{Soil moisture and potassium doses on soybean culture}
+\subsection{Soil moisture and potassium doses on soy bean culture}
 \label{case-soybean}
 
 The second example is a experiment completely randomized block with
-treatments in a $5\times 3$ factorial arrangement about soybean
+treatments in a $5\times 3$ factorial arrangement about soy bean
 culture. The aim of this study was to evaluate the effects of potassium
 doses (\texttt{K}) applied to soil (0, 0.3, 0.6, 1.2 e 1.8 100mg
 dm$^{-3}$) and soil humidity (\texttt{umid}) levels (37.5, 50, 62.5\%,
-which represent few, ideal and abundance water repectively) on the
-soybean production. The experiment was carried out in a greenhouse, in
+which represent few, ideal and abundance water respectively) on the
+soy bean production. The experiment was carried out in a greenhouse, in
 pots with two plants, and the count variable measured was the number of
 grains per pot \citep{Serafim2012}. \autoref{fig:desc-soy} (left) shows
 the number of grains recorded for each combination of potassium dose and
-humidity level, it is importante to note the indication of a quadratic
+humidity level, it is important to note the indication of a quadratic
 level of the potassium levels. Most points in the sample means and
 variances dispersion diagram (right) are above the identity line,
 suggesting overdispersion.
@@ -1153,16 +1243,16 @@ results presented in \autoref{case-cotton}. The two parametrization of
 COM-Poisson presented very similar goodness-of-fit measures and better
 than Poisson model. The difference between the log-likelihoods of the
 Poisson and COM-Poisson models is \Sexpr{lrt.ngra[2, 4]}, indicating
-that $\phi$ is significatly different of zero. With respect to the
+that $\phi$ is significantly different of zero. With respect to the
 regression parameters, the similarities between models are analogous to
 the previous section. Both models agree on the indication of effects,
 however the Poisson model indicates the effects with greater
-significance, because it doesn't fit the extra variability.
+significance, because it does not fit the extra variability.
 
 \begin{table}[ht]
 \centering
 \caption{Parameter estimates (Est) and ratio between estimate and
-  standard error (SE) for the four model strategies for the soybean
+  standard error (SE) for the four model strategies for the soy bean
   experiment.}
 \label{tab:coef-soy}
 \begin{tabularx}{\textwidth}{lCCCCCCCC}
@@ -1260,10 +1350,10 @@ print(xtable(corr.ngra,
 
 @
 
-The observed counts and fitted curvers for each humidity level with
+The observed counts and fitted curves for each humidity level with
 confidence bands are show in \autoref{fig:pred-soy}. The fitted values
 are identical both models, leading the same conclusions. On the other
-hand, confindence bands for the Poisson model are smaller due to
+hand, confidence bands for the Poisson model are smaller due to
 equidispersion assumption. Considering COM-Poisson models and
 quasi-Poisson approach, the confidence bands are quite similar, which
 shows their flexibility.
@@ -1422,15 +1512,15 @@ models.ovos$C2@details$counts
 
 @
 
-For this data set we proposed three linear preditors. We compare the
+For this data set we proposed three linear predictors. We compare the
 performance of models using the likelihood ratio tests to select the
 systematic part of model. The linear predictors are
 \begin{center}
 \begin{minipage}{12cm}
-Preditor 1: $\log(\mu_i) = \beta_0 + \beta_1 \texttt{dose}_i$\\
-Preditor 2: $\log(\mu_i) = \beta_0 + \beta_1 \texttt{dose}_i +
+Predictor 1: $\log(\mu_i) = \beta_0 + \beta_1 \texttt{dose}_i$\\
+Predictor 2: $\log(\mu_i) = \beta_0 + \beta_1 \texttt{dose}_i +
              \beta_2 \texttt{dose}_i^2$\\
-Preditor 3: $\log(\mu_i) = \beta_0 + \beta_1 \texttt{dose}_i +
+Predictor 3: $\log(\mu_i) = \beta_0 + \beta_1 \texttt{dose}_i +
              \beta_2 \texttt{dose}_i^2 + \beta_3 \texttt{dose}_i^3$.
 \end{minipage}
 \end{center}
@@ -1508,7 +1598,7 @@ print(xtable(tab, digits = digits),
 \vspace{-1mm}
 
 \footnotesize \raggedright np, number of parameters; diff $\ell$,
-difference in log-lokelihoods; QDev, quasi-deviance, F, F statistics
+difference in log-likelihoods; QDev, quasi-deviance, F, F statistics
 based on quasi-deviances; diff np, difference in np.
 \end{table}
 
@@ -1534,7 +1624,7 @@ the significance of the effects. In addition, note that the parameters
 of the standard COM-Poisson model are comparable to the others models,
 this occurs because it is the particular case $\phi = 0$ which implies
 $\lambda = \mu$. \autoref{fig:pred-ovos} shows the number of live
-offsprings observed in experiment with fitted curves and confidence
+off-springs observed in experiment with fitted curves and confidence
 bands for all model strategies adopted.
 
 \begin{table}[H]
