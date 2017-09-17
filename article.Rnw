@@ -100,9 +100,32 @@ library(dplyr)
 \maketitle
 
 \begin{abstract}
-\lipsum[1]
+
+  In the analysis of count data seldom the equidispersion assumption is
+  suitable, hence the Poisson regression model is inappropriate in many
+  situations. The COM-Poisson is a member of the exponential family, has
+  the Poisson and geometric distributions as special cases and the
+  Bernoulli distribution as a limiting case. It can deal with both under
+  and overdispersed count data. The main disadvantage of COM-Poisson
+  distribution is that the location parameter does not represent the
+  average making difficult interpretation in a regression model. In this
+  paper we present a very simple reparametrization based on mean
+  approximation. The estimation and inference is based on likelihood and
+  simulation study showed that the maximum likelihood estimators are
+  unbiased and consistent for both regression and precision
+  parameters. Furthermore we observe empirical correlation between
+  regression and precision parameters close to 0 suggest the
+  orthogonality for the proposed reparametrization. We presents
+  applications of the proposed model by three case studies with over,
+  under and equidispersed counts. Results show improvements over the
+  conventional approaches. Therefore, its use in the analysis of count
+  data is encouraged. The computational routines for fitting of original
+  and reparametrized COM-Poisson models are available in the
+  supplementary material.
+
 \vspace{0.1cm}
-\noindent\textbf{keywords:} COM-Poisson, Over/Under-dispersion, Count data
+\noindent\textbf{keywords:} COM-Poisson, Over/Under-dispersion, Count
+data, Likelihood inference.
 \end{abstract}
 
 \pagebreak
