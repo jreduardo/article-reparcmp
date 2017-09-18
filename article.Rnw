@@ -603,58 +603,72 @@ fitted in software R \citep{Rcore2017} by function \texttt{glm(...,
 \label{simulation-study}
 
 In this section we conducted a simulation study to assess the properties
-of the proposed model and estimators0. We considered average counts varying
-from 3 to 27 according to a regression model structure with a continuous
-variable and a categorical variable with three levels. With respect to
-the precision parameter $\phi$, we fixed it to four values $-1.6$,
+of the proposed model and estimators. We considered average counts
+varying from 3 to 27 according to a regression model structure with a
+continuous variable $\bm{x}_1$ between 0 and 1 and a categorical
+variable $\bm{x}_2$ with three levels. Then the systematic componente is
+given by $\bm{\mu} = \exp(\beta_0 + \beta_1 \bm{x}_1 + \beta_{21}
+\bm{x}_{21} + \beta_{22} \bm{x}_{22})$, where $\bm{x}_{21}$ and
+$\bm{x}_{22}$ are \textit{dummy} variable for $\bm{x}_2$. With respect
+to the precision parameter $\phi$, we fixed it to four values $-1.6$,
 $-1.0$, $0.0$ and $1.8$, in order to have strong overdispersed, moderate
-overdispersed, equidispersed and underdispersed counts respectively. For
-each value of precision parameter, we considered four different sample
-sizes, 50, 100, 300 and 1000, generating 1000 datasets in each case. The
-\autoref{alg:simulation} shows the details of the steps in simulation
-study. In \autoref{fig:bias-plot} we show the bias of the estimators for
-each scenario (combination between values of the dispersion parameter
-and samples sizes) together with a confidence interval calculated as
-average bias plus and minus $\Phi(0.975)$ times the standard error. The
-scales are standardized for each parameter by dividing the bias by the
-standard error obtained for the sample of size 50.
+overdispersed, equidispersed and underdispersed counts
+respectively. \autoref{fig:justpars} shows the variation of the average
+counts (left) and variation of dispersion index (E$(Y)$ / var$(Y)$) for
+each fixed value of the precision parameter $\phi$. This configuration
+allows us to assess the proprierties of the estimators in extreme
+situation such as This configuration allows us to evaluate the
+properties of the estimators in extreme situations such as high counts
+and low dispersion, and low counts and high dispersion.
 
-\begin{algorithm}
-\caption{Steps in simulation study.}
-\label{alg:simulation}
-  \Begin{
-  $\bm{\beta} = \begin{bmatrix} \beta_0 & \beta_1 & \beta_{21} &
-    \beta_{22} \end{bmatrix}^\top = \begin{bmatrix} 2.0 &
-    0.5 & 0.8 & -0.8 \end{bmatrix}^\top$\;
-  \For{$n \in \{50, 100, 300, 1000\}$}{
-    set $\bm{x}_1$ as a sequence, with $n$ elements, between $0$ and
-    $1$\;
-    set $\bm{x}_2$ as a repetition, with $n$ elements, of three
-    categories\;
-    compute $\bm{\mu}$ using $\bm{\mu} = \exp(\beta_0 + \beta_1 \bm{x}_1
-    +  \beta_{21} \bm{x}_{21} + \beta_{22} \bm{x}_{22})$, where
-    $\bm{x}_{21}$ and $\bm{x}_{22}$ are \textit{dummy} variable for
-    $\bm{x}_2$\;
-    \For{$\phi \in \{-1.6, -1.0, 0.0, 1.8\}$}{
-      \Repeat{$1000$ times}{
-        simulate $\bm{y}$ from COM-Poisson distribution with $\bm{\mu}$
-        and $\phi$ parameters\;
-        fit COM-Poisson$_\mu$ regression model to $\bm{y}$ data with
-        $\bm{X} = \begin{bmatrix} \bm{1} & \bm{x}_1 & \bm{x}_{21} &
-          \bm{x}_{22} \end{bmatrix}$ design matrix\;
-        get $\hat{\bm{\theta}} = \begin{bmatrix} \hat{\phi} & \hat{\beta}_0 &
-          \hat{\beta}_1 & \hat{\beta}_{21} & \hat{\beta}_{22}
-        \end{bmatrix}^\top$\;
-        get confidence intervals for $\hat{\bm{\theta}}$ by quadratic
-        approximation at the maximum likelihood estimate
-        (assumes $\hat{\bm{\theta}} \sim \mathcal{N}(\hat{\bm{\theta}},
-        \sqrt{-\bm{v}})$, where $\bm{v}$ is a diagonal of the inverse of
-        the Hessian matrix)\;
-      }
-    }
-  }
-}
-\end{algorithm}
+In order to assess the consistency of the estimators we considered four
+different sample sizes, 50, 100, 300 and 1000, generating 1000 datasets
+in each case. In \autoref{fig:bias-plot} we show the bias of the
+estimators for each scenario (combination between values of the
+precision parameter and samples sizes) together with a confidence
+interval calculated as average bias plus and minus $\Phi(0.975)$ times
+the standard error. The scales are standardized for each parameter by
+dividing the bias by the standard error obtained for the sample of size
+50.
+
+%-----------------------------------------------------------------------
+% Explain the simulation
+% \begin{algorithm}
+% \caption{Steps in simulation study.}
+% \label{alg:simulation}
+%   \Begin{
+%   $\bm{\beta} = \begin{bmatrix} \beta_0 & \beta_1 & \beta_{21} &
+%     \beta_{22} \end{bmatrix}^\top = \begin{bmatrix} 2.0 &
+%     0.5 & 0.8 & -0.8 \end{bmatrix}^\top$\;
+%   \For{$n \in \{50, 100, 300, 1000\}$}{
+%     set $\bm{x}_1$ as a sequence, with $n$ elements, between $0$ and
+%     $1$\;
+%     set $\bm{x}_2$ as a repetition, with $n$ elements, of three
+%     categories\;
+%     compute $\bm{\mu}$ using $\bm{\mu} = \exp(\beta_0 + \beta_1 \bm{x}_1
+%     +  \beta_{21} \bm{x}_{21} + \beta_{22} \bm{x}_{22})$, where
+%     $\bm{x}_{21}$ and $\bm{x}_{22}$ are \textit{dummy} variable for
+%     $\bm{x}_2$\;
+%     \For{$\phi \in \{-1.6, -1.0, 0.0, 1.8\}$}{
+%       \Repeat{$1000$ times}{
+%         simulate $\bm{y}$ from COM-Poisson distribution with $\bm{\mu}$
+%         and $\phi$ parameters\;
+%         fit COM-Poisson$_\mu$ regression model to $\bm{y}$ data with
+%         $\bm{X} = \begin{bmatrix} \bm{1} & \bm{x}_1 & \bm{x}_{21} &
+%           \bm{x}_{22} \end{bmatrix}$ design matrix\;
+%         get $\hat{\bm{\theta}} = \begin{bmatrix} \hat{\phi} & \hat{\beta}_0 &
+%           \hat{\beta}_1 & \hat{\beta}_{21} & \hat{\beta}_{22}
+%         \end{bmatrix}^\top$\;
+%         get confidence intervals for $\hat{\bm{\theta}}$ by quadratic
+%         approximation at the maximum likelihood estimate
+%         (assumes $\hat{\bm{\theta}} \sim \mathcal{N}(\hat{\bm{\theta}},
+%         \sqrt{-\bm{v}})$, where $\bm{v}$ is a diagonal of the inverse of
+%         the Hessian matrix)\;
+%       }
+%     }
+%   }
+% }
+% \end{algorithm}
 
 <<load-simulation, cache=TRUE>>=
 
@@ -669,6 +683,48 @@ names(sizes) <- sprintf("n=%s", sizes)
 
 # Load results
 results <- readRDS("./codes/simulation.rds")
+
+@
+
+<<justpars, fig.height=4, fig.width=9, fig.cap="Average counts (left) and dispersion indexes (right) for each scenario considered in the simulation study.">>=
+
+#-------------------------------------------
+# Justify the choices of the parameters simulation
+x1 <- seq(0, 1, length.out = 100)
+x2 <- rep(letters[1:3], length.out = 100)
+X <- model.matrix(~ x1 + x2)
+mu <- exp(X %*% beta)
+
+daexplain <- ldply(lapply(phis, function(phi) {
+    va <- compute_variance(mu, phi, sumto = 300)
+    data.frame(mu = mu, va = va, di = va / mu, x1 = x1, x2 = x2)
+}), .id = "phi")
+
+fl <- parse(text = gsub("=", "==", levels(daexplain$phi)))
+xy1 <- xyplot(mu ~ x1, groups = x2,
+              type = c("g", "l"),
+              lwd = 2,
+              xlab = "Continous variable",
+              ylab = "Average count",
+              auto.key = list(
+                  column = 3,
+                  points = FALSE,
+                  lines = TRUE,
+                  title = "Categorical variable",
+                  cex.title = 1.1
+              ))
+xy2 <- xyplot(di ~ x1 | phi, groups = x2,
+              type = c("g", "l"),
+              lwd = 2,
+              # scales = "free",
+              layout = c(2, 2),
+              xlab = "Continous variable",
+              ylab = "Dispersion index",
+              data = daexplain,
+              strip = strip.custom(factor.levels = fl))
+
+print(xy1, split = c(1, 1, 2, 1), more = TRUE)
+print(xy2, split = c(2, 1, 2, 1), more = FALSE)
 
 @
 
@@ -713,10 +769,12 @@ sample size is increased. The estimators for the regression parameters
 are unbiased, consistency and their empirical distributions are
 symmetric. For the precision parameter, the estimator is asymptotically
 unbiased, in small samples the parameter is overestimated and the
-empirical distribution is right-skewed. \autoref{fig:coverage-plot}
-presents the confidence interval coverage rate based on quadratic
-approximation at the maximum likelihood estimate by sample size and
-dispersed levels.
+empirical distribution is slightly right-skewed.
+\autoref{fig:coverage-plot} presents the confidence interval coverage
+rate based on quadratic approximation at the maximum likelihood estimate
+(assumes $\hat{\bm{\theta}} \sim \mathcal{N}(\hat{\bm{\theta}},
+\sqrt{-\bm{v}})$, where $\bm{v}$ is a diagonal of the inverse of the
+Hessian matrix) by sample size and dispersed levels.
 
 <<bias-plot, cache=TRUE, fig.height=5, fig.width=8, fig.cap="Distributions of standardized bias (gray points) and average with confidence intervals (black segments) by differents sample sizes and dispersion levels.">>=
 
