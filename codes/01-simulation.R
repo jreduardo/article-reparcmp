@@ -25,24 +25,42 @@ sizes <- c(50, 100, 300, 1000)
 names(sizes) <- sprintf("n=%s", sizes)
 
 #-------------------------------------------
-# Visualize the averages counts used in simulations
-x1 <- seq(0, 1, length.out = 1000)
-x2 <- rep(letters[1:3], length.out = 1000)
+# Justify the choices of the parameters simulation
+x1 <- seq(0, 1, length.out = 100)
+x2 <- rep(letters[1:3], length.out = 100)
 X <- model.matrix(~ x1 + x2)
 mu <- exp(X %*% beta)
 
-xyplot(mu ~ x1, groups = x2,
-       type = c("g", "l"),
-       lwd = 2,
-       xlab = "Continous variable",
-       ylab = "Counts average",
-       auto.key = list(
-           column = 3,
-           points = FALSE,
-           lines = TRUE,
-           title = "Categorical variable",
-           cex.title = 1.1
-       ))
+daexplain <- ldply(lapply(phis, function(phi) {
+    va <- compute_variance(mu, phi, sumto = 1000)
+    data.frame(mu = mu, va = va, di = va / mu, x1 = x1, x2 = x2)
+}), .id = "phi")
+
+fl <- parse(text = gsub("=", "==", levels(daexplain$phi)))
+xy1 <- xyplot(mu ~ x1, groups = x2,
+              type = c("g", "l"),
+              lwd = 2,
+              xlab = "Continous variable",
+              ylab = "Counts average",
+              auto.key = list(
+                  column = 3,
+                  points = FALSE,
+                  lines = TRUE,
+                  title = "Categorical variable",
+                  cex.title = 1.1
+              ))
+xy2 <- xyplot(di ~ x1 | phi, groups = x2,
+              type = c("g", "l"),
+              lwd = 2,
+              # scales = "free",
+              layout = c(2, 2),
+              xlab = "Continous variable",
+              ylab = "Dispersion index",
+              data = daexplain,
+              strip = strip.custom(factor.levels = fl))
+
+print(xy1, split = c(1, 1, 2, 1), more = TRUE)
+print(xy2, split = c(2, 1, 2, 1), more = FALSE)
 
 #-------------------------------------------
 # Random generation for the COM-Poisson distribution
