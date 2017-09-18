@@ -48,9 +48,9 @@
   Eduardo E. R. Junior\thanks{Corresponding author:
     \href{mailto:jreduardo@usp.br}{\nolinkurl{jreduardo@usp.br}}}
     \hspace*{.8mm}\thanks{Department of Exact Sciences, ESALQ-USP,
-    Piracicaba, São Paulo, Brazil} \and
+    Piracicaba, S\~{a}o Paulo, Brazil} \and
   Walmes M. Zeviani\thanks{Department of Statistics, UFPR, Curitiba,
-    Paraná, Brazil} \and
+    Paran\'{a}, Brazil} \and
   Wagner H. Bonat\footnotemark[3] \and
   Clarice G. B. Dem\'{e}trio\footnotemark[2]
 }
@@ -106,21 +106,22 @@ library(dplyr)
   situations. The COM-Poisson is a member of the exponential family, has
   the Poisson and geometric distributions as special cases and the
   Bernoulli distribution as a limiting case. It can deal with both under
-  and overdispersed count data. The main disadvantage of COM-Poisson
-  distribution is that the location parameter does not represent the
-  average making difficult interpretation in a regression model. In this
-  paper we present a very simple reparametrization based on mean
-  approximation. The estimation and inference is based on likelihood and
-  simulation study showed that the maximum likelihood estimators are
-  unbiased and consistent for both regression and precision
-  parameters. Furthermore we observe empirical correlation between
-  regression and precision parameters close to 0 suggest the
-  orthogonality for the proposed reparametrization. We presents
-  applications of the proposed model by three case studies with over,
-  under and equidispersed counts. Results show improvements over the
-  conventional approaches. Therefore, its use in the analysis of count
-  data is encouraged. The computational routines for fitting of original
-  and reparametrized COM-Poisson models are available in the
+  and overdispersed count data. Therefore it is a suitable distribution
+  to analysis of dispersed count data. In spite of the nice properties
+  of COM-Poisson, the location parameter of the distribution does not
+  represent the average making difficult interpretation in a regression
+  structure. In this paper we present a very simple reparametrization
+  based on mean approximation. The estimation and inference is based on
+  likelihood and simulation study showed that the maximum likelihood
+  estimators are unbiased and consistent for both regression and
+  precision parameters. Furthermore, we observe empirical correlation
+  between regression and precision parameters close to zero, suggest the
+  orthogonality feature in the proposed reparametrization model. We
+  presents applications of the proposed model by three case studies with
+  over, under and equidispersed counts. Results show improvements over
+  the conventional approaches. Therefore, its use in the analysis of
+  count data is encouraged. The computational routines for fitting of
+  original and reparametrized COM-Poisson models are available in the
   supplementary material.
 
 \vspace{0.1cm}
@@ -165,7 +166,7 @@ underdispersed cases. The explanatory mechanisms to underdispersion may
 be related to Poisson process. When the time between events is not
 exponential distributed, the number of events can be over or
 underdispersed, this motivated the class of duration dependence models
-\citep{Winkelmann1995}. Other possibity to explain underdispersion are
+\citep{Winkelmann1995}. Other possibility to explain underdispersion are
 order statistics. Suppose $Y_i$ is Poisson distributed then maximum of
 $Y_i$ is underdispersed.
 
@@ -220,7 +221,7 @@ methods based on likelihood function whose properties are assess in
 reparametrized COM-Poisson regression model are illustrated in
 \autoref{case-studies} with three case studies. The analysis are
 performed using the software R \citep{Rcore2017}. The source code and
-data sets are avaliable in supplementary material\footnote{Available on
+data sets are available in supplementary material\footnote{Available on
   \texttt{\url{http://www.leg.ufpr.br/~eduardojr/papercompanions}}
   \label{papercompanion}.}.
 
@@ -606,7 +607,7 @@ In this section we conducted a simulation study to assess the properties
 of the proposed model and estimators. We considered average counts
 varying from 3 to 27 according to a regression model structure with a
 continuous variable $\bm{x}_1$ between 0 and 1 and a categorical
-variable $\bm{x}_2$ with three levels. Then the systematic componente is
+variable $\bm{x}_2$ with three levels. Then the systematic component is
 given by $\bm{\mu} = \exp(\beta_0 + \beta_1 \bm{x}_1 + \beta_{21}
 \bm{x}_{21} + \beta_{22} \bm{x}_{22})$, where $\bm{x}_{21}$ and
 $\bm{x}_{22}$ are \textit{dummy} variable for $\bm{x}_2$. With respect
@@ -616,7 +617,7 @@ overdispersed, equidispersed and underdispersed counts
 respectively. \autoref{fig:justpars} shows the variation of the average
 counts (left) and variation of dispersion index (E$(Y)$ / var$(Y)$) for
 each fixed value of the precision parameter $\phi$. This configuration
-allows us to assess the proprierties of the estimators in extreme
+allows us to assess the properties of the estimators in extreme
 situation such as This configuration allows us to evaluate the
 properties of the estimators in extreme situations such as high counts
 and low dispersion, and low counts and high dispersion.
@@ -1878,7 +1879,7 @@ likelihood-based method to estimation and inference is presented. We
 assess the properties of these estimators by a simulation
 study. Applications of the proposed model are showed by three case
 studies with over, under and equidispersed counts. In the data analysis
-we compared standard Poisson, original COM-Poisson, repametrized
+we compared standard Poisson, original COM-Poisson, reparametrized
 COM-Poisson and quasi-Poisson models.
 
 We computed the quadratic errors for the mean approximation. The results
@@ -1887,8 +1888,8 @@ reparametrization. The results of a simulation study showed that the
 estimators of the regression and precision parameters are consistent and
 unbiased and asymptotically unbiased respectively. The empirical
 coverage rates of the confidence intervals for the parameters, compute
-by the asymptotical distrition of the estimators, are close to the
-nominal level for sizes greather than 100. The worst scenario is when we
+by the asymptotic distribution of the estimators, are close to the
+nominal level for sizes greater than 100. The worst scenario is when we
 have small sample size and strong overdispersed counts. In general, we
 recommend the use of Wald intervals for computational simplicity and
 good results.
@@ -1899,27 +1900,27 @@ observed empirical correlation between regression and precision
 parameters suggest the orthogonality between $\mu$ and $\phi$ in
 COM-Poisson$\mu$ distribution against the original parametrization. Due
 to this feature the computational procedure is faster under the
-reparameterized model. Another advantage, perhaps the main, of the
+reparametrized model. Another advantage, perhaps the main, of the
 reparametrization is that the estimated regression parameters have
 interpretation of rate ratios, same of the Poisson model. In comparison
 of the quasi-Poisson approach the results was similar in both
 simulations, nevertheless the COM-Poisson is a full parametric model,
 allowing the calculation of probabilities for example.
 
-In general, the results presented by the reparameterized COM-Poisson
+In general, the results presented by the reparametrized COM-Poisson
 models were satisfactory and superior to the conventional
 approaches. Therefore, its use in the analysis of count data is
 encouraged. The computational routines for fitting of original and
 reparametrized COM-Poisson models are available in the supplementary
 material\textsuperscript{\ref{papercompanion}}.
 
-There are many possible extensions and possible topics for futher
+There are many possible extensions and possible topics for further
 investigation to model discussed in the present paper, including
 simulation study to assess model robustness against distribution
 miss-specification, asses theoretical approximations for
 $Z(\lambda, \nu)$ (or $Z(\mu,\phi))$, in order to avoid the selection of
 sum's upper bound, propose a double GLM based on the reparametrized
-COM-Poisson model and a accomodate random effects since we have a model
+COM-Poisson model and a accommodate random effects since we have a model
 parametrized on mean.
 
 %-----------------------------------------------------------------------
