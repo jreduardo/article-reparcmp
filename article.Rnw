@@ -111,7 +111,9 @@ library(xtable)
 options(digits = 3, OutDec = ".",
         xtable.caption.placement = "top",
         xtable.booktabs = TRUE,
-        xtable.sanitize.text.function = identity)
+        xtable.sanitize.text.function = identity,
+        xtable.size = "small",
+        xtable.math.style.negative = TRUE)
 opts_chunk$set(
     warning = FALSE,
     message = FALSE,
@@ -121,7 +123,7 @@ opts_chunk$set(
     fig.height = 5,
     out.width = "1\\textwidth",
     fig.align = "center",
-    fig.pos = "H",
+    fig.pos = "!ht",
     # dev = "tikz"
     dev.args = list(family = "Palatino")
     )
@@ -144,6 +146,7 @@ library(dplyr)
 %-----------------------------------------------------------------------
 
 \begin{document}
+
 \maketitle
 
 \section{Introduction}
@@ -1013,13 +1016,13 @@ lrt.ncap <- getAnova(m1PO, m1C2)
 
 @
 
-\begin{table}[h]
-\centering
+\begin{table}[!ht]
+\centering \small
 \caption{Parameter estimates (Est) and ratio between estimate and
   standard error (SE) for the four model strategies for the cotton
   experiment.}
 \label{tab:coef-cotton}
-\begin{tabularx}{\textwidth}{lCCCCCCCC}
+\begin{tabularx}{\textwidth}{lrrrrrrrr}
   \toprule
   & \multicolumn{2}{c}{Poisson} &
     \multicolumn{2}{c}{COM-Poisson} &
@@ -1047,8 +1050,8 @@ pnames <- c("\\phi\\,,\\,\\sigma", "\\beta_0",
 rownames(est.ncap) <- paste0("$", pnames, "$")
 meds <- apply(do.call(cbind, measures.ncap), 1, function(x) {
     x <- formatC(x, getOption("digits"), format = "f")
-    x <- gsub("NA", "---", x)
-    paste(paste0("\\multicolumn{2}{c}{", x, "}"),
+    x <- gsub("NA", "-", x)
+    paste(paste0("\\multicolumn{2}{c}{$", x, "$}"),
           collapse = " & ")
 })
 text_gof <- paste(paste(names(meds), "&", meds),
@@ -1291,7 +1294,7 @@ lrt.ngra <- getAnova(m2PO, m2C2)
 
 @
 
-<<desc-soy, fig.pos="H", fig.height=4, fig.width=8, fig.cap="Number of grains per pot for each potassium dose and moisture level (left) and sample mean agains sample variance of the five replicates for each experimental treatment (right).">>=
+<<desc-soy, fig.pos="!ht", fig.height=4, fig.width=8, fig.cap="Number of grains per pot for each potassium dose and moisture level (left) and sample mean agains sample variance of the five replicates for each experimental treatment (right).">>=
 
 #-----------------------------------------------------------------------
 # Exploratory analysis
@@ -1362,13 +1365,13 @@ dose and moisture level, however the Poisson model indicates the effects
 with greater significance, because it does not fit the extra
 variability.
 
-\begin{table}[ht]
-\centering
+\begin{table}[!ht]
+\centering \small
 \caption{Parameter estimates (Est) and ratio between estimate and
   standard error (SE) for the four model strategies for the soybean
   experiment.}
 \label{tab:coef-soy}
-\begin{tabularx}{\textwidth}{lCCCCCCCC}
+\begin{tabularx}{\textwidth}{lrrrrrrrr}
   \toprule
   & \multicolumn{2}{c}{Poisson} &
     \multicolumn{2}{c}{COM-Poisson} &
@@ -1399,8 +1402,8 @@ pnames <- c("\\phi\\,,\\,\\sigma", "\\beta_0",
 rownames(est.ngra) <- paste0("$", pnames, "$")
 meds <- apply(do.call(cbind, measures.ngra), 1, function(x) {
     x <- formatC(x, getOption("digits"), format = "f")
-    x <- gsub("NA", "---", x)
-    paste(paste0("\\multicolumn{2}{c}{", x, "}"),
+    x <- gsub("NA", "-", x)
+    paste(paste0("\\multicolumn{2}{c}{$", x, "$}"),
           collapse = " & ")
 })
 text_gof <- paste(paste(names(meds), "&", meds),
@@ -1471,7 +1474,7 @@ equidispersion assumption. Considering COM-Poisson models and
 quasi-Poisson approach, the confidence bands are quite similar, which
 shows their flexibility.
 
-<<pred-soy, fig.pos="H", fig.height=3.8, fig.width=8, fig.cap="Dispersion diagrams of grain counts as function of potassium doses and humidity levels with fitted curves and confidence intervals (95\\%).">>=
+<<pred-soy, fig.pos="!ht", fig.height=3.8, fig.width=8, fig.cap="Dispersion diagrams of grain counts as function of potassium doses and humidity levels with fitted curves and confidence intervals (95\\%).">>=
 
 #-----------------------------------------------------------------------
 # Prediction
@@ -1638,11 +1641,11 @@ Predictor 3: $\log(\mu_i) = \beta_0 + \beta_1 \texttt{dose}_i +
 \end{minipage}
 \end{center}
 
-\begin{table}[ht]
-\centering
+\begin{table}[!ht]
+\centering \small
 \caption{Model fit measures and comparisons between predictors and models.}
 \label{tab:anova-ovos}
-\begin{tabularx}{\textwidth}{lCCCCCrC}
+\begin{tabularx}{\textwidth}{lcccccrc}
   \toprule
  Poisson & np & $\ell$ & AIC & 2(diff $\ell$) & diff np & P($>\rchi^2$) & \\
  \midrule
@@ -1740,7 +1743,7 @@ $\lambda = \mu$. \autoref{fig:pred-ovos} shows the number of live
 off-springs observed in experiment with fitted curves and confidence
 bands for all model strategies adopted.
 
-\begin{table}[H]
+\begin{table}[!ht]
 \centering
 \caption{Parameter estimates (Est) and ratio between estimate and
   standard error (SE) for the four model strategies for the nitrofen
@@ -1955,8 +1958,6 @@ COM-Poisson model and a accommodate random effects since we have a model
 parametrized on mean.
 
 %-----------------------------------------------------------------------
-\newpage
-
-\small
 \bibliography{references.bib}
+
 \end{document}
