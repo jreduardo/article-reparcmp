@@ -1,33 +1,19 @@
-\documentclass[a4paper]{article}
+%-------------------------------------------
+% Document class
+\documentclass[submit]{smj}
 
-\usepackage{amssymb}
+%-------------------------------------------
+% Personal packages and definitions
 \usepackage{amsfonts}
-\usepackage{amsmath}
 \usepackage{bm}
 \DeclareRobustCommand{\rchi}{{\mathpalette\irchi\relax}}
 \newcommand{\irchi}[2]{\raisebox{\depth}{$#1\chi$}}
 
-\usepackage{hyperref}
-\hypersetup{colorlinks=true, linkcolor=blue, citecolor=blue,
-  urlcolor=blue}
-
-\usepackage[bottom]{footmisc}
-\usepackage{geometry}
-\geometry{lmargin=3cm, rmargin=3cm, tmargin=3cm, bmargin=3cm}
-
 % Algorithm
 \usepackage[english, vlined, ruled]{algorithm2e}
 \SetAlCapSty{}
-% \SetAlCapFnt{\footnotesize}
-% \SetAlCapNameFnt{\footnotesize}
 
-\usepackage{natbib}
-% \bibliographystyle{humannat}
-\bibliographystyle{agsm}
-
-\usepackage{lipsum}
 \usepackage{float}
-\usepackage{mathpazo}
 
 \usepackage{booktabs}
 \usepackage{tabularx}
@@ -40,22 +26,83 @@
   \begin{tabular}[t]{c}}%
 \makeatother
 
-%-----------------------------------------------------------------------
-\title{Reparametrization of COM-Poisson Regression Models with
-  Applications in the Analysis of Experimental Data}
+% -------------------------------------------
+% Authors and affiliations
+\Author{Eduardo E. Ribeiro Jr\Affil{1},
+  Walmes M. Zeviani\Affil{2},
+  Wagner H. Bonat\Affil{2},
+  Clarice G. B. Dem\'{e}trio\Affil{1}
+  and John Hinde\Affil{3}
+}
+\AuthorRunning{Ribeiro Jr \textrm{et al.}}
 
-\author{
-  Eduardo E. R. Junior\thanks{Corresponding author:
-    \href{mailto:jreduardo@usp.br}{\nolinkurl{jreduardo@usp.br}}}
-    \hspace*{.8mm}\thanks{Department of Exact Sciences, ESALQ-USP,
-    Piracicaba, S\~{a}o Paulo, Brazil} \and
-  Walmes M. Zeviani\thanks{Department of Statistics, UFPR, Curitiba,
-    Paran\'{a}, Brazil} \and
-  Wagner H. Bonat\footnotemark[3] \and
-  Clarice G. B. Dem\'{e}trio\footnotemark[2]
+\Affiliations{
+\item Department of Exact Sciences,
+  University of S\~{a}o Paulo - ESALQ,
+  Piracicaba,
+  SP, Brazil
+\item Department of Statistics,
+  Paran\'{a} Federal University,
+  Curitiba,
+  PR, Brazil
+\item School of Mathematics, Statistics and Applied Mathematics,
+  National University of Ireland,
+  Galway,
+  Galway, Ireland
 }
 
-\date{\today}
+%-------------------------------------------
+% Corresponding author
+\CorrAddress{Eduardo E. Ribeiro Jr,
+             Department of Exact Sciences,
+             Luiz de Queiroz College of Agriculture - ESALQ,
+             University of S\~{a}o Paulo - USP,
+             Piracicaba, S\~{a}o Paulo,
+             P\'{a}dua Dias, 11, Avenue, CEP--13.418-900
+             Brazil}
+\CorrEmail{jreduardo@usp.br}
+\CorrPhone{(+55)\;41\;9\;8711\;9034}
+\CorrFax{(+55)\;19\;3447\;6021}
+
+%-------------------------------------------
+% Title and shor title
+\Title{Reparametrization of COM-Poisson Regression Models with
+  Applications in the Analysis of Experimental Data}
+\TitleRunning{Reparametrization of COM-Poisson Regression Models}
+
+%-------------------------------------------
+% Abstract
+\Abstract{
+  In the analysis of count data seldom the equidispersion assumption is
+  suitable, hence the Poisson regression model is inappropriate in many
+  situations. The COM-Poisson is a member of the exponential family, has
+  the Poisson and geometric distributions as special cases and the
+  Bernoulli distribution as a limiting case. It can deal with both under
+  and overdispersed count data. Therefore it is a suitable distribution
+  to the analysis of dispersed count data. In spite of the nice
+  properties of COM-Poisson, the location parameter of the distribution
+  does not represent the conditional mean making difficult
+  interpretation in a regression structure. In this paper we present a
+  very simple reparametrization based on mean approximation. The
+  estimation and inference is based on likelihood and simulation study
+  showed that the maximum likelihood estimators are unbiased and
+  consistent for both regression and precision parameters. Furthermore,
+  we observed empirical correlation between regression and precision
+  parameters close to zero suggesting the orthogonality feature in the
+  proposed mean reparametrized model. We present applications of the
+  proposed model through three case studies with over, under and
+  equidispersed counts. Results show improvements over the conventional
+  approaches. Therefore, its use in the analysis of count data is
+  encouraged. The computational routines for fitting of original and
+  reparametrized COM-Poisson models are available in the supplementary
+  material.
+}
+
+%-------------------------------------------
+% Key-words
+\Keywords{
+COM-Poisson; Count data; Over/Under-dispersion; Likelihood inference
+}
 
 <<setup, include=FALSE>>=
 
@@ -98,39 +145,6 @@ library(dplyr)
 
 \begin{document}
 \maketitle
-
-\begin{abstract}
-
-  In the analysis of count data seldom the equidispersion assumption is
-  suitable, hence the Poisson regression model is inappropriate in many
-  situations. The COM-Poisson is a member of the exponential family, has
-  the Poisson and geometric distributions as special cases and the
-  Bernoulli distribution as a limiting case. It can deal with both under
-  and overdispersed count data. Therefore it is a suitable distribution
-  to the analysis of dispersed count data. In spite of the nice
-  properties of COM-Poisson, the location parameter of the distribution
-  does not represent the conditional mean making difficult
-  interpretation in a regression structure. In this paper we present a
-  very simple reparametrization based on mean approximation. The
-  estimation and inference is based on likelihood and simulation study
-  showed that the maximum likelihood estimators are unbiased and
-  consistent for both regression and precision parameters. Furthermore,
-  we observed empirical correlation between regression and precision
-  parameters close to zero suggesting the orthogonality feature in the
-  proposed mean reparametrized model. We present applications of the
-  proposed model through three case studies with over, under and
-  equidispersed counts. Results show improvements over the conventional
-  approaches. Therefore, its use in the analysis of count data is
-  encouraged. The computational routines for fitting of original and
-  reparametrized COM-Poisson models are available in the supplementary
-  material.
-
-\vspace{0.1cm}
-\noindent\textbf{keywords:} COM-Poisson, Over/Under-dispersion, Count
-data, Likelihood inference.
-\end{abstract}
-
-\pagebreak
 
 \section{Introduction}
 \label{introduction}
