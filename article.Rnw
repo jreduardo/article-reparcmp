@@ -1,10 +1,11 @@
 %-------------------------------------------
 % Document class
-\documentclass[submit]{smj}
+\documentclass[publish]{smj}
 
 %-------------------------------------------
 % Personal packages and definitions
 \usepackage{amsfonts}
+\usepackage{float}
 \usepackage{bm}
 \DeclareRobustCommand{\rchi}{{\mathpalette\irchi\relax}}
 \newcommand{\irchi}[2]{\raisebox{\depth}{$#1\chi$}}
@@ -13,18 +14,10 @@
 \usepackage[english, vlined, ruled]{algorithm2e}
 \SetAlCapSty{}
 
-\usepackage{float}
 
 \usepackage{booktabs}
 \usepackage{tabularx}
 \newcolumntype{C}{>{\centering\arraybackslash}X}
-
-\makeatletter
-\def\and{%
-  \end{tabular}%
-  \hskip 0em \@plus.17fil \protect$\bullet$
-  \begin{tabular}[t]{c}}%
-\makeatother
 
 % -------------------------------------------
 % Authors and affiliations
@@ -127,6 +120,24 @@ opts_chunk$set(
     # dev = "tikz"
     dev.args = list(family = "Palatino")
     )
+
+divide_matrix <- function(mat, divide) {
+    mat1 <- mat[, 1:divide]
+    mat2 <- mat[, (divide + 1):ncol(mat)]
+    nc1 <- ncol(mat1)
+    nc2 <- ncol(mat2)
+    cdiff <- abs(ncol(mat1) - ncol(mat2))
+    if (cdiff) {
+        complete <- matrix(NA, nrow = nrow(mat), ncol = cdiff)
+        colnames(complete) <- rep(" ", cdiff)
+        if (nc1 < nc2) {
+            mat1 <- cbind(mat1, complete)
+        } else {
+            mat2 <- cbind(mat2, complete)
+        }
+    }
+    return(list(mat1, mat2))
+}
 
 source("./codes/lattice-panels.R")
 source("./codes/functions.R")
@@ -309,7 +320,7 @@ xt2 <- gsub("\\|([0-9].{2}) \\|", "\\|**\\1** \\|", xt2)
 print(xtable(xt2, digits = -2,
              caption = caption,
              align = "C|CCCCCC",
-             # align = "ccccccc",
+             # align = "c|cccccc",
              label = "tab:convergenceZ"),
       include.colnames = FALSE,
       tabular.environment = "tabularx",
@@ -1022,7 +1033,7 @@ lrt.ncap <- getAnova(m1PO, m1C2)
   standard error (SE) for the four model strategies for the cotton
   experiment.}
 \label{tab:coef-cotton}
-\begin{tabularx}{\textwidth}{lrrrrrrrr}
+\begin{tabular}{lrrrrrrrr}
   \toprule
   & \multicolumn{2}{c}{Poisson} &
     \multicolumn{2}{c}{COM-Poisson} &
@@ -1069,7 +1080,7 @@ print.xtable(xtable(est.ncap, digits = 4,
              add.to.row = append_gof)
 
 @
-\end{tabularx}
+\end{tabular}
 \end{table}
 
 The results presented in \autoref{tab:coef-cotton} show that the
@@ -1218,20 +1229,47 @@ corr.ncap <- do.call("rbind",
 # Organize on table
 rownames(corr.ncap) <- paste0("COM-Poisson", c("", "$_\\mu$"))
 colnames(corr.ncap) <- gsub("beta", "hat{\\\\beta}", pnames[-1])
+corrncap_aux <- divide_matrix(corr.ncap, divide = 6)
 
-caption <- paste("Empirical correlations between $\\hat{\\phi}$ and",
-                 "$\\hat{\\bm{\\beta}}$ for the two parametrizations",
-                 "of COM-Poisson model fit to underdispersed data.")
-print(xtable(corr.ncap,
-             align = c("lccccccccccc"),
-             caption = caption,
-             digits = 3,
-             label = "tab:corr-cotton"),
-      size = "small",
-      sanitize.rownames.function = identity,
+# caption <- paste("Empirical correlations between $\\hat{\\phi}$ and",
+#                  "$\\hat{\\bm{\\beta}}$ for the two parametrizations",
+#                  "of COM-Poisson model fit to underdispersed data.")
+# print(xtable(corr.ncap,
+#              align = c("lrrrrrrrrrrr"),
+#              caption = caption,
+#              digits = 3,
+#              label = "tab:corr-cotton"),
+#       size = "small",
+#       sanitize.rownames.function = identity,
+#       sanitize.colnames.function = function(x) sprintf("$%s$", x))
+
+
+@
+
+\begin{table}[ht]
+\centering
+\caption{Empirical correlations between $\hat{\phi}$ and $\hat{\bm{\beta}}$ for the two parametrizations of COM-Poisson model fit to equidispersed data.}
+\label{tab:corr-cotton}
+\begingroup\small
+\begin{tabular}{lrrrrrr}
+  \toprule
+<<results="asis">>=
+
+print(xtable(corrncap_aux[[1]], digits = 4),
+      only.contents = TRUE,
+      hline.after = FALSE,
+      sanitize.colnames.function = function(x) sprintf("$%s$", x))
+cat("\\midrule", sep = "\n")
+
+print(xtable(corrncap_aux[[2]], digits = 4),
+      only.contents = TRUE,
       sanitize.colnames.function = function(x) sprintf("$%s$", x))
 
 @
+\end{tabular}
+\endgroup
+\end{table}
+
 
 \subsection{Soil moisture and potassium doses on soy bean culture}
 \label{case-soybean}
@@ -1371,7 +1409,7 @@ variability.
   standard error (SE) for the four model strategies for the soybean
   experiment.}
 \label{tab:coef-soy}
-\begin{tabularx}{\textwidth}{lrrrrrrrr}
+\begin{tabular}{lrrrrrrrr}
   \toprule
   & \multicolumn{2}{c}{Poisson} &
     \multicolumn{2}{c}{COM-Poisson} &
@@ -1421,7 +1459,7 @@ print.xtable(xtable(est.ngra, digits = 4,
              add.to.row = append_gof)
 
 @
-\end{tabularx}
+\end{tabular}
 \end{table}
 
 The infinite sum $Z(\mu, \phi)$ in cases of oversidepersed counts needs
@@ -1450,21 +1488,45 @@ corr.ngra <- do.call("rbind",
 rownames(corr.ngra) <- paste0("COM-Poisson", c("", "$_\\mu$"))
 colnames(corr.ngra) <- gsub("(beta|tau|gamma)", "hat{\\\\\\1}",
                             pnames[-1])
+corrngra_aux <- divide_matrix(corr.ncap, divide = 7)
 
-caption <- paste("Empirical correlations between $\\hat{\\phi}$ and",
-                 "$\\hat{\\bm{\\beta}}$ for the two parametrizations",
-                 "of COM-Poisson model fit to overdispersed data.")
-print(xtable(corr.ngra,
-             align = c("lccccccccccc"),
-             caption = caption,
-             digits = 3,
-             label = "tab:corr-soy"),
-      size = "small",
-      sanitize.rownames.function = identity,
-      sanitize.colnames.function = function(x) sprintf("$%s$", x))
-
+# caption <- paste("Empirical correlations between $\\hat{\\phi}$ and",
+#                  "$\\hat{\\bm{\\beta}}$ for the two parametrizations",
+#                  "of COM-Poisson model fit to overdispersed data.")
+# print(xtable(corr.ngra,
+#              align = c("lccccccccccc"),
+#              caption = caption,
+#              digits = 3,
+#              label = "tab:corr-soy"),
+#       size = "small",
+#       sanitize.rownames.function = identity,
+#       sanitize.colnames.function = function(x) sprintf("$%s$", x))
 
 @
+
+\begin{table}[ht]
+\centering
+\caption{Empirical correlations between $\hat{\phi}$ and $\hat{\bm{\beta}}$ for the two parametrizations of COM-Poisson model fit to overdispersed data.}
+\label{tab:corr-soy}
+\begingroup\small
+\begin{tabular}{lrrrrrrr}
+  \toprule
+<<results="asis">>=
+
+print(xtable(corrngra_aux[[1]], digits = 4),
+      only.contents = TRUE,
+      hline.after = FALSE,
+      sanitize.colnames.function = function(x) sprintf("$%s$", x))
+cat("\\midrule", sep = "\n")
+
+print(xtable(corrngra_aux[[2]], digits = 4),
+      only.contents = TRUE,
+      sanitize.colnames.function = function(x) sprintf("$%s$", x))
+
+@
+\end{tabular}
+\endgroup
+\end{table}
 
 The observed counts and fitted curves for each humidity level with
 confidence bands are show in \autoref{fig:pred-soy}. The fitted values
@@ -1645,7 +1707,7 @@ Predictor 3: $\log(\mu_i) = \beta_0 + \beta_1 \texttt{dose}_i +
 \centering \small
 \caption{Model fit measures and comparisons between predictors and models.}
 \label{tab:anova-ovos}
-\begin{tabularx}{\textwidth}{lcccccrc}
+\begin{tabularx}{\textwidth}{lCCCCCrC}
   \toprule
  Poisson & np & $\ell$ & AIC & 2(diff $\ell$) & diff np & P($>\rchi^2$) & \\
  \midrule
@@ -1711,7 +1773,7 @@ print(xtable(tab, digits = digits),
 @
  \bottomrule
 \end{tabularx}
-\vspace{-1mm}
+%\vspace{-1mm}
 
 \footnotesize \raggedright np, number of parameters; diff $\ell$,
 difference in log-likelihoods; QDev, quasi-deviance, F, F statistics
@@ -1749,7 +1811,7 @@ bands for all model strategies adopted.
   standard error (SE) for the four model strategies for the nitrofen
   experiment.}
 \label{tab:coef-ovos}
-\begin{tabularx}{\textwidth}{lCCCCCCCC}
+\begin{tabular}{lrrrrrrrr}
   \toprule
   & \multicolumn{2}{c}{Poisson} &
     \multicolumn{2}{c}{COM-Poisson} &
@@ -1778,7 +1840,7 @@ print.xtable(xtable(est.ovos, digits = 4),
              only.contents = TRUE)
 
 @
-\end{tabularx}
+\end{tabular}
 \end{table}
 
 The fitted values and confidence bands in \autoref{fig:pred-ovos} come
@@ -1891,15 +1953,15 @@ caption <- paste("Empirical correlations between $\\hat{\\phi}$ and",
                  "$\\hat{\\bm{\\beta}}$ for the two parametrizations",
                  "of COM-Poisson model fit to equidispersed data.")
 print(xtable(corr.ovos,
-             align = c("lCCCC"),
+             align = c("lrrrr"),
              caption = caption,
-             digits = 3,
+             digits = 4,
              label = "tab:corr-ovos"),
       # size = "small",
       sanitize.rownames.function = identity,
       sanitize.colnames.function = function(x) sprintf("$%s$", x),
-      tabular.environment = "tabularx",
-      width = "\\textwidth")
+      # width = "\\textwidth,"
+      tabular.environment = "tabular")
 
 @
 
