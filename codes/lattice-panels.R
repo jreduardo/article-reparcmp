@@ -60,7 +60,7 @@ ps2 <- list(
         left = ac, right = ac)
 )
 
-trellis.par.set(lattice:::updateList(ps1, ps2), warn = FALSE)
+trellis.par.set(ps0 <- lattice:::updateList(ps1, ps2), warn = FALSE)
 
 #=======================================================================
 # Lattice function for graphics

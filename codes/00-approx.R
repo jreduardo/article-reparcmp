@@ -7,8 +7,8 @@
 
 #-----------------------------------------------------------------------
 # Load package and functions
-source("config.R")
 source("functions.R")
+source("lattice-panels.R")
 
 #-----------------------------------------------------------------------
 # Convergence of Z(lambda, nu) constant
@@ -37,12 +37,12 @@ xt
 #-----------------------------------------------------------------------
 # Study the approximation
 
-#-------------------------------------------
-# Mean and variance relationship
+# Parameters
 aux <- expand.grid(
     mu = seq(2, 30, length.out = 50),
     phi = seq(log(0.3), log(2.5), length.out = 50))
 
+# Compute approximately and numerically moments
 moments <- mapply(FUN = calc_moments,
                   mu = aux$mu,
                   phi = aux$phi,
@@ -51,55 +51,19 @@ moments <- mapply(FUN = calc_moments,
 grid <- cbind(aux, t(do.call(cbind, moments)))
 grid <- transform(grid, va = mu / exp(phi))
 
-col <- brewer.pal(n = 8, name = "RdBu")
-myreg <- colorRampPalette(colors = col)
-xy1 <- xyplot(var ~ mean,
-              groups = phi,
-              data = grid,
-              type = "l",
-              lwd = 2,
-              axis = axis.grid,
-              xlab = expression(E(X)),
-              ylab = expression(V(X)),
-              sub = "(a)",
-              legend = list(
-                  top = list(
-                      fun = draw.colorkey,
-                      args = list(
-                          key = list(
-                              space = "top",
-                              col = myreg(length(unique(grid$phi))),
-                              at = unique(grid$phi),
-                              draw = FALSE)))),
-              par.settings = modifyList(
-                  ps2, list(superpose.line = list(
-                                col = myreg(length(unique(grid$phi))))
-                            )
-              ),
-              panel = function(x, y, ...) {
-                  panel.xyplot(x, y, ...)
-                  panel.curve(1*x, min(x), max(x), lty = 2)
-              },
-              page = function(...) {
-                  grid.text(expression(log(nu)),
-                            just = "bottom",
-                            x = unit(0.10, "npc"),
-                            y = unit(0.83, "npc"))
-              })
-
 #-------------------------------------------
 # Errors in approximations for E[Y] and V[Y]
 grid <- transform(grid,
                   emu = (mu - mean)^2,
                   eva = (va - var)^2)
 
-myreg <- colorRampPalette(c("gray90",  "gray20"))(100)
-xy2 <- levelplot(emu ~ phi + mu, data = grid,
+myreg <- colorRampPalette(c("gray90",  "gray20"))
+xy1 <- levelplot(emu ~ phi + mu, data = grid,
                  aspect = "fill",
                  col.regions = myreg,
                  xlab = expression(phi),
                  ylab = expression(mu),
-                 sub = "(b)",
+                 sub = "(a)",
                  colorkey = list(space = "top"),
                  par.settings = ps2,
                  panel = function(x, y, z, ...) {
@@ -109,12 +73,12 @@ xy2 <- levelplot(emu ~ phi + mu, data = grid,
                      panel.abline(v = 0, lty = 2)
                  })
 
-xy3 <- levelplot(eva ~ phi + mu, data = grid,
+xy2 <- levelplot(eva ~ phi + mu, data = grid,
                  aspect = "fill",
                  col.regions = myreg,
                  xlab = expression(phi),
                  ylab = expression(mu),
-                 sub = "(c)",
+                 sub = "(b)",
                  colorkey = list(space = "top"),
                  par.settings = ps2,
                  panel = function(x, y, z, ...) {
@@ -124,31 +88,30 @@ xy3 <- levelplot(eva ~ phi + mu, data = grid,
                      panel.abline(v = 0, lty = 2)
                  })
 
-print(xy1, split = c(1, 1, 3, 1), more = TRUE)
-print(xy2, split = c(2, 1, 3, 1), more = TRUE)
-print(xy3, split = c(3, 1, 3, 1), more = FALSE)
+print(xy1, split = c(1, 1, 2, 1), more = TRUE)
+print(xy2, split = c(2, 1, 2, 1), more = FALSE)
 
 #-----------------------------------------------------------------------
 # COM-Poisson probability mass function (mean parametrization)
-grid <- expand.grid(mu = c(2, 8, 15), phi = c(-1, 0, 1))
+gridpar <- expand.grid(mu = c(2, 8, 15), phi = c(-1, 0, 1))
 y <- 0:30
 py <- mapply(FUN = dcmp,
-             mu = grid$mu,
-             phi = grid$phi,
+             mu = gridpar$mu,
+             phi = gridpar$phi,
              MoreArgs = list(y = y, sumto = 100),
              SIMPLIFY = FALSE)
-grid <- cbind(grid[rep(1:nrow(grid), each = length(y)), ],
+gridpar <- cbind(gridpar[rep(1:nrow(gridpar), each = length(y)), ],
               y = y,
               py = unlist(py))
 
 # COM-Poisson p.m.f. to different combination betwenn phi and mu
 leg_phi <- parse(
     text = paste("phi == \"",
-                 formatC(unique(grid$phi), 1, format = "f"),
+                 formatC(unique(gridpar$phi), 1, format = "f"),
                  "\""))
 barchart(py ~ y | factor(mu),
          groups = factor(phi),
-         data = grid,
+         data = gridpar,
          horizontal = FALSE,
          layout = c(NA, 1),
          as.table = TRUE,
@@ -169,3 +132,174 @@ barchart(py ~ y | factor(mu),
              strip.names = TRUE,
              var.name = expression(mu == ""),
              sep = ""))
+
+#-----------------------------------------------------------------------
+# Study indexex on the reparametrized COM-Poisson distribution
+psaux <- modifyList(
+    ps0, list(superpose.line = list(
+                  col = myreg(length(unique(grid$phi)))),
+              layout.widths = list(
+                  left.padding = -0.5)
+              )
+)
+
+#-------------------------------------------
+# Mean and variance relationship
+xy1 <- xyplot(var ~ mean | "Mean-Variance",
+              groups = phi,
+              data = grid,
+              type = "l",
+              lwd = 2,
+              axis = axis.grid,
+              xlab = expression(E(Y)),
+              ylab = expression(var(Y)),
+              sub = "(a)",
+              legend = list(
+                  top = list(
+                      fun = draw.colorkey,
+                      args = list(
+                          key = list(
+                              space = "top",
+                              col = myreg(length(unique(grid$phi))),
+                              at = unique(grid$phi),
+                              draw = FALSE)))),
+              par.settings = psaux,
+              panel = function(x, y, ...) {
+                  panel.xyplot(x, y, ...)
+                  panel.curve(1*x, min(x), max(x), lty = 2)
+              },
+              page = function(...) {
+                  grid.text(expression(phi),
+                            just = "bottom",
+                            x = unit(0.15, "npc"),
+                            y = unit(0.83, "npc"))
+              })
+
+#-------------------------------------------
+# Dispersion index (DI)
+xy2 <- xyplot(var / mean ~ mu | "Dispersion index",
+              groups = phi,
+              data = grid,
+              type = "l",
+              lwd = 2,
+              axis = axis.grid,
+              xlab = expression(mu),
+              ylab = "",
+              sub = "(b)",
+              legend = list(
+                  top = list(
+                      fun = draw.colorkey,
+                      args = list(
+                          key = list(
+                              space = "top",
+                              col = myreg(length(unique(grid$phi))),
+                              at = unique(grid$phi),
+                              draw = FALSE)))),
+              par.settings = psaux,
+              panel = function(x, y, ...) {
+                  panel.xyplot(x, y, ...)
+                  panel.curve(1 + 0*x, min(x), max(x), lty = 2)
+              },
+              page = function(...) {
+                  grid.text(expression(phi),
+                            just = "bottom",
+                            x = unit(0.15, "npc"),
+                            y = unit(0.83, "npc"))
+              })
+
+#-------------------------------------------
+# Zero-inflation index
+prob0 <- mapply(FUN = dcmp,
+                mu = grid$mu,
+                phi = grid$phi,
+                MoreArgs = list(y = 0, sumto = 300),
+                SIMPLIFY = FALSE)
+grid <- transform(grid, zero_index = 1 + log(prob0) / mean)
+
+xy3 <- xyplot(zero_index ~ mu | "Zero-inflation index",
+              groups = phi,
+              data = grid,
+              type = "l",
+              lwd = 2,
+              axis = axis.grid,
+              xlab = expression(mu),
+              ylab = "",
+              sub = "(c)",
+              legend = list(
+                  top = list(
+                      fun = draw.colorkey,
+                      args = list(
+                          key = list(
+                              space = "top",
+                              col = myreg(length(unique(grid$phi))),
+                              at = unique(grid$phi),
+                              draw = FALSE)))),
+              par.settings = psaux,
+              panel = function(x, y, ...) {
+                  panel.xyplot(x, y, ...)
+                  panel.curve(0*x, min(x), max(x), lty = 2)
+              },
+              page = function(...) {
+                  grid.text(expression(phi),
+                            just = "bottom",
+                            x = unit(0.15, "npc"),
+                            y = unit(0.83, "npc"))
+              })
+
+#-------------------------------------------
+# Heavy tail-index
+hi_fun <- Vectorize(FUN = function(x, mu, phi, sumto) {
+    probs <- dcmp(y = c(x, x + 1), mu = mu, phi = phi, sumto = sumto)
+    probs[2] / probs[1]
+}, vectorize.args = "x")
+
+x <- 40:150
+his <- mapply(FUN = hi_fun,
+              mu = grid$mu,
+              phi = grid$phi,
+              MoreArgs = list(x = x, sumto = 300),
+              SIMPLIFY = FALSE)
+
+aux1 <- lapply(his, function(k) data.frame("x" = x, "heavy_index" = k))
+aux1 <- do.call(rbind, aux1)
+aux2 <- grid[c("mu", "phi")][rep(1:nrow(grid), each = length(x)), ]
+heavy_data <- cbind(aux1, aux2)
+
+# Choose one specific mu of unique(grid$mu)
+choosemu <- 18
+xy4 <- xyplot(heavy_index ~ x | "Heavy-tail index",
+              groups = phi,
+              # data = heavy_data,
+              data = subset(heavy_data, mu == choosemu),
+              type = "l",
+              lwd = 2,
+              axis = axis.grid,
+              xlab = expression(x),
+              ylab = "",
+              sub = "(d)",
+              legend = list(
+                  top = list(
+                      fun = draw.colorkey,
+                      args = list(
+                          key = list(
+                              space = "top",
+                              col = myreg(length(unique(grid$phi))),
+                              at = unique(grid$phi),
+                              draw = FALSE)))),
+              par.settings = psaux,
+              panel = function(x, y, ...) {
+                  panel.xyplot(x, y, ...)
+                  panel.curve(choosemu / (x + 1), from = min(x),
+                              to = max(x), lty = 2)
+              },
+              page = function(...) {
+                  grid.text(expression(phi),
+                            just = "bottom",
+                            x = unit(0.15, "npc"),
+                            y = unit(0.83, "npc"))
+              })
+
+print(xy1, split = c(1, 1, 4, 1), more = TRUE)
+print(xy2, split = c(2, 1, 4, 1), more = TRUE)
+print(xy3, split = c(3, 1, 4, 1), more = TRUE)
+print(xy4, split = c(4, 1, 4, 1), more = FALSE)
