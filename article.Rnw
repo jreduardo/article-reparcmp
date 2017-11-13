@@ -899,32 +899,34 @@ fitted in software R \citep{Rcore2017} by function \texttt{glm(...,
 \label{simulation-study}
 
 In this section we conducted a simulation study to assess the properties
-of the proposed model and estimators. We considered average counts
-varying from 3 to 27 according to a regression model structure with a
-continuous variable $\bm{x}_1$ between 0 and 1 and a categorical
-variable $\bm{x}_2$ with three levels. Then the systematic component is
-given by $\bm{\mu} = \exp(\beta_0 + \beta_1 \bm{x}_1 + \beta_{21}
-\bm{x}_{21} + \beta_{22} \bm{x}_{22})$, where $\bm{x}_{21}$ and
-$\bm{x}_{22}$ are \textit{dummy} variable for $\bm{x}_2$. With respect
-to the precision parameter $\phi$, we fixed it to four values: $-1.6$,
-$-1.0$, $0.0$ and $1.8$; in orderto have strong overdispersed, moderate
-overdispersed, equidispersed and underdispersed counts
-respectively. \autoref{fig:justpars} shows the variation of the average
-counts (left) and variation of dispersion index (E$(Y)$/var$(Y)$) for
-each fixed value of the precision parameter $\phi$. This configuration
-allows us to evaluate the properties of the estimators in extreme
-situations such as high counts and low dispersion, and low counts and
-high dispersion.
+of the maximum likelihood estimators as well as the flexibility of the
+COM-Poisson regression model to deal with non-equidispersed count data.
 
-In order to assess the consistency of the estimators we considered four
-different sample sizes: 50, 100, 300 and 1000; generating 1000 datasets
-in each case. In \autoref{fig:bias-plot} we show the bias of the
-estimators for each scenario (combination between values of the
-precision parameter and samples sizes) together with a confidence
-interval calculated as average bias plus and minus $\Phi(0.975)$ times
-the standard error. The scales are standardized for each parameter by
-dividing the bias by the standard error obtained for the sample of size
-50.
+We considered average counts varying from $3$ to $27$ according to a
+regression model with a continuous and a categorical covariate. The
+continuous covariate~($\bm{x}_1$) was generated as a sequence from $0$
+to $1$ and length equals to the sample size.  Similarly, the categorical
+covariate~($\bm{x}_2$) was generated as a sequence of three values each
+one repeated $3/n$ times (rounding up when required), where $n$ denotes
+the sample size. Thus, the expectation of the COM-Poisson random
+variable is given by
+$\bm{\mu} = \exp(\beta_0 + \beta_1 \bm{x}_1 + \beta_{21} \bm{x}_{21} +
+\beta_{22} \bm{x}_{22})$,
+where $\bm{x}_{21}$ and $\bm{x}_{22}$ are dummy representing the levels
+of $\bm{x}_2$.  The regression coefficients were fixed at the values,
+$\beta_0 = 2$, $\beta_1 = 05$, $\beta_{21} = 0.8$ and
+$\beta_{22} = -0.8$.
+
+We designed four simulation scenarios by considering four different
+values of the dispersion parameter $\phi = -1.6, -1.0, 0.0$ and $1.8$.
+Thus, we have strong and moderate overdispersion, equidispersion and
+underdispersion, respectively.  \autoref{fig:justpars} shows the
+variation of the average counts (left) and dispersion index (right) for
+each value of the dispersion parameter considered in the simulation
+study.  These configurations allow us to assess the properties of the
+maximum likelihood estimators in extreme situations such as high counts
+and low dispersion, and low counts and high dispersion, but also in the
+standard case of equidispersion.
 
 %-----------------------------------------------------------------------
 % Explain the simulation
@@ -1026,6 +1028,16 @@ print(xy2, split = c(2, 1, 2, 1), more = FALSE)
 
 @
 
+In order to check the consistency of the estimators we considered four
+different sample sizes: $50$, $100$, $300$ and $1000$; generating $1000$
+data sets in each case.  In \autoref{fig:bias-plot} we show the bias of
+the estimators for each simulation scenario (combination between values
+of the dispersion parameter and samples sizes) along with the confidence
+intervals calculated as average bias plus and minus $\Phi(0.975)$ times
+the average standard error. The scales are standardized for each
+parameter by dividing the average bias by the average standard error
+obtained for the sample of size $50$.
+
 <<bias-data, cache=TRUE>>=
 
 #-----------------------------------------------------------------------
@@ -1061,18 +1073,16 @@ bias$phi <- ordered(bias$phi, c("phi=-1.6", "phi=-1", "phi=0",
 
 @
 
-The results in \autoref{fig:bias-plot} show that for all dispersed
-levels, both the expected bias and standard error tend to 0 as the
+
+The results in \autoref{fig:bias-plot} show that for all dispersion
+levels, both the average bias and standard errors tend to $0$ as the
 sample size is increased. The estimators for the regression parameters
 are unbiased, consistency and their empirical distributions are
-symmetric. For the precision parameter, the estimator is asymptotically
+symmetric. For the dispersion parameter, the estimator is asymptotically
 unbiased, in small samples the parameter is overestimated and the
 empirical distribution is slightly right-skewed.
-\autoref{fig:coverage-plot} presents the confidence interval coverage
-rate based on quadratic approximation at the maximum likelihood estimate
-(assumes $\hat{\bm{\theta}} \sim \mathcal{N}(\hat{\bm{\theta}},
-\sqrt{\bm{v}})$, where $\bm{v}$ is a diagonal of the inverse of the
-observed information matrix) by sample size and dispersed levels.
+\autoref{fig:coverage-plot} presents the empirical coverage rate of the
+asymptotic confidence intervals.
 
 <<bias-plot, cache=TRUE, fig.height=5, fig.width=8, fig.cap="Distributions of standardized bias (gray points) and average with confidence intervals (black segments) by differents sample sizes and dispersion levels.">>=
 
@@ -1170,11 +1180,12 @@ covdata <- aggregate(coverage ~ n + phi + param, data = coverage,
 
 The coverage rates in \autoref{fig:coverage-plot} show that for the
 regression parameters the empirical coverage rates are close to the
-nominal level of 95\% for sample sizes greater than 100 and all
-dispersed levels. For the precision parameter the empirical coverage
-rates are slightly lower than the nominal level, however, they become
-closer for large samples. The worst scenario is when we have small
-sample size and strong overdispersed counts.
+nominal level of 95\% for sample sizes greater than $100$ and all
+simulation scenarios. For the dispersion parameter the empirical
+coverage rates are slightly lower than the nominal level, however, they
+become closer to the nominal level for large samples.  The worst
+scenario is when we have small sample size and strong overdispersed
+counts.
 
 <<coverage-plot, fig.height=4, fig.width=9, fig.cap="Coverage rate based on confidence intervals obtained by quadratic approximation for differents sample sizes and dispersion levels.">>=
 
