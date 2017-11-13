@@ -63,39 +63,49 @@
   Applications in the Analysis of Experimental Data}
 \TitleRunning{Reparametrization of COM-Poisson Regression Models}
 
-%-------------------------------------------
+% -------------------------------------------
 % Abstract
-\Abstract{
-  In the analysis of count data seldom the equidispersion assumption is
-  suitable, hence the Poisson regression model is inappropriate in many
-  situations. The COM-Poisson is a member of the exponential family, has
-  the Poisson and geometric distributions as special cases and the
-  Bernoulli distribution as a limiting case. It can deal with both under
-  and overdispersed count data. Therefore it is a suitable distribution
-  to the analysis of dispersed count data. In spite of the nice
-  properties of COM-Poisson, the location parameter of the distribution
-  does not represent the conditional mean making difficult
-  interpretation in a regression structure. In this paper we present a
-  very simple reparametrization based on mean approximation. The
-  estimation and inference is based on likelihood and simulation study
-  showed that the maximum likelihood estimators are unbiased and
-  consistent for both regression and precision parameters. Furthermore,
-  we observed empirical correlation between regression and precision
-  parameters close to zero suggesting the orthogonality feature in the
-  proposed mean reparametrized model. We present applications of the
-  proposed model through three case studies with over, under and
-  equidispersed counts. Results show improvements over the conventional
-  approaches. Therefore, its use in the analysis of count data is
-  encouraged. The computational routines for fitting of original and
-  reparametrized COM-Poisson models are available in the supplementary
-  material.
+\Abstract{ In the analysis of count data often the equidispersion
+  assumption is not suitable, hence the Poisson regression model is
+  inappropriate.  As a generalization of the Poisson distribution the
+  COM-Poisson distribution can deal with under-, equi- and overdispersed
+  count data.  It is a member of the exponential family of distributions
+  and has the Poisson and geometric distributions as special cases as
+  well as the Bernoulli distribution as a limiting case.  In spite of
+  the nice properties of the COM-Poisson distribution, its location
+  parameter does not correspond to the expectation, which in turn
+  becomes challenging the interpretation of the regression models
+  specified using such a distribution. In this paper, we propose a
+  straightforward reparametrization of the COM-Poisson distribution
+  based on an approximation to the expectation of this distribution. The
+  main advantage of our new parametrization is the straightforward
+  interpretation of the regression coefficients in terms of the
+  expectation of the count response variable, as usual in the context of
+  generalized linear models. Furthermore, the estimation and inference
+  for the new COM-Poisson regression model can be done based on the
+  likelihood paradigm. We carried out simulation studies to verify the
+  finite sample properties of the maximum likelihood estimators. The
+  results from our simulation study show that the maximum likelihood
+  estimators are unbiased and consistent for both regression and
+  dispersion parameters. We observed that the empirical correlation
+  between the regression and dispersion parameter estimators is close to
+  zero, which suggests that these parameters are orthogonal. We
+  illustrate the application of the proposed model through the analysis
+  of three data sets with over-, under- and equidispersed count data.
+  The study of distribution properties through a consideration of
+  dispersion, zero-inflated and heavy tail indices, and the results of
+  data analysis show the flexibility over standard
+  approaches. Therefore, we encourage the application of the new
+  parametrization for the analysis of count data in the context of
+  COM-Poisson regression models.  The computational routines for fitting
+  the original and new version of the COM-Poisson regression model and
+  the analyzed data sets are available in the supplementary material.
 }
 
 %-------------------------------------------
 % Key-words
-\Keywords{
-COM-Poisson; Count data; Over/Under-dispersion; Likelihood inference
-}
+\Keywords{ COM-Poisson, Overdispersion, Underdispersion, Count data,
+  Likelihood inference.  }
 
 <<setup, include=FALSE>>=
 
@@ -163,97 +173,115 @@ library(dplyr)
 \section{Introduction}
 \label{introduction}
 
-Count data are variables that assume non-negative integer values and
-represent the number of times an event occurs in the observation
-unit. This kind of data is common in experimental research such as
-the number of grains produced by a plant, number of fruits produced by a
-tree, number of insects captured by a trap, among others. Since the
-seminal paper by \citet{Nelder1972} introduced the class of generalized
-linear models (GLM), analysis of count data often consider the Poisson
-regression model. This model provides a suitable distribution for a
-counting random variable and an efficient Newton scoring algorithm is
-used to fit it. Furthermore, the theoretical background for GLMs is
-well established in the class of dispersion models \citep{Jorgensen1997}
-as a generalization of the exponential family of distributions.
+Count data are random variables that assume non-negative integer values
+and represent the number of times an event occurs in the observation
+unit. This kind of data is common in crop sciences such as the number of
+grains produced by a plant, number of fruits produced by a tree, number
+of insects captured by a trap, to cite but a few.  Since the seminal
+paper of \citet{Nelder1972} where the class of the generalized linear
+models (GLMs) was introduced, the analysis of count data often employs
+the Poisson regression model. This model provides a suitable strategy
+for the analysis of count data and an efficient Newton scoring algorithm
+can be used for fitting the model.
 
-In spite of the advantages of the GLM framework, the Poisson
-distribution has only one parameter, which represents the mean, and
-also, the variance of the count random variable. This relationship is
-referred as equidispersion.  However, this assumption can be unsuitable
-to many situations and when the Poisson model is applied in these cases
-the standard errors for the parameters estimates are inconsistent
-\citep{Winkelmann1995}.
+In spite of the advantages of the Poisson regression model, the Poisson
+distribution has only one parameter, which represents both the
+expectation and variance of the count random variable.  This restriction
+in the relationship between the expectation and variance induced by the
+Poisson distribution is referred as equidispersion.  However, in
+practical data analysis such a restriction can be unsuitable, since the
+observed data can present both the variance smaller or larger than the
+expectation, leading to the cases of under and overdispersion,
+respectively.  The main problem of the application of the Poisson
+regression model to non equidispersed count data is that the standard
+errors associated with the regression coefficients are inconsistently
+estimated, which in turn can lead to misleading
+inferences~\citep{Winkelmann1995, Bonat2017}.
 
-In practice, overdispersion, when the variance greater than the mean, is
-largely reported in the literature and may occur due to the absence of
-relevant covariates, heterogeneity of sampling units, different domain
-size not considered and excess of zero \citep{Hinde1998}. Lesser
-reported, but that has received attention from the statistical
-community, is a underdispersion case, when the variance is less than the
-mean. The processes that reduce the variability are not as well known as
-those lead to extra variability. For the same reason, there are a few
-approaches to deal underdispersed cases. The explanatory mechanisms to
-underdispersion may be related to Poisson process. When the time between
-events is not exponential distributed, the number of events can be over
-or underdispersed, this motivated the class of duration dependence
-models \citep{Winkelmann1995}. Other possibility to explain
-underdispersion are order statistics. Suppose $Y_i$ is Poisson
-distributed then maximum of $Y_i$ is underdispersed.
+In practice, overdispersion is largely reported in the literature and
+may occur due to the absence of relevant covariates, heterogeneity of
+sampling units, different domain size not considered in the analysis and
+excess of zeros~\citep{Hinde1998}.  The case of underdispersion is less
+report in the literature, however, it has been of increasing interest in
+the statistical community. The processes that reduce the variability are
+not as well-known as those leading to extra variability.  For the same
+reason, there are a few approaches to deal with underdispersed count
+data. The explanatory mechanisms leading to underdispersion may be
+related to the underline Poisson process generating the count data.
+% Here, you gave the idea that you are going to explain all mechanisms.
+% Perhaps, you can improve on it!! Have a look at my material for
+% regression models school.
+When the time between events is not exponential distributed, the number
+of events can be over or underdispersed, this process motivated the
+class of duration dependence models~\citep{Winkelmann1995}.  Another
+possibility to explain the underdispersion phenomenon is order
+statistics.  Suppose $Y_i$ is Poisson distributed then the maximum of
+$Y_i$ is underdispersed. (NEED REF).
 
 The strategies for constructing alternative count distributions are
-related with the causes of the non-equidispersion. Particular to
-overdispersion case Poisson mixed models are widely applied. One popular
-example of this approach is the negative-binomial model, where the mean
-is added a random noise that is assumed to follow a gamma
-distribution. However, other distributions for the random effects may be
-considered, for example the model Poisson-Tweedie \citep{Bonat2017} and
-Poisson-Inverse-Gaussian. For underdispersion, the Gamma-Count
-distribution assumes a gamma distribution for the time between events,
-thus it can deal with dispersed counts \citep{Zeviani2014}. The
-COM-Poisson distribution is given by a generalization the Poisson
-distribution allowed for a non-linear decrease in ratios of successive
-probabilities \citep{Shmueli2005}.
+related with the causes of the non-equidispersion. In special to the
+overdispersion case the Poisson mixture models are widely applied.  One
+popular example of this approach is the negative-binomial model, where a
+gamma random effect is added to the expectation of the Poisson
+distribution.  However, other distributions can be used to represent the
+random effects.  For example the Poisson-Tweedie model~\citep{Bonat2017}
+and its special cases as the Poisson inverse-Gaussian and Neyman-Type A
+consider that the random effects are Tweedie, inverse Gaussian and
+Poisson distributed, respectively.  The Gamma-Count distribution assumes
+a gamma distribution for the time between events, thus it can deal with
+underdispersed as well as overdispersed count
+data~\citep{Zeviani2014}. The COM-Poisson distribution is obtained by a
+generalization of the Poisson distribution allowing for a non-linear
+decrease in the ratios of successive probabilities~\citep{Shmueli2005}.
 
-The COM-Poisson is a member of the exponential family, has the Poisson
-and geometric distributions as special cases and the Bernoulli
-distribution as a limiting case. It can deal with both under and
-overdispersed count data. Some recently applications of the COM-Poisson
-distribution are related by \citet{Lord2010} for analysis of traffic
-crash data, \citet{Sellers2010} to model airfreight breakage and book
-purchases and \citet{Huang2017} with analysis of attendance data,
-takeover birds and cotton bolls count. The main disadvantage of
-COM-Poisson distribution is that the location parameter does not
-represent the regression conditional mean making difficult
-interpretation in a regression structure. \citet{Huang2017} proposed a
-mean-parametrization COM-Poisson distribution to avoid this issue, in
-this approach the mean parameter is obtained by solving the root of an
-equation defined as a infinite sum.
+The COM-Poisson distribution is a member of the exponential family and
+it has the Poisson and geometric distributions as special cases as well
+as the Bernoulli distribution as a limiting case. It can deal with both
+under and overdispersed count data.  Some recently applications of the
+COM-Poisson distribution include \citet{Lord2010} for the analysis of
+traffic crash data, \citet{Sellers2010} for the modelling of airfreight
+breakage and book purchases and \citet{Huang2017} to the analysis of
+attendance data, takeover birds and cotton bolls count.  The main
+disadvantage of the COM-Poisson regression model as presented
+in~\citet{Sellers2010} is that its location parameter does not
+correspond to the expectation of the distribution, which in turn becomes
+the interpretation of the regression coefficients challenging and no
+comparable with standard approaches as the Poisson and negative binomial
+regression models. \citet{Huang2017} proposed a mean-parametrization of
+the COM-Poisson distribution in order to avoid such an issue.  In this
+approach the mean parameter is obtained by solving an non-linear
+equation defined as an infinite sum.  Consequently, it is
+computationally demanding and liable to numerical problems.
 
-The main goal of this article is to proposed a novel COM-Poisson
-parametrization based on mean approximation given by
-\citet{Shmueli2005}. In this parametrization the probability mass
-function is written with $\mu$ and $\phi$ as function of original
-parameters, where $\mu$ is the mean and $\phi$ is the precision or
-dispersion parameter. Opposite the original parametrization, the
-proposed parametrization leads to interpretability of the parameters in
-a regression model and it is more simple than mean-parametrization gives
-by \cite{Huang2017} because in this case it is not necessary find $\mu$
-as the root of an equation involving an infinite sum. We conduce a
-simulation study to performe the properties of the maximum likelihood
-estimators for the proposed mean-parametrized COM-Poisson regression
-model.
+The main goal of this article is to propose a novel COM-Poisson
+parametrization based on the mean approximation presented by
+\citet{Shmueli2005}. In this parametrization, the probability mass
+function is written in terms of $\mu$ and $\phi$, where $\mu$ is the
+expectation and $\phi$ is the dispersion parameter. In contrast to the
+original parametrization, the proposed parametrization leads to
+regression coefficients directly associated with the expectation of the
+response variable as usual in the context of generalized linear models.
+Consequently, the obtained regression coefficients are comparable with
+the ones obtained by standard approaches as the Poisson and negative
+binomial regression models.  Furthermore, our novel COM-Poisson
+parametrization is simpler than the strategy proposed
+by~\cite{Huang2017}, since it does not involve any numerical method for
+solving non-linear equations.
 
 This paper is organized as follows. In \autoref{background} we present
-the COM-Poisson distribution and \cite{Huang2017} parametrization. The
-proposed reparametrization and assessement of moments approximations is
-considered in the \autoref{reparametrization}. In the
-\autoref{estimation-and-inference} we show the estimation and inference
-methods based on likelihood function whose properties are assess in
-\autoref{simulation-study} by simulations. Applications of
-reparametrized COM-Poisson regression model are illustrated in
-\autoref{case-studies} with three case studies. The analysis are
-performed using the software R \citep{Rcore2017}. The source code and
-data sets are available in supplementary material\footnote{Available on
+the COM-Poisson distribution and the strategy proposed
+by~\cite{Huang2017}.  The proposed reparametrization, assessment of
+moment approximations, and study of distribution properties are
+considered in the~\autoref{reparametrization}. In
+the~\autoref{estimation-and-inference} we present the estimation and
+inference for the novel COM-Poisson regression model based on the
+likelihood paradigm. The properties of the maximum likelihood estimators
+are assess in~\autoref{simulation-study} through simulation studies.  We
+illustrate the application of the new COM-Poisson regression model
+through the analysis of three data sets. We provide an \texttt{R}
+implementation of the COM-Poisson and reparameterized COM-Poisson
+regression models as well as the analyzed data sets in the supplementary
+material.\footnote{Available on
   \texttt{\url{http://www.leg.ufpr.br/~eduardojr/papercompanions}}
   \label{papercompanion}.}.
 
@@ -494,7 +522,7 @@ xy3 <- xyplot(var ~ mean,
 
 print(xy1, split = c(1, 1, 3, 1), more = TRUE)
 print(xy2, split = c(2, 1, 3, 1), more = TRUE)
-print(xy3, split = c(3, 1, 3, 1), more = TRUE)
+print(xy3, split = c(3, 1, 3, 1), more = FALSE)
 
 @
 
