@@ -838,11 +838,11 @@ light tailed distribution, i.e. $HT \to 0$ for $y \to \infty$.
 \section{Estimation and Inference}
 \label{estimation-and-inference}
 
-In this section we shall describe the estimation and inference methods
-adopted in this paper. The two forms of COM-Poisson models are fitted by
-maximization of the log-likelihood function. The log-likelihood function
-based on a set of independent observation $y_i$, $i=1,2,\ldots,n$ for
-COM-Poisson$_\mu$ has the following form,
+In this section we shall describe the estimation and inference to the
+two forms of the COM-Poisson regression model based on the maximum
+likelihood method. The log-likelihood function for a set of
+independent observations $y_i$, $i=1,2,\ldots,n$ for COM-Poisson$_\mu$
+from the COM-Poisson$_\mu$ distribution has the following form,
 \begin{equation}
   \label{eqn:ll-rcmp}
   \ell = \ell(\bm{\beta}, \phi \mid \bm{y}) =
@@ -853,41 +853,42 @@ COM-Poisson$_\mu$ has the following form,
   \sum_{i=1}^n \log(Z(\mu_i, \phi)),
 \end{equation}
 where $\mu_i = \exp(\bm{x}_i^\top\bm{\beta})$, with
-$\bm{x}_i^\top = (x_{i1},\, x_{i2},\, \ldots,\, x_{ip})$ the vector of
+$\bm{x}_i^\top = (x_{i1},\, x_{i2},\, \ldots,\, x_{ip})$ is a vector of
 known covariates for the $i$-th observation, and $(\bm{\beta},\, \phi)
 \in \mathbb{R}^{p+1}$. The normalizing constant $Z(\mu_i, \phi)$ is
 given by
-\begin{equation*}
+\begin{equation}
+\label{eqn:infseries}
   Z(\mu_i, \phi) = \sum_{j=0}^\infty \left [ \left (
     \mu_i + \frac{e^\phi - 1}{2e^\phi} \right )^{je^\phi}
   \frac{1}{(j!)^{e^\phi}} \right ]
-\end{equation*}
-To compute the log-likelihood function we need the computation of an
-infinite serie for each observation, which makes the computation
-expensive for regions in the parameter space where the convergence of
-sum $Z$ is slow.
+\end{equation}
+The evaluation of the log-likelihood function for each observation
+involves the computation of the infinite series in
+\autoref{eqn:infseries}.  Thus, the fitting procedure is
+computational expansive for regions of the parameter space where the
+convergence of the infinite sum is slow.
 
 Parameter estimation requires numerical maximization of
-\autoref{eqn:ll-rcmp}. Since $\ell$ derivatives cannot be solved in
-closed forms, we adopted the BFGS algorithm \cite{Nocedal1995} that uses
-numerical estimate for the Hessian matrix
-$\mathcal{H}(\bm{\theta})$. Standard errors for regression coefficients
-are obtained based on the observed information matrix
+\autoref{eqn:ll-rcmp}. Since derivatives of $\ell$ cannot be obtained in
+closed forms, we adopted the BFGS algorithm~\cite{Nocedal1995} as
+implemented in the function \texttt{optim()} for the statistical
+software \texttt{R}. Standard errors for regression coefficients are
+obtained based on the observed information matrix
 $\mathcal{I}(\bm{\theta})$, where
-$\mathcal{I}(\bm{\theta}) = -\mathcal{H}(\bm{\theta})$ numerically
-calculated by BFGS algorithm. Confidence intervals for $\hat{\mu}_i$ are
-obtained by using the delta method \citep[p. 89]{Pawitan2001}.
+$\mathcal{I}(\bm{\theta}) = -\mathcal{H}(\bm{\theta})$ (Hessian matrix)
+is computed numerically. Confidence intervals for $\hat{\mu}_i$ are
+obtained by using the delta method~\citep[p. 89]{Pawitan2001}.
 
-The parameter estimation for COM-Poisson model in the original
-parametrization is analogous to presented for COM-Poisson$_\mu$, however
-considering \autoref{eqn:ll-rcmp} in terms of $\lambda$. Even for the
-standard COM-Poisson distribution, the precision parameter is taken on
-the log scale, to avoid restriction of the parameter space.
+The parameter estimation for the COM-Poisson regression model in the
+original parametrization is analogous to the one presented for the
+COM-Poisson$_\mu$ distribution, however, it considers
+\autoref{eqn:ll-rcmp} in terms of $\lambda$. Even for the standard
+COM-Poisson distribution, the dispersion parameter is taken on the log
+scale to avoid numerical issues.
 
-Values of the maximized log-likelihood, the Akaike criterion (AIC) and
-Bayesian criterion (BIC) are computed to compare the parametric
-models. As a baseline model, in the applications we fitted the
-quasi-Poisson model \citep{Wedderburn1974}. This approach is based on
+In the applications we fitted the quasi-Poisson model
+\citep{Wedderburn1974} as a baseline model. This approach is based on
 second-moment assumption that allows more flexibility to model. In this
 case the variance of the response variable is fixed by a additional
 parameter $\sigma$, $\textrm{var}(Y_i)=\sigma \mu_i$. These models are
