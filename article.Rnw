@@ -289,13 +289,13 @@ material.\footnote{Available on
 \label{background}
 
 The COM-Poisson distribution generalizes the Poisson distribution in
-terms of the ratio between the probabilities of two consecutive values,
-with addition of a precision parameter \cite{Sellers2010}. Let $Y$ be a
-COM-Poisson random variable, then
+terms of the ratio between the probabilities of two consecutive events
+by adding an extra dispersion parameter~\cite{Sellers2010}.  Let $Y$ be
+a COM-Poisson random variable, then
 $$\frac{\Pr(Y=y-1)}{\Pr(Y=y)} = \frac{y^\nu}{\lambda}$$ while for the
-Poisson distribution this ratio is $\frac{y}{\lambda}$. This allows the
-distribution deals with overdispersion or underdispersion cases. The probability mass
-function for the COM-Poisson random variables takes the form
+Poisson distribution this ratio is $\frac{y}{\lambda}$. It allows the
+COM-Poisson distribution deals with non equidispersed count data.  The
+probability mass function of the COM-Poisson distribution is given by
 \begin{equation}
   \label{eqn:pmf-cmp}
   \Pr(Y=y \mid \lambda, \nu) = \frac{\lambda^y}{(y!)^\nu Z(\lambda, \nu)},
@@ -308,13 +308,12 @@ constant that depends on both parameters.
 The $Z(\lambda, \nu)$ series diverges theoretically only when $\nu=0$
 and $\lambda \geq 1$, but numerically for small values of $\nu$ combined
 with large of $\lambda$, the sum is so huge it causes
-\textit{overflow}. \autoref{tab:convergenceZ} shows the calculated
-normalizing constants using a thousand increments, that is,
+\textit{overflow}. \autoref{tab:convergenceZ} shows the values of the
+normalizing constants using one thousand increments, that is,
 $\sum_{j=0}^{1000}\lambda^j/(j!)^\nu$ for different values of $\lambda$
-and $\phi$ \footnote{For $\lambda=1$ e $\nu=0$ we show Inf, although the
-  numerically value is $1000$, since the series clearly diverges.}.
+and $\phi$.
 
-<<convergenceZ, echo=FALSE, results="asis">>=
+<<convergenceZ, echo=FALSE>>=
 
 #-----------------------------------------------------------------------
 # Convergence of Z(lambda, nu) constant
@@ -338,13 +337,27 @@ grid$z <- apply(grid, 1, function(par) {
 })
 
 xt <- xtabs(z ~ nu + lambda, data = grid)
+
+@
+
+\begin{table}[ht]
+\centering
+\caption{Values for $Z(\lambda, \nu)$ constant (numerically computed) for values of $\lambda$ (0.5 to 50) and $\phi$ (0 to 1)}
+\label{tab:convergenceZ}
+\begingroup\small
+\begin{tabularx}{\textwidth}{C|CCCCCC}
+  \toprule
+
+<<results="asis">>=
 caption <- paste(
-    "Values for $Z(\\lambda, \\nu)$ constant (calculated numerically)",
+    "Values for $Z(\\lambda, \\nu)$ constant (numerically computed)",
     "for values of $\\lambda$ (0.5 to 50) and $\\phi$ (0 to 1)")
 
 # Remove excessive scientific notation
 xt2 <- gsub("e\\+00", "    ", format(xt))
-xt2 <- gsub("\\|([0-9].{2}) \\|", "\\|**\\1** \\|", xt2)
+xt2 <- gsub("Inf", "divergent$^{**}$", format(xt2))
+xt2[1, -1] <- "divergent$^{*\\,\\,\\,}$"
+
 print(xtable(xt2, digits = -2,
              caption = caption,
              align = "C|CCCCCC",
@@ -352,6 +365,7 @@ print(xtable(xt2, digits = -2,
              label = "tab:convergenceZ"),
       include.colnames = FALSE,
       tabular.environment = "tabularx",
+      only.contents = TRUE,
       width = "\\textwidth",
       add.to.row = list(
           pos = list(0, 0),
@@ -362,37 +376,54 @@ print(xtable(xt2, digits = -2,
 
 @
 
-An undesirable feature of COM-Poisson distribution is that the moments
-cannot be solved in closed form. \citet{Shmueli2005} and
+\end{tabularx}
+\endgroup
+
+\footnotesize \raggedright
+divergent$^{*}$ is a mathematically divergent serie; and
+divergent$^{**}$ a numerically divergent serie.
+\end{table}
+
+In the first line of \autoref{tab:convergenceZ} we have mathematically
+divergent series, because $\sum_{j=0}\lambda^y$, when $\lambda \geq 1$,
+is divergent.  In other cases the series diverges numerically, due to
+the computational storage limitation.  For both divergences it is
+impossible to compute probabilities, therefore, this acts as a
+restriction in the parameter space.
+
+An undesirable feature of the COM-Poisson distribution is that the
+moments cannot be obtained in closed form. \citet{Shmueli2005} and
 \citet{Sellers2010} using an asymptotic approximation for
-$Z(\lambda,\nu)$, showed that an approximate form can be
+$Z(\lambda,\nu)$, showed that the expectation and variance of the
+COM-Poisson distribution can be approximated by
 \begin{equation}
   \label{eqn:mean-approx}
   E(Y) \approx \lambda^{1/\nu} - \frac{\nu - 1}{2\nu} \qquad
   \textrm{and} \qquad
   \textrm{var}(Y) \approx \frac{\lambda^{1/\nu}}{\nu}\,,
 \end{equation} which is particularly accurate for  $\nu \leq 1$ or
-$\lambda > 10$. The authors also shows that the mean-variance
-relationship can be approximate by $\frac{1}{\nu}E(Y)$. In
-\autoref{reparametrization} we assess the accucary of these
-approximations.
+$\lambda > 10$. The authors also argue that the mean-variance
+relationship can be approximate by
+$\frac{1}{\nu}E(Y)$. In~\autoref{reparametrization} we assess the
+accucary of these approximations.
 
-A regression formulation for COM-Poisson models was proposed by
-\citet{Sellers2010}, using the original parametrization. In this case,
-the COM-Poisson regression is $\eta(E(Y_i)) = \log(\lambda_i)$ and the
-relationship between $E(Y_i)$ and $\bm{x}_i$ is modelled
-indirectly. \citet{Huang2017} shows how the means of COM-Poisson
-distributions can be modelled directly. In the \autoref{eqn:pmf-cmp},
-\Citeauthor{Huang2017} proposes that the parameter $\lambda$ as a
-function of $\mu$ and $\nu$, given by the solution to
+The COM-Poisson regression model was proposed by~\citet{Sellers2010},
+using the original parametrization. In this case, the COM-Poisson
+regression model is $\log(\lambda_i) = \bm{x}_i^\top \bm{\beta}$ and the
+relationship between $E(Y_i)$ and $\bm{x}_i$ is modelled indirectly.
+\citet{Huang2017} shows how to model directly the expectation of the
+COM-Poisson distribution in a suitable parametrization. In the
+\autoref{eqn:pmf-cmp}, \Citeauthor{Huang2017} proposes that the
+parameter $\lambda$ as a function of $\mu$ and $\nu$, given by the
+solution to
 \begin{equation*}
   \sum_{j=0}^{\infty} (j - \mu) \frac{\lambda^j}{(y!)^\nu} = 0\,.
 \end{equation*}
-Thus the mean-parametrized COM-Poisson regression is $\eta(E(Y_i)) =
-\log(\mu_i)$. In this article, we presented an alternative
-mean-parametrization of COM-Poisson models to avoid the limitations of
-original parametrization and complexity of \Citeauthor{Huang2017}
-parametrization.
+Thus the mean-parametrized COM-Poisson regression model is $\log(\mu_i)
+= \bm{x}_i^\top \bm{\beta}$. In this article, we propose an alternative
+mean-parametrization of the COM-Poisson distribution in order to avoid the
+limitations of the original parametrization and the numerical complexity
+of the \Citeauthor{Huang2017}'s approach.
 
 \section{Reparametrization}
 \label{reparametrization}
