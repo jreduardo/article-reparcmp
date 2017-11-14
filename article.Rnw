@@ -208,9 +208,6 @@ not as well-known as those leading to extra variability.  For the same
 reason, there are a few approaches to deal with underdispersed count
 data. The explanatory mechanisms leading to underdispersion may be
 related to the underline Poisson process generating the count data.
-% Here, you gave the idea that you are going to explain all mechanisms.
-% Perhaps, you can improve on it!! Have a look at my material for
-% regression models school.
 When the time between events is not exponential distributed, the number
 of events can be over or underdispersed, this process motivated the
 class of duration dependence models~\citep{Winkelmann1995}.  Another
@@ -380,16 +377,16 @@ print(xtable(xt2, digits = -2,
 \endgroup
 
 \footnotesize \raggedright
-divergent$^{*}$ is a mathematically divergent serie; and
-divergent$^{**}$ a numerically divergent serie.
+divergent$^{*}$ is a mathematically divergent series; and
+divergent$^{**}$ a numerically divergent aerie.
 \end{table}
 
 In the first line of \autoref{tab:convergenceZ} we have mathematically
-divergent series, because $\sum_{j=0}\lambda^y$, when $\lambda \geq 1$,
-is divergent.  In other cases the series diverges numerically, due to
-the computational storage limitation.  For both divergences it is
-impossible to compute probabilities, therefore, this acts as a
-restriction in the parameter space.
+divergent series, because $\sum_{j=0}^\infty\lambda^y$, when
+$\lambda \geq 1$, is divergent.  In other cases the series diverges
+numerically, due to the computational storage limitation.  For both
+divergences it is impossible to compute probabilities, therefore, this
+acts as a restriction in the parameter space.
 
 An undesirable feature of the COM-Poisson distribution is that the
 moments cannot be obtained in closed form. \citet{Shmueli2005} and
@@ -405,7 +402,7 @@ COM-Poisson distribution can be approximated by
 $\lambda > 10$. The authors also argue that the mean-variance
 relationship can be approximate by
 $\frac{1}{\nu}E(Y)$. In~\autoref{reparametrization} we assess the
-accucary of these approximations.
+accuracy of these approximations.
 
 The COM-Poisson regression model was proposed by~\citet{Sellers2010},
 using the original parametrization. In this case, the COM-Poisson
@@ -617,8 +614,8 @@ flexibility of Poisson-Tweedie distribution, and \citet{Puig2006} to
 describe count distributions. Regarding the COM-Poisson$_\mu$
 distribution, we presents in \autoref{fig:indexes-plot} the relationship
 between mean and variance (a), the dispersion and zero-inflation indexes
-(b--c) for differents values of $\mu$ and $\phi$ and heavy-tail index
-(d) for $\mu=25$ and differents values of $y$ and $\phi$.
+(b--c) for different values of $\mu$ and $\phi$ and heavy-tail index
+(d) for $\mu=25$ and different values of $y$ and $\phi$.
 
 <<compute-indexes, include=FALSE, cache=TRUE>>=
 
@@ -825,7 +822,7 @@ $\mu$. Consequently, the mean and variance relationship
 parameter $\phi$. In terms of moments, this leads to a specification
 indistinguishable from the quasi-Poisson regression model. The
 dispersion indexes in \autoref{fig:indexes-plot}(b) show that the
-distribuion is suitable to deal to dispersed counts, of course. For the
+distribution is suitable to deal to dispersed counts, of course. For the
 parameter values evaluated the largest DI was \Sexpr{madi} and smallest
 was \Sexpr{midi}. \autoref{fig:indexes-plot}(c) shows the COM-Poisson
 can handle with a limited amount of zero-inflation, in cases of
@@ -1815,7 +1812,7 @@ COM-Poisson$_{\mu}$. Probably, it is due to the equidispersion
 assumption underline the Poisson model. The confidence intervals from
 the COM-Poisson$_{\mu}$ and quasi-Poisson models are really similar,
 which in turn show the already highlighted similarity between these
-approches.
+approaches.
 
 <<pred-soy, fig.pos="!ht", fig.height=3.8, fig.width=8, fig.cap="Dispersion diagrams of grain counts as function of potassium doses and humidity levels with fitted curves and confidence intervals (95\\%).">>=
 
@@ -1902,7 +1899,7 @@ The data set comes from an experiment to measure the reproductive
 toxicity of a herbicide, nitrofen, on a species of zooplankton
 (\textit{Ceriodaphnia dubia}). Fifty animals were randomized into
 batches of ten and each batch was put in a solution with a measured
-concentration of nitrofen (0, 0.8, 1.6, 2.35 e 3.10 mug$/10^2$litre)
+concentration of nitrofen ($0, 0.8, 1.6, 2.35$ e $3.10$ mug$/10^2$litre)
 (\texttt{dose}). Then the number of total live offspring was recorded
 \cite{Bailer1994}.
 
@@ -1971,7 +1968,7 @@ models.ovos$C2@details$counts
 
 @
 
-For this data set we proposed three linear predictors. We compare the
+For this data set we proposed three linear predictors. We compared the
 performance of models using the likelihood ratio tests. The linear
 predictors are
 \begin{center}
@@ -2294,7 +2291,7 @@ on the proposed reparametrization is faster than in the original
 parametrization.
 
 In general, the results presented by the reparametrized COM-Poisson
-models were satisfactory and comparable to the convential approaches.
+models were satisfactory and comparable to the conventional approaches.
 Therefore, its use in the analysis of count data is encouraged. The
 computational routines for fitting the original and reparametrized
 COM-Poisson regression models are available in the supplementary
