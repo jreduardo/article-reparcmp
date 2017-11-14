@@ -2253,56 +2253,62 @@ print(xtable(corr.ovos,
 \section{Concluding remarks}
 \label{conclusion}
 
-In this paper, we argued the parametrization of COM-Poisson distribution
-to analyse dispersed count data. We proposed a novel reparametrization
-based only mean approximation indicated by \cite{Shmueli2005}. The
-likelihood-based method to estimation and inference is presented. We
-assess the properties of these estimators by a simulation
-study. Applications of the proposed model are showed by three case
-studies with over, under and equidispersed counts. In the data analysis
-we compared standard Poisson, original COM-Poisson, reparametrized
-COM-Poisson and quasi-Poisson models.
+In this paper, we presented a novel parametrization of the COM-Poisson
+distribution and the associated regression model. The novel
+parametrization was based on a simple asymptotic approximation for the
+expectation and variance of the COM-Poisson distribution. The main
+advantage of the proposed reparametrization is the simple interpretation
+of the regression coefficients in terms of the expectation of the
+response variable as usual in the generalize linear models
+context. Thus, it is possible to compare the results of the COM-Poisson
+model with the ones from standard approaches as the Poisson and
+quasi-Poisson regression models. Furthermore, in the novel
+parametrization the COM-Poisson distribution is indexed by the
+expectation $\mu$ and an extra dispersion parameter $\phi$ whose our
+data analysis suggest to be orthogonal.
 
-We computed the quadratic errors for the mean approximation. The results
-showed that it is well accurate supports our proposed
-reparametrization. The results of a simulation study showed that the
-estimators of the regression and precision parameters are consistent and
-unbiased and asymptotically unbiased respectively. The empirical
-coverage rates of the confidence intervals for the parameters, compute
-by the asymptotic distribution of the estimators, are close to the
-nominal level for sizes greater than 100. The worst scenario is when we
-have small sample size and strong overdispersed counts. In general, we
-recommend the use of Wald intervals for computational simplicity and
-good results.
+We evaluated the accuracy of the asymptotic approximations for the
+expectation and variance of the COM-Poisson distribution by considering
+quadratic approximation errors.  The results showed that the
+approximations are accurate for a large part of the parameter space of
+the parameters $\mu$ and $\phi$, which in turn support our
+reparametrization.  We carried out a simulation study to assess the
+properties of the reparametrized COM-Poisson model to deal with
+different levels of dispersion as well as the properties of the maximum
+likelihood estimators. The results of our simulation study suggested
+that the maximum likelihood estimators of the regression and dispersion
+parameters are unbiased and consistent.  The empirical coverage rates of
+the confidence intervals computed based on the asymptotic distribution
+of the maximum likelihood estimators are close to the nominal level for
+sample size greater than $100$.  The worst scenario is when we have
+small sample sizes and strong overdispersed counts.  In general, we
+recommend the use of the asymptotic confidence intervals for
+computational simplicity.
 
-The data analysis in the case studies has shown that COM-Poisson is a
-suitable distribution for over, under and equidispersion situations. The
-observed empirical correlation between regression and precision
-parameters suggest the orthogonality between $\mu$ and $\phi$ in
-COM-Poisson$_\mu$ distribution against the original parametrization. Due
-to this feature the computational procedure is faster under the
-reparametrized model. Another advantage, perhaps the main, of the
-reparametrization is that the estimated regression parameters have
-interpretation of rate ratios, same of the Poisson model. In comparison
-of the quasi-Poisson approach the results was similar in both
-simulations, nevertheless the COM-Poisson is a full parametric model,
-allowing the calculation of probabilities for example.
+The data analyses have shown that the COM-Poisson regression model is a
+suitable choice to deal with non equidispersed count data.  The observed
+empirical correlation between the regression and dispersion parameter
+estimators suggest orthogonality between $\mu$ and $\phi$ in
+COM-Poisson$_\mu$ distribution. Thus, the computational procedure based
+on the proposed reparametrization is faster than in the original
+parametrization.
 
 In general, the results presented by the reparametrized COM-Poisson
-models were satisfactory and superior to the conventional
-approaches. Therefore, its use in the analysis of count data is
-encouraged. The computational routines for fitting of original and
-reparametrized COM-Poisson models are available in the supplementary
+models were satisfactory and comparable to the convential approaches.
+Therefore, its use in the analysis of count data is encouraged. The
+computational routines for fitting the original and reparametrized
+COM-Poisson regression models are available in the supplementary
 material\textsuperscript{\ref{papercompanion}}.
 
-There are many possible extensions and possible topics for further
-investigation to model discussed in the present paper, including
-simulation study to assess model robustness against distribution
-miss-specification, asses theoretical approximations for
-$Z(\lambda, \nu)$ (or $Z(\mu,\phi))$, in order to avoid the selection of
-sum's upper bound, propose a double GLM based on the reparametrized
-COM-Poisson model and a accommodate random effects since we have a model
-parametrized on mean.
+There are many possible extensions to the model discussed in this paper,
+including simulation studies to assess the model robustness against
+model misspecification and to asses the theoretical approximations for
+$Z(\lambda, \nu)$ (or $Z(\mu,\phi))$. Another simple extension of the
+proposed model is to model both $\mu$ and $\phi$ parameters as functions
+of covariate in a double generalized linear models framework.  Finally,
+the reparametrized version of the COM-Poisson model also encourages the
+specification of generalized linear mixed models using this
+distribution.
 
 %-----------------------------------------------------------------------
 \bibliography{references.bib}
