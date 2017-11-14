@@ -1224,38 +1224,37 @@ xyplot(coverage ~ n | param,
 \section{Case studies}
 \label{case-studies}
 
-In this section, we report three illustrative examples of real count
-data analysis obtained from experimental research. We considered as
-alternative models for the analysis the standard Poisson model, the
-COM-Poisson model in two forms (original and mean parametrization) and
-Quasi-Poisson model, based on second-moment assumptions. The data sets
-and \texttt{R} codes for their analysis are available on on-line
-supplements.
+In this section, we report three illustrative examples of count data
+analysis. We considered as alternative models for the analysis the
+standard Poisson regression model, the COM-Poisson model in the two
+forms (original and new parametrization) and the quasi-Poisson
+regression model.  The data sets and \texttt{R} codes for their analysis
+are available as supplementary material.
 
 \subsection{Artificial defoliation in cotton phenology}
 \label{case-cotton}
 
 This example relates to cotton plants (\textit{Gossypium hirsutum})
 submitted to five levels of artificial defoliation (\texttt{des}) and
-crossed with five growth stages (\texttt{est}). The purpose of this
-research was to study the effect of defoliation levels at different
-growth stages of cotton plants on the cotton production, expressed by
-the number of bools produced. The study was conducted in a greenhouse
-and the experimental design was completely randomized with five
-replicates. This data set was analysed by \citet{Zeviani2014} using the
+crossed with five growth stages (\texttt{est}). The main goal of this
+study was to assess the effect of defoliation levels at different growth
+stages of cotton plants on the cotton production, expressed by the
+number of bolls produced. The study was conducted in a greenhouse and
+the experimental design was completely randomized with five
+replicates. This data set was analyzed by~\citet{Zeviani2014} using the
 \textit{Gamma-Count} distribution.
 
-Following the results of \citet{Zeviani2014}, we considered the linear
-predictor specified by
+Following~\citet{Zeviani2014}, the linear predictor is given by
 $$\log(\mu_{ij}) = \beta_0 + \beta_{1j} \textrm{def}_i + \beta_{2j}
 \textrm{def}_i^2$$
 where $\mu_{ij}$ is the expected number of cotton bolls for the $i$-th
 defoliation level ($i=$ 1: 0\%, 2: 25\%, 3: 50\%, 4: 75\% e 5: 100\%)
 and $j$-th growth stage ($j$ = 1: vegetative, 2: flower bud, 3: blossom,
-4: boll, 5: boll open), that is, we have a second order effect of
+4: boll, 5: boll open), i.e. we have a second order effect of
 defoliation in each growth stage. The parameters estimates and
 goodness-of-fit measures for the Poisson, COM-Poisson, COM-Poisson$_\mu$
-and quasi-Poisson models are presented in \autoref{tab:coef-cotton}.
+and quasi-Poisson regression models are presented in
+\autoref{tab:coef-cotton}.
 
 <<fit-cotton, cache=TRUE, include=FALSE>>=
 
@@ -1354,37 +1353,39 @@ print.xtable(xtable(est.ncap, digits = 4,
 \end{table}
 
 The results presented in \autoref{tab:coef-cotton} show that the
-goodness-of-fit measures (maximum log-likelihood, AIC and BIC) are quite
-similar between COM-Poisson and COM-Poisson$_\mu$. This shows that the
-reparametrization does not change the model fit, as expected. The Poisson
-model is clearly unsuitable, being overly conservative. The difference
-between the log-likelihoods of the Poisson and COM-Poisson$_\mu$ models
-is \Sexpr{lrt.ncap[2, 4]}. Comparing this value with the chi-square
-distribution, with one degree of freedom, we have these models are
-significantly different ($\phi \neq 0$). The estimated value of
-precision parameter, $\hat{\phi}$ is \Sexpr{co1[1]}, indicating
-underdispersion.
+goodness-of-fit measures (log-likelihood, AIC and BIC) are quite similar
+for the COM-Poisson and COM-Poisson$_\mu$ models.  It suggests that the
+reparametrization does not change the model fit, as expected.  The
+Poisson model is clearly unsuitable, being overly conservative.  The
+difference in terms of log-likelihood value from the Poisson to the
+COM-Poisson$_\mu$ model was $\Sexpr{lrt.ncap[2, 4]}$, which in turn
+suggests the better fit of the COM-Poisson$_{\mu}$ model. A chi-square
+test also supports this statement.  Finally, the estimated value of the
+dispersion parameter $\hat{\phi} = \Sexpr{co1[1]}$ suggests underdispersion.
 
-\autoref{tab:coef-cotton} also shows the advantage of COM-Poisson$_\mu$
-(reparametrized), since the estimates are quite similar those obtained by
-the Poisson model, whereas estimates obtained by the COM-Poisson model
-in original parametrization are on a non-interpretable scale. The ratios
-between estimates and their respective standard errors for the
-COM-Poisson models are very close to ratios obtained by quasi-Poisson
-model. However, it is important to note that COM-Poisson model is a
-full parametric approach, that is, there is a probability distribution
-associate to counts.
+Furthermore, results in \autoref{tab:coef-cotton} also shows the
+advantage of the COM-Poisson$_\mu$ model, since the estimates are quite
+similar to the ones obtained by the Poisson model, whereas estimates
+obtained from the COM-Poisson model in the original parametrization are
+on a non interpretable scale.  The ratios between estimates and their
+respective standard errors for the COM-Poisson models are very close to
+ratios obtained by quasi-Poisson model. However, it is important to note
+that COM-Poisson model is a full parametric approach, i.e. there is a
+probability distribution associate to counts. On the other hand, the
+quasi-Poisson model is a specification based only on second-moments
+assumptions.
 
-In the \autoref{fig:pred-cotton} are presented the observed values and
-curves of fitted values with confidence intervals (95\%) as functions of
-the defoliation level for each growth stage. The fitted values are same
-for both models, but confidence intervals are bigger for Poisson model
-because the equidispersion assumption. The results from COM-Poisson
-models are consistent with those from the Gamma-Count model, fitted by
-\cite{Zeviani2014}, Poisson-Tweedie model, fitted by \cite{Bonat2017}
-and alternative COM-Poisson parametrization, fitted by \cite{Huang2017},
-in that both methods indicate underdispersion and significant effects of
-defoliation for the vegetative, blossom and boll growth stages.
+\autoref{fig:pred-cotton} presents the observed and fitted values with
+confidence intervals (95\%) as a function of the defoliation level for
+each growth stage. The fitted values are the same for the Poisson and
+COM-Poisson$_{\mu}$ models, however, the confidence intervals are larger
+for the Poisson model because the equidispersion assumption.  The
+results from the COM-Poisson$_{\mu}$ model are consistent with those
+from the Gamma-Count model~\cite{Zeviani2014},
+Poisson-Tweedie~\cite{Bonat2017} and the alternative parametrization of
+the COM-Poisson distribution proposed by~\cite{Huang2017}.  In all
+strategies the models indicated underdispersion and significant effects
+of defoliation for the vegetative, blossom and boll growth stages.
 
 <<pred-cotton, fig.height=3.5, fig.width=8.5, fig.cap="Scatterplots of the observed data and curves of fitted values with 95\\% confidence intervals as functions of the defoliation level for each growth stage.">>=
 
@@ -1473,20 +1474,24 @@ xyplot(ncap ~ des | est,
 
 @
 
-In order to assess the orthogonality between $\bm{\mu}$ and $\phi$ in
-the COM-Poisson$_\mu$ parametrization, \autoref{tab:corr-cotton}
-presents the empirical correlations between precision and regression
-parameters, obtained from the estimated variance and covariance
-matrix. The correlations are practically null considering the
-COM-Poisson$_\mu$, whereas to the original parametrization they are
-quite high. This reflects a better performance of the maximization
-algorithm in mean-parametrization model, in this case COM-Poisson$_\mu$
-fit was \Sexpr{time12[3] * 100 / time11[3]}\% slower then COM-Poisson
-model. It is important to note that the initial values for the BFGS
-algorithm are provided by Poisson fitted model, then in the COM-Poisson
-mean-parametrized model the initial values are practically the maximum
-likelihood estimates and the effort of maximization is on the precision
-parameter $\phi$.
+In order to assess the relation between $\bm{\mu}$ and $\phi$ in the
+COM-Poisson$_\mu$ parametrization, \autoref{tab:corr-cotton} presents
+the empirical correlations between the regression and dispersion
+parameters, as computed by the asymptotic covariance matrix of the
+estimators, i.e. the inverse of the observed information.  The
+correlations are practically null considering the COM-Poisson$_\mu$. On
+the other hand, for the original parametrization such correlations are
+quite larger, in special for the parameter $\beta_0$ (due to effects
+parametrization in the linear predictor).  This result explain the
+better performance of the maximization algorithm in the new
+parametrization.  It is important to note that the initial values for
+the \texttt{BFGS} algorithm are provided by the Poisson model, then in
+the COM-Poisson$_{\mu}$ model the initial values are practically the
+maximum likelihood estimates and the effort of maximization is on the
+dispersion parameter $\phi$ only. To compare the computational times on
+the two parametrizations we repeat $50$ times the routine to fit. In
+this case COM-Poisson$_\mu$ fit was, on average, $38$\% faster than the
+original one.
 
 <<corr-cotton, results="asis">>=
 
@@ -1549,14 +1554,14 @@ with treatments in a $5\times 3$ factorial arrangement about soybean
 (\emph{Glicine Max}). The aim of this study was to evaluate the effects
 of potassium doses (\texttt{K}) applied to soil (0, 0.3, 0.6, 1.2 and
 1.8 $\times$ 100mg dm$^{-3}$) and soil moisture (\texttt{umid}) levels
-(37.5, 50, 62.5\%) on the soybean production. The experiment was
-carried out in a greenhouse, in pots with two plants, and the count
-variable measured was the number of grains per pot
-\citep{Serafim2012}. \autoref{fig:desc-soy} (left) shows the number of
-grains recorded for each combination of potassium dose and moisture
-level, it is important to note the indication of a quadratic level of
-the potassium levels. Most points in the sample variance vs. sample
-means dispersion diagram (right) are above the identity line, suggesting
+(37.5, 50, 62.5\%) on the soybean production. The experiment was carried
+out in a greenhouse, in pots with two plants, and the count variable
+measured was the number of grains per pot~\citep{Serafim2012}.
+\autoref{fig:desc-soy} (left) shows the number of grains recorded for
+each combination of potassium dose and moisture level, it is important
+to note the indication of a quadratic effect of the potassium
+levels. Most points in the sample variance \textit{versus} sample means
+dispersion diagram (right) are above the identity line, suggesting
 overdispersion (block effect not yet removed).
 
 <<fit-soy, cache=TRUE, include=FALSE>>=
@@ -1643,7 +1648,7 @@ print(xy2, split = c(2, 1, 2, 1), more = FALSE)
 
 @
 
-For the analysis of this data set we proposed, based on descriptive
+For the analysis of this data set we proposed based on descriptive
 analysis \autoref{fig:desc-soy}, the linear predictor specified as a
 linear doses for each humidity level and a global quadratic dose effect,
 i.e
@@ -1659,19 +1664,19 @@ the effect of $j$-th moisture level and $\beta_{3j}$ is the first order
 potassium effect (\texttt{K}) for the $j$-th moisture level
 (\texttt{umid}). \autoref{tab:coef-soy} presents the estimates, ratio
 between estimate and standard error and goodness-of-fit measures for
-the alternative models fitted.
+the alternative models.
 
-The results in \autoref{tab:coef-soy} has similar interpretations to
-results presented in \autoref{case-cotton}. The two parametrization of
-COM-Poisson presented very similar goodness-of-fit measures and better
-than Poisson model. The difference between the log-likelihoods of the
-Poisson and COM-Poisson models is \Sexpr{lrt.ngra[2, 4]}, indicating
-that $\phi$ is significantly different of zero. With respect to the
-regression parameters, the similarities between models are analogous to
-the previous section. Both models indicate effects of block, potassium
-dose and moisture level, however the Poisson model indicates the effects
-with greater significance, because it does not fit the extra
-variability.
+The results in \autoref{tab:coef-soy} have similar interpretations to
+the results presented in \autoref{case-cotton}. The two parametrization
+of COM-Poisson model presented very similar goodness-of-fit measures and
+better fit than the Poisson model. The difference between the
+log-likelihoods of the Poisson and COM-Poisson models was
+$\Sexpr{lrt.ngra[2, 4]}$, indicating that $\phi$ is significantly
+different from zero. Concerning to the regression parameters, the
+similarities between the models are analogous to the previous
+Section. Both models indicate effects of block, potassium dose and
+moisture level, however the Poisson model indicates the effects with
+greater significance, because it does not fit the extra variability.
 
 \begin{table}[!ht]
 \centering \small
@@ -1732,19 +1737,22 @@ print.xtable(xtable(est.ngra, digits = 4,
 \end{tabular}
 \end{table}
 
-The infinite sum $Z(\mu, \phi)$ in cases of oversidepersed counts needs
-a greater upper bound for the convergence, making the computation of the
-likelihood more expansive. In this case, the upper bound was 700. The
-number of likelihood computations, on the BFGS algorithm, was
-\Sexpr{c21[1]} and \Sexpr{c22[2]} for the original and
-mean-parametrization and the time to fit was \Sexpr{time21[3]} and
-\Sexpr{time22[3]} seconds respectively. This may be due the
-well-behaviour of likelihood function for orthogonal parameters also,
-best start values from Poisson model. In \autoref{tab:corr-soy} we
-present the empirical correlations between regression and precision
-parameter. The correlations are close to zero for the COM-Poisson$_\mu$
-parametrization, indicating the empirical orthogonality between $\mu$
-and $\phi$ on COM-Poisson$_\mu$ distribution.
+The infinite sum $Z(\mu, \phi)$ in the cases of overdispersed count data
+requires a larger upper bound to reach convergence. Thus, in these cases
+the computation of the log-likelihood function is computationally
+expensive.  For the data set considered, the upper bound was fixed at
+$700$.  The \texttt{BFGS} algorithm evaluated the log-likelihood
+function $\Sexpr{c21[1]}$ and $\Sexpr{c22[2]}$ times to reach
+convergence, when using the original and new parametrization of the
+COM-Poisson distribution, respectively.  In terms of computational time
+and for 50 repetitions of fit, the proposed reparametrization was on
+average $110\%$ faster than the original one.  Probably, it is due to
+the better behaviour of the log-likelihood function as well as better
+initial values obtained from the Poisson fit. In \autoref{tab:corr-soy}
+we present the empirical correlation between the regression and
+dispersion parameter estimates. The correlations are close to zero for
+the COM-Poisson$_\mu$ model, indicating the empirical orthogonality
+between $\mu$ and $\phi$.
 
 <<corr-soy, results="asis">>=
 
@@ -1798,13 +1806,16 @@ print(xtable(corrngra_aux[[2]], digits = 4),
 \endgroup
 \end{table}
 
-The observed counts and fitted curves for each humidity level with
-confidence bands are show in \autoref{fig:pred-soy}. The fitted values
-are identical for both models, leading to the same conclusions. On the
-other hand, confidence bands for the Poisson model are smaller due to
-equidispersion assumption. Considering COM-Poisson models and
-quasi-Poisson approach, the confidence bands are quite similar, which
-shows their flexibility.
+The observed and fitted counts for each humidity level with confidence
+intervals are shown in \autoref{fig:pred-soy}. The fitted values are
+identical for the Poisson and COM-Poisson$_{\mu}$ models, leading to the
+same conclusions. On the other hand, confidence intervals for the
+Poisson model are smaller than the ones from the
+COM-Poisson$_{\mu}$. Probably, it is due to the equidispersion
+assumption underline the Poisson model. The confidence intervals from
+the COM-Poisson$_{\mu}$ and quasi-Poisson models are really similar,
+which in turn show the already highlighted similarity between these
+approches.
 
 <<pred-soy, fig.pos="!ht", fig.height=3.8, fig.width=8, fig.cap="Dispersion diagrams of grain counts as function of potassium doses and humidity levels with fitted curves and confidence intervals (95\\%).">>=
 
@@ -1889,9 +1900,9 @@ update(xy1, layout = c(NA, 1), type = c("p", "g"),
 
 The data set comes from an experiment to measure the reproductive
 toxicity of a herbicide, nitrofen, on a species of zooplankton
-(\textit{Ceriodaphnia dubia}). 50 animals were randomized into batches
-of 10 and each batch was put in a solution with a measured concentration
-of nitrofen (0, 0.8, 1.6, 2.35 e 3.10 mug$/10^2$litre)
+(\textit{Ceriodaphnia dubia}). Fifty animals were randomized into
+batches of ten and each batch was put in a solution with a measured
+concentration of nitrofen (0, 0.8, 1.6, 2.35 e 3.10 mug$/10^2$litre)
 (\texttt{dose}). Then the number of total live offspring was recorded
 \cite{Bailer1994}.
 
@@ -1961,8 +1972,8 @@ models.ovos$C2@details$counts
 @
 
 For this data set we proposed three linear predictors. We compare the
-performance of models using the likelihood ratio tests to select the
-systematic part of model. The linear predictors are
+performance of models using the likelihood ratio tests. The linear
+predictors are
 \begin{center}
 \begin{minipage}{12cm}
 Predictor 1: $\log(\mu_i) = \beta_0 + \beta_1 \texttt{dose}_i$\\
@@ -2050,30 +2061,31 @@ difference in log-likelihoods; QDev, quasi-deviance, F, F statistics
 based on quasi-deviances; diff np, difference in np.
 \end{table}
 
-\autoref{tab:anova-ovos} summarizes the results of fitted models and
+\autoref{tab:anova-ovos} summarizes the results of the fitted models and
 likelihood ratio tests comparing the sequence of predictors. All models
-indicate the cubic effect of nitrofen concentration. Considering this
-predictor, there is an evidence of equidispersed counts, $\phi$
-estimates of COM-Poisson close to zero and $\sigma$ of quasi-Poisson, to
-one. It is interesting to note that if we omit the effects of a greater
-order on the predictor, the modes show evidence of overdispersion
-counts. This exemplifies the discussion about causes of overdispersion
-made in \autoref{introduction}. We can also note that the quasi-Poisson
-approach, although robust to equisdispersion assumption, shows a higher
-descriptive levels ($p$-values) than parametric models, that is, the
-tests under parametric models are most powerful than quasi-Poisson
-models in the equidispersed case.
+indicate the significance of the cubic effect of the nitrofen
+concentration.  Considering this predictor, there is an evidence of
+equidispersed counts, $\phi$ estimates of the COM-Poisson close to zero
+and $\sigma$ of quasi-Poisson close to one.  It is interesting to note
+that if we omit the high order effects the models show evidence of
+overdispersion. This exemplifies the discussion about causes of
+overdispersion made in \autoref{introduction}.  We can also note that
+the quasi-Poisson approach, although robust to equidispersion
+assumption, shows a higher descriptive levels ($p$-values) than
+parametric models, that is, the tests under parametric models are more
+powerful than the ones under the quasi-Poisson model in the
+equidispersed case.
 
-In \autoref{tab:coef-ovos} we presented the estimates of the regression
+In \autoref{tab:coef-ovos} we present the estimates of the regression
 parameters considering the cubic dose effect (third predictor). The
-interpretations are similar to the discussed in the others cases
-studies, but in this the Poisson model is also suitable for indicating
-the significance of the effects. In addition, note that the parameters
-of the standard COM-Poisson model are comparable to the others models,
-this occurs because it is the particular case $\phi = 0$ which implies
-$\lambda = \mu$. \autoref{fig:pred-ovos} shows the number of live
-off-springs observed in experiment with fitted curves and confidence
-bands for all model strategies adopted.
+interpretations are similar to others cases studies, however, in this
+case the Poisson model is also suitable for indicating the significance
+of the covariate effects.  In addition, note that the parameter
+estimates of the original COM-Poisson model are comparable to the others
+models. It occurs because it is the special case $\phi = 0$ which
+implies $\lambda = \mu$. \autoref{fig:pred-ovos} shows the number of
+live off-springs observed and fitted along with confidence intervals for
+all model strategies adopted.
 
 \begin{table}[!ht]
 \centering
@@ -2113,10 +2125,10 @@ print.xtable(xtable(est.ovos, digits = 4),
 \end{tabular}
 \end{table}
 
-The fitted values and confidence bands in \autoref{fig:pred-ovos} come
-to have a full overlay. This shows that even in case where is not
-necessary to estimate the precision parameter $\phi$, but estimating it
-does not lead to incorrect analysis.
+The fitted values and confidence intervals in \autoref{fig:pred-ovos}
+come to have a full overlay. It shows that the estimation of the extra
+dispersion parameter does not affect the estimation of the regression
+coefficients in the case of equidispersed counts.
 
 <<pred-ovos, fig.height=3.5, fig.width=5.5, out.width="0.7\\textwidth", fig.cap="Number of live offsprings observed for each nitrofen concentration level with fitted curves and 95\\% confidence intervals.">>=
 
@@ -2200,12 +2212,15 @@ xyplot(novos ~ dose,
 
 @
 
-Finally, in \autoref{tab:corr-ovos} we presented the empirical
-correlations between regression and precision parameters. The results
-show that even in the particular case ($\phi=0$), the empirical
-correlations for the standard models are not zero. For the
+Finally, in \autoref{tab:corr-ovos} we present the empirical
+correlations between the regression and dispersion parameter estimates.
+The results show that even in the special case ($\phi=0$), the empirical
+correlations for the original COM-Poisson model are not zero.  For the
 reparametrized model, as discussed in the previous sections, the
-correlations are practically null.
+correlations are practically null. The computational times for fifty
+repetitions of fit are similar. The average time to fit for the
+COM-Poisson$_\mu$ and COM-Poisson models is 1.19 and 1.09 seconds,
+respectively.
 
 <<corr-ovos, results="asis">>=
 
