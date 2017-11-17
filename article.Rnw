@@ -6,6 +6,7 @@
 % Personal packages and definitions
 \usepackage{amsfonts}
 \usepackage{float}
+\usepackage[section]{placeins}
 \usepackage{bm}
 \DeclareRobustCommand{\rchi}{{\mathpalette\irchi\relax}}
 \newcommand{\irchi}[2]{\raisebox{\depth}{$#1\chi$}}
