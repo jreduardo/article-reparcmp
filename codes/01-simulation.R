@@ -71,6 +71,7 @@ rcmp <- Vectorize(FUN = function(n, mu, phi) {
 
 #-------------------------------------------
 # Simulation
+# CAUTION LONG TIME CONSUMING 12H, LOAD THE RESULTS OF COMPRESSED FILE
 library(parallel)
 results <- mclapply(sizes, function(n) {
     x1 <- seq(0, 1, length.out = n)
@@ -101,7 +102,6 @@ results <- mclapply(sizes, function(n) {
         }) # Close replicate
     }) # Close phi
 }, mc.cores = 3) # Close sizes
-
 str(results)
 
 saveRDS(results, "simulation.rds", compress = FALSE)
@@ -134,10 +134,7 @@ aux <- ldply(lapply(results, function(x) {
     })
     ldply(out, .id = "phi")
 }), .id = "n")
-
 str(aux)
-
-
 
 # Where is NA's?
 aux$na <- apply(aux, 1, function(x) as.integer(sum(is.na(x)) != 0))
@@ -243,6 +240,47 @@ xyplot(param ~ bias | phi, groups = n, data = bias,
                     panel.abline(h = 1:5, col = "lightgray", lty = 2)
                 })
     )
+
+# Alternative graph (figure with all point is very large in size memory)
+bwplot(param ~ bias | phi, groups = n, data = bias,
+       pch = "|",
+       grid = TRUE,
+       as.table = TRUE,
+       layout = c(4, 1),
+       xlab = "Standardized Bias",
+       fill = "gray80",
+       col = "red",
+       strip = strip.custom(factor.levels = fl),
+       panel = panel.superpose,
+       scales = list(y = list(labels = yl)),
+       box.width = 0.05,
+       whisker.width = 0.4,
+       key = key,
+       par.settings = list(
+           plot.symbol = list(pch = 20, cex = 0.5, col = "gray70"),
+           box.rectangle = list(col = "gray70"),
+           box.umbrella=list(col = "gray70", lwd = 2)
+       ),
+       panel.groups = function(x, y, group.number, ...) {
+           my.panel.bwplot(x, (y - 0.05) + (group.number - 2.5) / 5, ...)
+           panel.abline(v = 0, lty = 2)
+       }) +
+    segplot(param ~ bias[, "lwr"] + bias[, "upr"] | phi,
+            centers = bias[, "fit"],
+            data = cidata,
+            draw = FALSE,
+            horizontal = TRUE,
+            layout = c(4, 1),
+            groups = n, gap = 0.3,
+            key = key,
+            pch = 21:24,
+            cex = 0.7,
+            lwd = 2,
+            panel = function(...) {
+                panel.groups.segplot(...)
+                panel.abline(v = 0, lty = 2)
+                panel.abline(h = 1:5, col = "lightgray", lty = 2)
+            })
 
 #-----------------------------------------------------------------------
 # Compute coverage rate

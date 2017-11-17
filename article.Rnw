@@ -14,7 +14,6 @@
 \usepackage[english, vlined, ruled]{algorithm2e}
 \SetAlCapSty{}
 
-
 \usepackage{booktabs}
 \usepackage{tabularx}
 \newcolumntype{C}{>{\centering\arraybackslash}X}
@@ -126,7 +125,7 @@ opts_chunk$set(
     fig.height = 5,
     out.width = "1\\textwidth",
     fig.align = "center",
-    fig.pos = "!ht",
+    fig.pos = "!htp",
     # dev = "tikz"
     dev.args = list(family = "Palatino")
     )
@@ -536,7 +535,7 @@ distribution takes the form
   \left ( \mu +\frac{ e^\phi-1}{2e^\phi} \right )^{ye^\phi}
   \frac{(y!)^{-e^\phi}}{Z(\mu, \phi)},
   \qquad y = 0, 1, 2, \ldots\,,
-\end{equation} where $\mu > 0$. We denotes this distribution as
+\end{equation} where $\mu > 0$. We denote this distribution as
 COM-Poisson$_\mu$. In \autoref{fig:pmf-cmp} we show the shapes of
 COM-Poisson$_\mu$ distribution.
 
@@ -866,13 +865,13 @@ involves the computation of the infinite series in
 computational expansive for regions of the parameter space where the
 convergence of the infinite sum is slow.
 
-Parameter estimation requires numerical maximization of
-\autoref{eqn:ll-rcmp}. Since derivatives of $\ell$ cannot be obtained in
-closed forms, we adopted the BFGS algorithm~\cite{Nocedal1995} as
-implemented in the function \texttt{optim()} for the statistical
-software \texttt{R}. Standard errors for regression coefficients are
-obtained based on the observed information matrix
-$\mathcal{I}(\bm{\theta})$, where
+Parameter estimation requires the numerical maximization of
+\autoref{eqn:ll-rcmp}. Since the derivatives of $\ell$ cannot be
+obtained in closed forms, we adopted the \texttt{BFGS}
+algorithm~\cite{Nocedal1995} as implemented in the function
+\texttt{optim()} for the statistical software \texttt{R}. Standard
+errors for the regression coefficients are obtained based on the
+observed information matrix $\mathcal{I}(\bm{\theta})$, where
 $\mathcal{I}(\bm{\theta}) = -\mathcal{H}(\bm{\theta})$ (Hessian matrix)
 is computed numerically. Confidence intervals for $\hat{\mu}_i$ are
 obtained by using the delta method~\citep[p. 89]{Pawitan2001}.
@@ -1081,7 +1080,7 @@ empirical distribution is slightly right-skewed.
 \autoref{fig:coverage-plot} presents the empirical coverage rate of the
 asymptotic confidence intervals.
 
-<<bias-plot, cache=TRUE, fig.height=5, fig.width=8, fig.cap="Distributions of standardized bias (gray points) and average with confidence intervals (black segments) by differents sample sizes and dispersion levels.">>=
+<<bias-plot, cache=TRUE, fig.height=6.5, fig.width=8.5, fig.cap="Distributions of standardized bias (gray points) and average with confidence intervals (black segments) by different sample sizes and dispersion levels.">>=
 
 # Distributions of bias and average with confidence intervals
 ci <- function(x) {
@@ -1105,44 +1104,87 @@ fl <- parse(text = gsub("=", "==", levels(bias$phi)))
 yl <- parse(text = c("hat(phi)",
                      paste0("hat(beta)[", c(0, 1, 21, 22), "]")))
 
-xyplot(param ~ bias | phi, groups = n, data = bias,
-       panel = panel.superpose,
+
+# Alternative graph (figure with all point is very large in size memory)
+bwplot(param ~ bias | phi, groups = n, data = bias,
+       pch = "|",
+       grid = TRUE,
+       as.table = TRUE,
        layout = c(4, 1),
-       key = key,
-       strip = strip.custom(factor.levels = fl),
-       scales = list(y = list(labels = yl)),
-       ylab = "",
        xlab = "Standardized Bias",
-       jitter.y = TRUE,
-       factor = 0.1,
-       gap = 0.3,
-       alpha = 0.6,
-       col = "gray80",
-       cex = 0.7,
-       panel.groups = function(x, y, group.number,
-                               subscripts, gap, ...){
-           noise <- centfac(factor(levels(bias$n)), space = gap)
-           noise <- sort(noise)
-           panel.xyplot(x, y + noise[group.number], ...)
+       fill = "gray80",
+       col = "red",
+       strip = strip.custom(factor.levels = fl),
+       panel = panel.superpose,
+       scales = list(y = list(labels = yl)),
+       box.width = 0.05,
+       whisker.width = 0.4,
+       key = key,
+       par.settings = list(
+           plot.symbol = list(pch = 20, cex = 0.5, col = "gray70"),
+           box.rectangle = list(col = "gray70"),
+           box.umbrella=list(col = "gray70", lwd = 2)
+       ),
+       panel.groups = function(x, y, group.number, ...) {
+           my.panel.bwplot(x, (y - 0.05) + (group.number - 2.5) / 5, ...)
+           panel.abline(v = 0, lty = 2)
        }) +
-    as.layer(
-        segplot(param ~ bias[, "lwr"] + bias[, "upr"] | phi,
-                centers = bias[, "fit"],
-                data = cidata,
-                draw = FALSE,
-                horizontal = TRUE,
-                layout = c(4, 1),
-                groups = n, gap = 0.3,
-                key = key,
-                pch = 21:24,
-                cex = 0.7,
-                lwd = 2,
-                panel = function(...) {
-                    panel.groups.segplot(...)
-                    panel.abline(v = 0, lty = 2)
-                    panel.abline(h = 1:5, col = "lightgray", lty = 2)
-                })
-    )
+    segplot(param ~ bias[, "lwr"] + bias[, "upr"] | phi,
+            centers = bias[, "fit"],
+            data = cidata,
+            draw = FALSE,
+            horizontal = TRUE,
+            layout = c(4, 1),
+            groups = n, gap = 0.3,
+            key = key,
+            pch = 21:24,
+            cex = 0.7,
+            lwd = 2,
+            panel = function(...) {
+                panel.groups.segplot(...)
+                panel.abline(v = 0, lty = 2)
+                panel.abline(h = 1:5, col = "lightgray", lty = 2)
+            })
+
+# xyplot(param ~ bias | phi, groups = n, data = bias,
+#        panel = panel.superpose,
+#        layout = c(4, 1),
+#        key = key,
+#        strip = strip.custom(factor.levels = fl),
+#        scales = list(y = list(labels = yl)),
+#        ylab = "",
+#        xlab = "Standardized Bias",
+#        jitter.y = TRUE,
+#        factor = 0.1,
+#        gap = 0.3,
+#        alpha = 0.6,
+#        col = "gray80",
+#        cex = 0.7,
+#        panel.groups = function(x, y, group.number,
+#                                subscripts, gap, ...){
+#            noise <- centfac(factor(levels(bias$n)), space = gap)
+#            noise <- sort(noise)
+#            panel.xyplot(x, y + noise[group.number], ...)
+#        }) +
+#     as.layer(
+#         segplot(param ~ bias[, "lwr"] + bias[, "upr"] | phi,
+#                 centers = bias[, "fit"],
+#                 data = cidata,
+#                 draw = FALSE,
+#                 horizontal = TRUE,
+#                 layout = c(4, 1),
+#                 groups = n, gap = 0.3,
+#                 key = key,
+#                 pch = 21:24,
+#                 cex = 0.7,
+#                 lwd = 2,
+#                 panel = function(...) {
+#                     panel.groups.segplot(...)
+#                     panel.abline(v = 0, lty = 2)
+#                     panel.abline(h = 1:5, col = "lightgray", lty = 2)
+#                 })
+#     )
+
 @
 
 <<coverage-data>>=
@@ -1184,7 +1226,7 @@ become closer to the nominal level for large samples.  The worst
 scenario is when we have small sample size and strong overdispersed
 counts.
 
-<<coverage-plot, fig.height=4, fig.width=9, fig.cap="Coverage rate based on confidence intervals obtained by quadratic approximation for differents sample sizes and dispersion levels.">>=
+<<coverage-plot, fig.height=4, fig.width=9, fig.cap="Coverage rate based on confidence intervals obtained by quadratic approximation for different sample sizes and dispersion levels.">>=
 
 fl <- parse(text = gsub("=", "==", levels(bias$phi)))
 yl <- parse(text = c("hat(phi)",
@@ -1520,7 +1562,7 @@ corrncap_aux <- divide_matrix(corr.ncap, divide = 6)
 
 \begin{table}[ht]
 \centering
-\caption{Empirical correlations between $\hat{\phi}$ and $\hat{\bm{\beta}}$ for the two parametrizations of COM-Poisson model fit to equidispersed data.}
+\caption{Empirical correlations between $\hat{\phi}$ and $\hat{\bm{\beta}}$ for the two parametrizations of COM-Poisson model fit to underdispersed data.}
 \label{tab:corr-cotton}
 \begingroup\small
 \begin{tabular}{lrrrrrr}
