@@ -13,6 +13,13 @@ library(plyr)
 library(tidyr)
 library(bbmle)
 
+#-------------------------------------------
+# Random generation for the COM-Poisson distribution
+rcmp <- Vectorize(FUN = function(n, mu, phi) {
+    par <- mu2lambda(mu, phi)
+    with(par, compoisson::rcom(n = n, lambda, nu))
+}, vectorize.args = "mu")
+
 #-----------------------------------------------------------------------
 # Simulation study
 B <- 1000
@@ -61,13 +68,6 @@ xy2 <- xyplot(di ~ x1 | phi, groups = x2,
 
 print(xy1, split = c(1, 1, 2, 1), more = TRUE)
 print(xy2, split = c(2, 1, 2, 1), more = FALSE)
-
-#-------------------------------------------
-# Random generation for the COM-Poisson distribution
-rcmp <- Vectorize(FUN = function(n, mu, phi) {
-    par <- mu2lambda(mu, phi)
-    with(par, compoisson::rcom(n = n, lambda, nu))
-}, vectorize.args = "mu")
 
 #-------------------------------------------
 # Simulation
@@ -398,3 +398,67 @@ useOuterStrips(
        factor.levels =  yl
     )
 )
+
+#-----------------------------------------------------------------------
+# Obtain the covariance between dispersion and regression parameters
+aux <- ldply(
+    lapply(results, function(x) {
+    ind <- names(x); names(ind) <- ind
+    out <- lapply(ind, function(y) {
+        vcovs <- lapply(x[[y]], "[[", "vcov")
+        index <- vapply(lapply(vcovs, is.na), sum, integer(1))
+        vcovs <- vcovs[!index]
+        corrs <- lapply(vcovs, cov2cor)
+        covs <- do.call(rbind, lapply(vcovs, "[", 1, 2:5))
+        cors <- do.call(rbind, lapply(corrs, "[", 1, 2:5))
+        ldply(list("cov" = covs, "cor" = cors), .id = "scale")
+    })
+    ldply(out, .id = "phi")
+}), .id = "n")
+str(aux)
+
+# Organize the results
+dacov <- gather(aux, param, value, b0:b22, factor_key = TRUE)
+dacov$phi <- ordered(dacov$phi,
+                     c("phi=-1.6", "phi=-1", "phi=0", "phi=1.8"))
+str(dacov)
+
+# Distributions of covariance/correlations
+fl <- parse(text = gsub("=", "==", levels(dacov$phi)))
+yl <- parse(text = paste0("hat(beta)[", c(0, 1, 21, 22), "]"))
+
+# Boxplots
+useOuterStrips(
+    bwplot(param ~ value | phi + scale,
+           groups = n,
+           data = dacov,
+           box.width = 0.12,
+           pch = "|",
+           grid = TRUE,
+           as.table = TRUE,
+           layout = c(4, 2),
+           xlab = "Observed values in the simulations",
+           fill = colorRampPalette(c("gray80",  "gray20"))(4),
+           panel = panel.superpose,
+           scales = list(y = list(labels = yl), x = "free"),
+           whisker.width = 0.4,
+           auto.key = list(
+               column = 4,
+               rectangles = TRUE,
+               points = FALSE,
+               title = "Sample size",
+               cex.title = 1
+           ),
+           par.settings = list(
+               plot.symbol = list(pch = 19, cex = 0.1)
+           ),
+           panel.groups = function(x, y, group.number, ...) {
+               my.panel.bwplot(x, y + (group.number - 2.5) / 5, ...)
+               panel.abline(v = 0, lty = 2)
+           }),
+    strip = strip.custom(factor.levels = fl),
+    strip.left = strip.custom(
+        factor.levels = c("Covariance", "Correlation"))
+)
+
+#-----------------------------------------------------------------------
