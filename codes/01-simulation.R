@@ -401,6 +401,7 @@ useOuterStrips(
 
 #-----------------------------------------------------------------------
 # Obtain the covariance between dispersion and regression parameters
+
 aux <- ldply(
     lapply(results, function(x) {
     ind <- names(x); names(ind) <- ind
@@ -462,3 +463,183 @@ useOuterStrips(
 )
 
 #-----------------------------------------------------------------------
+# Likelihood surfaces (simulation with simple no covariate case)
+
+# Settings of the simulation
+fixed_mu <- 10
+fixed_size <- 300L
+
+# Simulate 1000 observations of the DW distribution
+set.seed(97380)
+das <- lapply(phis, function(phi) {
+    rcmp(fixed_size, mu = fixed_mu, phi = phi)
+})
+
+# Compute approximately expected dispersion indexes
+dis <- vapply(phis, compute_variance, double(1),
+              mu = fixed_mu, sumto = 500L) / 10
+dis
+
+# Verify mean, variance and dispersion indexes in the simulations
+ldply(lapply(das, function(x) {
+    c("Mean" = mean(x), "Var" = var(x), "DI" = var(x)/mean(x))
+}), .id = "phi") %>%
+    mutate(out, "Expected DI" = dis)
+
+# Fit models
+index <- seq_along(phis)
+names(index) <- phis
+
+# Fit on original parametrization
+models_orpar <- lapply(index, function(i) {
+    lambda <- mu2lambda(fixed_mu, phis[i])[[1]]
+    start <- c("phi" = phis[i], "(Intercept)" = log(lambda))
+    y <- das[[i]]
+    fitcm(y ~ 1, sumto = 300L, model = "CP", start = start)
+})
+
+# Fit on propose reparametrization
+models_repar <- lapply(index, function(i) {
+    start <- c("phi2" = phis[i], "(Intercept)" = log(fixed_mu))
+    y <- das[[i]]
+    fitcm(y ~ 1, sumto = 300L, model = "CP2", start = start)
+})
+
+# Same maximum loglikelihood
+cbind("Original" = vapply(models_orpar, logLik, numeric(1)),
+      "Propose"  = vapply(models_repar, logLik, numeric(1)))
+
+#-------------------------------------------
+# Deviance contours
+
+# Original parametrization
+devs_orpar <- purrr::map_df(index, function(i) {
+    m0 <- models_orpar[[i]]
+    co <- unname(coef(m0))
+    # Wald intervals
+    interval <- confint(m0, level = 0.999, method = "quad")
+    aux <- lapply(as.data.frame(t(interval)),
+                  function(x) seq(x[1], x[2], length.out = 50))
+    grid <- do.call("expand.grid", list(aux, KEEP.OUT.ATTRS = FALSE))
+    # Compute loglikelihood and deviance for grid
+    grid$loglik <- apply(grid, 1, function(par) {
+        -llcmp(params = par, y = m0@data$y, X = m0@data$X, sumto = 100L)
+    })
+    grid$deviance <- -2 * (grid$loglik - logLik(m0))
+    grid$lambda <- exp(grid[, 2])
+    transform(grid,
+              "lambda" = exp(grid[, 2]),
+              "reallambda" = mu2lambda(fixed_mu, phis[i])[[1]],
+              "realphi" = phis[i],
+              "fitlambda" = exp(co[2]),
+              "fitphi" = co[1])
+})
+
+# Propose parametrization
+devs_repar <- purrr::map_df(index, function(i) {
+    m0 <- models_repar[[i]]
+    co <- unname(coef(m0))
+    # Wald intervals
+    interval <- confint(m0, level = 0.999, method = "quad")
+    aux <- lapply(as.data.frame(t(interval)),
+                  function(x) seq(x[1], x[2], length.out = 50))
+    grid <- do.call("expand.grid", list(aux, KEEP.OUT.ATTRS = FALSE))
+    # Compute loglikelihood and deviance for grid
+    grid$loglik <- apply(grid, 1, function(par) {
+        -llcmp2(params = par, y = m0@data$y, X = m0@data$X, sumto = 100L)
+    })
+    grid$deviance <- -2 * (grid$loglik - logLik(m0))
+    transform(grid,
+              "mu" = exp(grid[, 2]),
+              "realmu" = fixed_mu,
+              "realphi" = phis[i],
+              "fitmu" = exp(co[2]),
+              "fitphi" = co[1])
+})
+
+#-------------------------------------------
+# Plots deviance surfaces
+output <- readRDS("orthogonality.rds")
+devs_orpar <- output$devs_orpar
+devs_repar <- output$devs_repar
+
+niveis <- c(0.9, 0.95, 0.99)
+cortes <- qchisq(niveis, df = 2)
+fl <- parse(text = gsub("=", "==", names(phis)))
+
+# Original parametrization
+devs_orpar$fphi <- ordered(devs_orpar$realphi)
+xy1 <- useOuterStrips(
+    levelplot(
+        deviance ~ lambda + phi | fphi + "Original parametrization",
+        data = devs_orpar,
+        scales = list(y = list(rot = 90, relation = "free"),
+                      x = "free"),
+        cuts = 30,
+        xlab = expression(lambda),
+        ylab = expression(phi),
+        colorkey = list(space = "right"),
+        panel = function(x, y, z, at, region, ...,
+                         subscripts = subscripts) {
+            ##
+            flambda <- devs_orpar$fitlambda[subscripts]
+            fphi <- devs_orpar$fitphi[subscripts]
+            ##
+            tlambda <- devs_orpar$reallambda[subscripts]
+            tphi <- devs_orpar$realphi[subscripts]
+            ##
+            panel.levelplot(x, y, z, at = at, region = TRUE,
+                            ..., subscripts = subscripts)
+            panel.contourplot(x, y, z, ..., at = cortes,
+                              contour = TRUE, region = FALSE,
+                              subscripts = subscripts)
+            panel.abline(v = flambda, h = fphi, lty = 2)
+            panel.points(x = tlambda, y = tphi,
+                         lty = 2, pch = 19)
+        }),
+    strip = strip.custom(factor.levels = fl)
+)
+
+# Propose parametrization
+devs_repar$fphi <- ordered(devs_repar$realphi)
+xy2 <- useOuterStrips(
+    levelplot(
+        deviance ~ mu + phi2 | fphi + "Proposed parametrization",
+        data = devs_repar,
+        scales = list(y = list(rot = 90, relation = "free"),
+                      x = "free"),
+        cuts = 30,
+        xlab = expression(mu),
+        ylab = expression(phi),
+        colorkey = list(space = "right"),
+        panel = function(x, y, z, at, region, ...,
+                         subscripts = subscripts) {
+            ##
+            fmu <- devs_repar$fitmu[subscripts]
+            fphi <- devs_repar$fitphi[subscripts]
+            ##
+            tmu <- devs_repar$realmu[subscripts]
+            tphi <- devs_repar$realphi[subscripts]
+            ##
+            panel.levelplot(x, y, z, at = at, region = TRUE,
+                            ..., subscripts = subscripts)
+            panel.contourplot(x, y, z, ..., at = cortes,
+                              contour = TRUE, region = FALSE,
+                              subscripts = subscripts)
+            panel.abline(v = fmu, h = fphi, lty = 2)
+            panel.points(x = tmu, y = tphi,
+                         lty = 2, pch = 19)
+        }),
+    strip = strip.custom(factor.levels = fl)
+)
+
+# Organize plots
+print(xy1, position = c(0.0, 0.49, 1.0, 1.0), more = TRUE)
+print(xy2, position = c(0.0, 0.0, 0.995, 0.51), more = FALSE)
+
+# Save into compress file
+out <- list("models_orpar" = models_orpar,
+            "models_repar" = models_repar,
+            "devs_orpar" = devs_orpar,
+            "devs_repar" = devs_repar)
+saveRDS(out, "orthogonality.rds", compress = FALSE)
