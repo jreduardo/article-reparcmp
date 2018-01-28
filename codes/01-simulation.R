@@ -466,8 +466,8 @@ useOuterStrips(
 # Likelihood surfaces (simulation with simple no covariate case)
 
 # Settings of the simulation
-fixed_mu <- 10
-fixed_size <- 300L
+fixed_mu <- 5
+fixed_size <- 1000L
 
 # Simulate 1000 observations of the DW distribution
 set.seed(97380)
@@ -557,15 +557,15 @@ devs_repar <- purrr::map_df(index, function(i) {
               "fitphi" = co[1])
 })
 
-#-------------------------------------------
-# Plots deviance surfaces
-output <- readRDS("orthogonality.rds")
-devs_orpar <- output$devs_orpar
-devs_repar <- output$devs_repar
+# #-------------------------------------------
+# # Plots deviance surfaces
+# output <- readRDS("orthogonality.rds")
+# devs_orpar <- output$devs_orpar
+# devs_repar <- output$devs_repar
 
 niveis <- c(0.9, 0.95, 0.99)
 cortes <- qchisq(niveis, df = 2)
-fl <- parse(text = gsub("=", "==", names(phis)))
+fl <- parse(text = paste("phi==", sort(phis)))
 
 # Original parametrization
 devs_orpar$fphi <- ordered(devs_orpar$realphi)
