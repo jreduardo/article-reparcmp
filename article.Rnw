@@ -2491,10 +2491,10 @@ print(xtable(corr.ovos,
 \section{Concluding remarks}
 \label{conclusion}
 
-In this paper, we presented a novel parametrization of the COM-Poisson
-distribution and the associated regression model. The novel
-parametrization was based on a simple asymptotic approximation for the
-expectation and variance of the COM-Poisson distribution. The main
+In this paper, we presented and characterized a novel parametrization of
+the COM-Poisson distribution and the associated regression model. The
+novel parametrization was based on a simple asymptotic approximation for
+the expectation and variance of the COM-Poisson distribution. The main
 advantage of the proposed reparametrization is the simple interpretation
 of the regression coefficients in terms of the expectation of the
 response variable as usual in the generalized linear models
@@ -2503,14 +2503,18 @@ model with the ones from standard approaches as the Poisson and
 quasi-Poisson regression models. Furthermore, in the novel
 parametrization the COM-Poisson distribution is indexed by the
 expectation $\mu$ and an extra dispersion parameter $\phi$ which our
-data analysis suggest to be orthogonal.
+data analysis suggest being orthogonal. This is similar to
+\Citeauthor{Huang2017}'s (\citeyear{Huang2017}) parametrization but is
+simpler, because the $\mu$ is obtained from simple algebra.
 
 We evaluated the accuracy of the asymptotic approximations for the
 expectation and variance of the COM-Poisson distribution by considering
 quadratic approximation errors.  The results showed that the
 approximations are accurate for a large part of the parameter space,
-which in turn support our reparametrization.  We carried out a
-simulation study to assess the properties of the reparametrized
+which in turn support our reparametrization. Moreover, we discuss the
+properties and flexibility of the distribution to deal with count data
+although dispersion, zero-inflation and heavy-tail indexes. We carried
+out a simulation study to assess the properties of the reparametrized
 COM-Poisson model to deal with different levels of dispersion as well as
 the properties of the maximum likelihood estimators. The results of our
 simulation study suggested that the maximum likelihood estimators of the
