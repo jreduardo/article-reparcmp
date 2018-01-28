@@ -905,8 +905,9 @@ models are fitted in the \texttt{R} software using the function
 \label{simulation-study}
 
 In this section we performed a simulation study to assess the properties
-of the maximum likelihood estimators as well as the flexibility of the
-COM-Poisson regression model to deal with non-equidispersed count data.
+of the maximum likelihood estimators and orthogonality of the
+reparametrized model as well as the flexibility of the COM-Poisson
+regression model to deal with non-equidispersed count data.
 
 We considered average counts varying from $3$ to $27$ according to a
 regression model with a continuous and a categorical covariate. The
@@ -923,9 +924,9 @@ of $\bm{x}_2$.  The regression coefficients were fixed at the values,
 $\beta_0 = 2$, $\beta_1 = 0.5$, $\beta_{21} = 0.8$ and
 $\beta_{22} = -0.8$.
 
-We designed four simulation scenarios by considering different
-values of the dispersion parameter $\phi = -1.6, -1.0, 0.0$ and $1.8$.
-Thus, we have strong and moderate overdispersion, equidispersion, and
+We designed four simulation scenarios by considering different values of
+the dispersion parameter $\phi = -1.6, -1.0, 0.0$ and $1.8$.  Thus, we
+have strong and moderate overdispersion, equidispersion, and
 underdispersion, respectively.  \autoref{fig:justpars} shows the
 variation of the average counts (left) and dispersion index (right) for
 each value of the dispersion parameter considered in the simulation
@@ -1270,6 +1271,182 @@ xyplot(coverage ~ n | param,
 
 @
 
+To check the orthogonality property we compute the covariance matrix
+between maximum likelihood estimators
+$\hat{\bm{\theta}} = (\hat{\bm{\beta}}, \phi)$, obtained by observed
+information matrix,
+Cov$(\hat{\bm{\theta}}) = \mathcal{I}^{-1}(\bm{\theta})$.
+\autoref{fig:ortho-plot} shows the covariance between regression and
+dispersion parameter estimators for each simulation scenario, on
+the correlation scale. The correlations are close to zero in all cases
+suggesting the orthogonality property for the reparametrized
+model. Interesting results in the first panel shows that
+cov($\hat{\beta}_{22}, \hat{\phi}$) is not very close to zero (values
+between $-0.4$ and $0.2$) for strong overdispersion ($\phi = -1.6$).
+
+<<ortho-plot, fig.height=4.5, fig.width=9, fig.cap="Empirical correlations between regression and dispersion parameters by different sample sizes and dispersion levels.">>=
+
+#-----------------------------------------------------------------------
+# Obtain the covariance between dispersion and regression parameters
+
+aux <- ldply(
+    lapply(results, function(x) {
+    ind <- names(x); names(ind) <- ind
+    out <- lapply(ind, function(y) {
+        vcovs <- lapply(x[[y]], "[[", "vcov")
+        index <- vapply(lapply(vcovs, is.na), sum, integer(1))
+        vcovs <- vcovs[!index]
+        corrs <- lapply(vcovs, cov2cor)
+        covs <- do.call(rbind, lapply(vcovs, "[", 1, 2:5))
+        cors <- do.call(rbind, lapply(corrs, "[", 1, 2:5))
+        ldply(list("cov" = covs, "cor" = cors), .id = "scale")
+    })
+    ldply(out, .id = "phi")
+}), .id = "n")
+str(aux)
+
+# Organize the results
+dacov <- gather(aux, param, value, b0:b22, factor_key = TRUE)
+dacov$phi <- ordered(dacov$phi,
+                     c("phi=-1.6", "phi=-1", "phi=0", "phi=1.8"))
+str(dacov)
+
+# Distributions of covariance/correlations
+fl <- parse(text = gsub("=", "==", levels(dacov$phi)))
+yl <- parse(text = paste0("hat(beta)[", c(0, 1, 21, 22), "]"))
+
+# Boxplots
+bwplot(param ~ value | phi,
+       groups = n,
+       data = subset(dacov, scale == "cor"),
+       box.width = 0.12,
+       pch = "|",
+       grid = TRUE,
+       as.table = TRUE,
+       layout = c(4, 1),
+       xlab = "Empirical correlations with dispersion parameter estimator",
+       fill = colorRampPalette(c("gray80",  "gray20"))(4),
+       panel = panel.superpose,
+       scales = list(y = list(labels = yl), x = "free"),
+       whisker.width = 0.4,
+       strip = strip.custom(factor.levels = fl),
+       auto.key = list(
+           column = 4,
+           rectangles = TRUE,
+           points = FALSE,
+           title = "Sample size",
+           cex.title = 1
+       ),
+       par.settings = list(
+           plot.symbol = list(pch = 19, cex = 0.1)
+       ),
+       panel.groups = function(x, y, group.number, ...) {
+           my.panel.bwplot(x, y + (group.number - 2.5) / 5, ...)
+           panel.abline(v = 0, lty = 2)
+       })
+
+@
+
+To ilustrate the orthogonality, \autoref{fig:ortho-surf} the deviance
+surfaces for four simulated data set of size 1000, $\mu=5$ and different
+values of the dispersion parameters. The shapes of the deviance function
+show that the proposed parametrization is better for both computation
+and asymptotic (normal-based) inference. Furthermore, it is interesting
+to note that the deviance function shape on strong overdispersion
+($\phi=-1.8$) not as well behaved as the others. This is due to the
+difficulty of the distribution in dealing with strong overdispersion in
+low counts (see dispersion index plot in the
+\autoref{fig:indexes-plot}). This also explains the results of
+Cov$(\hat{\beta}_{22}, \phi)$ in the first panel of
+\autoref{fig:ortho-plot}, since $\beta_{22}$ is negative and associate
+with low counts.
+
+<<ortho-surf, fig.height=5.1, fig.width=9, fig.cap="Deviance surfaces under original and proposed parametrization for simulated data sets of size 1000 an different dispersion parameters. The ellipses are confidence regions (90, 95 and 99\\%), dotted lines are the maximum likelihood estimates, and points are the real parameters used in the simulation.">>=
+
+#-------------------------------------------
+# Plots deviance surfaces
+output <- readRDS("codes/orthogonality.rds")
+devs_orpar <- output$devs_orpar
+devs_repar <- output$devs_repar
+
+niveis <- c(0.9, 0.95, 0.99)
+cortes <- qchisq(niveis, df = 2)
+fl <- parse(text = paste("phi==", sort(phis)))
+
+# Original parametrization
+devs_orpar$fphi <- ordered(devs_orpar$realphi)
+xy1 <- useOuterStrips(
+    levelplot(
+        deviance ~ lambda + phi | fphi + "Original parametrization",
+        data = devs_orpar,
+        scales = list(y = list(rot = 90, relation = "free"),
+                      x = "free"),
+        cuts = 30,
+        xlab = expression(lambda),
+        ylab = expression(phi),
+        colorkey = FALSE,
+        panel = function(x, y, z, at, region, ...,
+                         subscripts = subscripts) {
+            ##
+            flambda <- devs_orpar$fitlambda[subscripts]
+            fphi <- devs_orpar$fitphi[subscripts]
+            ##
+            tlambda <- devs_orpar$reallambda[subscripts]
+            tphi <- devs_orpar$realphi[subscripts]
+            ##
+            panel.levelplot(x, y, z, at = at, region = TRUE,
+                            ..., subscripts = subscripts)
+            panel.contourplot(x, y, z, ..., at = cortes,
+                              contour = TRUE, region = FALSE,
+                              subscripts = subscripts)
+            panel.abline(v = flambda, h = fphi, lty = 2)
+            panel.points(x = tlambda, y = tphi,
+                         lty = 2, pch = 19)
+        }),
+    strip = strip.custom(factor.levels = fl),
+    strip.left = strip.custom(par.strip.text=list(cex = 0.9))
+)
+
+# Propose parametrization
+devs_repar$fphi <- ordered(devs_repar$realphi)
+xy2 <- useOuterStrips(
+    levelplot(
+        deviance ~ mu + phi2 | fphi + "Proposed parametrization",
+        data = devs_repar,
+        scales = list(y = list(rot = 90, relation = "free"),
+                      x = "free"),
+        cuts = 30,
+        xlab = expression(mu),
+        ylab = expression(phi),
+        colorkey = FALSE,
+        panel = function(x, y, z, at, region, ...,
+                         subscripts = subscripts) {
+            ##
+            fmu <- devs_repar$fitmu[subscripts]
+            fphi <- devs_repar$fitphi[subscripts]
+            ##
+            tmu <- devs_repar$realmu[subscripts]
+            tphi <- devs_repar$realphi[subscripts]
+            ##
+            panel.levelplot(x, y, z, at = at, region = TRUE,
+                            ..., subscripts = subscripts)
+            panel.contourplot(x, y, z, ..., at = cortes,
+                              contour = TRUE, region = FALSE,
+                              subscripts = subscripts)
+            panel.abline(v = fmu, h = fphi, lty = 2)
+            panel.points(x = tmu, y = tphi,
+                         lty = 2, pch = 19)
+        }),
+    strip = strip.custom(factor.levels = fl),
+    strip.left = strip.custom(par.strip.text=list(cex = 0.9))
+)
+
+# Organize plots
+print(xy1, position = c(0.0, 0.48, 1.0, 1.0), more = TRUE)
+print(xy2, position = c(0.0, 0.0, 1.0, 0.52), more = FALSE)
+
+@
+
 \section{Case studies}
 \label{case-studies}
 
@@ -1407,7 +1584,7 @@ for the COM-Poisson and COM-Poisson$_\mu$ models.  It suggests that the
 reparametrization does not change the model fit, as expected.  The
 Poisson model is clearly unsuitable, being overly conservative.  The
 difference in terms of log-likelihood value from the Poisson to the
-COM-Poisson$_\mu$ model was $$\Sexpr{lrt.ncap[2, 4]}$$, which in turn
+COM-Poisson$_\mu$ model was $\Sexpr{lrt.ncap[2, 4]}$, which in turn
 suggests the better fit of the COM-Poisson$_{\mu}$ model. A chi-square
 test also supports this statement.  Finally, the estimated value of the
 dispersion parameter $\\hat{\phi} = \Sexpr{co1[1]}$ suggests
