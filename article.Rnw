@@ -1273,14 +1273,14 @@ xyplot(coverage ~ n | param,
 
 To check the orthogonality property we compute the covariance matrix
 between maximum likelihood estimators
-$\hat{\bm{\theta}} = (\hat{\bm{\beta}}, \phi)$, obtained by observed
-information matrix,
+$\hat{\bm{\theta}} = (\hat{\bm{\beta}}, \phi)$, obtained from the
+observed information matrix,
 Cov$(\hat{\bm{\theta}}) = \mathcal{I}^{-1}(\bm{\theta})$.
 \autoref{fig:ortho-plot} shows the covariance between regression and
-dispersion parameter estimators for each simulation scenario, on
-the correlation scale. The correlations are close to zero in all cases
+dispersion parameter estimators for each simulation scenario, on the
+correlation scale. The correlations are close to zero in all cases
 suggesting the orthogonality property for the reparametrized
-model. Interesting results in the first panel shows that
+model. Interestingly, results in the first panel show that
 cov($\hat{\beta}_{22}, \hat{\phi}$) is not very close to zero (values
 between $-0.4$ and $0.2$) for strong overdispersion ($\phi = -1.6$).
 
@@ -1347,7 +1347,7 @@ bwplot(param ~ value | phi,
 
 @
 
-<<ortho-surf, fig.height=5, fig.width=9, fig.cap="Deviance surfaces under original and proposed parametrization for simulated data sets of size 1000 an different dispersion parameters. The ellipses are confidence regions (90, 95 and 99\\%), dotted lines are the maximum likelihood estimates, and points are the real parameters used in the simulation.">>=
+<<ortho-surf, fig.height=5, fig.width=9, fig.cap="Deviance surfaces contour plots under original and proposed parametrization for four simulated data sets of size 1000 with different dispersion parameters. The ellipses are confidence regions (90, 95 and 99\\%), dotted lines are the maximum likelihood estimates, and points are the real parameters used in the simulation.">>=
 
 #-------------------------------------------
 # Plots deviance surfaces
@@ -1433,19 +1433,19 @@ print(xy2, position = c(0.0, 0.0, 1.0, 0.52), more = FALSE)
 
 @
 
-To ilustrate the orthogonality, \autoref{fig:ortho-surf} the deviance
-surfaces for four simulated data set of size 1000, $\mu=5$ and different
-values of the dispersion parameters. The shapes of the deviance function
-show that the proposed parametrization is better for both computation
-and asymptotic (normal-based) inference. Furthermore, it is interesting
-to note that the deviance function shape on strong overdispersion
-($\phi=-1.6$) not as well behaved as the others. This is due to the
-difficulty of the distribution in dealing with strong overdispersion in
-low counts (see dispersion index plot in the
-\autoref{fig:indexes-plot}). This also explains the results of
-Cov$(\hat{\beta}_{22}, \phi)$ in the first panel of
-\autoref{fig:ortho-plot}, since $\beta_{22}$ is negative and associate
-with low counts.
+To illustrate the orthogonality, \autoref{fig:ortho-surf} displays
+contour plots of the deviance surfaces for four simulated data set of
+size 1000, $\mu=5$ and different values of the dispersion
+parameters. The shapes of the deviance function show that the proposed
+parametrization is better for both computation and asymptotic
+(normal-based) inference. Furthermore, it is interesting to note that
+the deviance function shape under strong overdispersion ($\phi=-1.6$) is
+not as well behaved as the others; this is due to the difficulty of the
+distribution in dealing with strong overdispersion in low counts (see
+dispersion index plot in the \autoref{fig:indexes-plot}). This also
+explains the results of Cov$(\hat{\beta}_{22}, \phi)$ in the first panel
+of \autoref{fig:ortho-plot}, since $\beta_{22}$ is negative and
+associated with low counts.
 
 \section{Case studies}
 \label{case-studies}
@@ -1838,7 +1838,7 @@ lrt.ngra <- getAnova(m2PO, m2C2)
 
 @
 
-<<desc-soy, fig.pos="!ht", fig.height=4, fig.width=8, fig.cap="Number of bean seeds per pot for each potassium dose and moisture level (left) and sample mean against sample variance of the five replicates for each experimental treatment (right). Solid lines are the smoothing curves on the left and the least of squares curve on the right.">>=
+<<desc-soy, fig.height=4, fig.width=8, fig.cap="Number of bean seeds per pot for each potassium dose and moisture level (left) and sample mean against sample variance of the five replicates for each experimental treatment (right). Solid lines are the smoothing curves on the left and the least of squares curve on the right.">>=
 
 #-----------------------------------------------------------------------
 # Exploratory analysis
@@ -2050,7 +2050,7 @@ models are really similar, which in turn shows the already highlighted
 similarity between these approaches, however only the COM-Poisson
 model$_{\mu}$ corresponds to a fully specified probability model.
 
-<<pred-soy, fig.pos="!ht", fig.height=3.8, fig.width=8, fig.cap="Dispersion diagrams of been seeds counts as function of potassium doses and humidity levels with fitted curves and confidence intervals (95\\%).">>=
+<<pred-soy, fig.height=3.8, fig.width=8, fig.cap="Dispersion diagrams of been seeds counts as function of potassium doses and humidity levels with fitted curves and confidence intervals (95\\%).">>=
 
 #-----------------------------------------------------------------------
 # Prediction
