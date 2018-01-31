@@ -27,7 +27,7 @@
   Clarice G. B. Dem\'{e}trio\Affil{1}
   and John Hinde\Affil{3}
 }
-\AuthorRunning{Ribeiro Jr \textrm{et al.}}
+\AuthorRunning{Eduardo E. Ribeiro Jr \textrm{et al.}}
 
 \Affiliations{
 \item Department of Exact Sciences,
@@ -93,7 +93,7 @@
   illustrate the application of the proposed model through the analysis
   of three data sets with over-, under- and equidispersed count data.
   The study of distribution properties through a consideration of
-  dispersion, zero-inflated and heavy tail indices, together with the
+  dispersion, zero-inflated and heavy tail indexes, together with the
   results of data analysis show the flexibility over standard
   approaches. Therefore, we encourage the application of the new
   parametrization for the analysis of count data in the context of
@@ -1435,7 +1435,7 @@ print(xy2, position = c(0.0, 0.0, 1.0, 0.52), more = FALSE)
 
 To illustrate the orthogonality, \autoref{fig:ortho-surf} displays
 contour plots of the deviance surfaces for four simulated data set of
-size 1000, $\mu=5$ and different values of the dispersion
+size 1000 with $\mu=5$ and different values of the dispersion
 parameters. The shapes of the deviance function show that the proposed
 parametrization is better for both computation and asymptotic
 (normal-based) inference. Furthermore, it is interesting to note that
