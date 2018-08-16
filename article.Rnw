@@ -499,7 +499,7 @@ xy1 <- levelplot(emu ~ phi + mu, data = grid,
                  par.settings = ps2,
                  panel = function(x, y, z, ...) {
                      panel.levelplot(x, y, z, ...)
-                     panel.curve(10 - ( exp(x) - 1)/(2 * exp(x)),
+                     panel.curve(10 - (exp(x) - 1)/(2 * exp(x)),
                                  lty = 2)
                      panel.abline(v = 0, lty = 2)
                  })
@@ -514,8 +514,8 @@ xy2 <- levelplot(eva ~ phi + mu, data = grid,
                  par.settings = ps2,
                  panel = function(x, y, z, ...) {
                      panel.levelplot(x, y, z, ...)
-                     panel.curve((10 - ( exp(x) - 1)/
-                                  (2 * exp(x)))/exp(x), lty = 2)
+                     panel.curve(10 - (exp(x) - 1)/(2 * exp(x)),
+                                 lty = 2)
                      panel.abline(v = 0, lty = 2)
                  })
 
