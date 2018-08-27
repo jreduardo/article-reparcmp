@@ -65,42 +65,33 @@
 
 % -------------------------------------------
 % Abstract
-\Abstract{ In the analysis of count data often the equidispersion
-  assumption is not suitable, hence the Poisson regression model is
-  inappropriate.  As a generalization of the Poisson distribution the
-  COM-Poisson distribution can deal with under-, equi- and overdispersed
-  count data.  It is a member of the exponential family of distributions
-  and has the Poisson and geometric distributions as special cases, as
-  well as the Bernoulli distribution as a limiting case.  In spite of
-  the nice properties of the COM-Poisson distribution, its location
-  parameter does not correspond to the expectation, which complicates
-  the interpretation of regression models specified using this
-  distribution. In this paper, we propose a straightforward
-  reparametrization of the COM-Poisson distribution based on an
-  approximation to the expectation of this distribution. The main
-  advantage of our new parametrization is the straightforward
-  interpretation of the regression coefficients in terms of the
-  expectation of the count response variable, as usual in the context of
-  generalized linear models. Furthermore, the estimation and inference
-  for the new COM-Poisson regression model can be done based on the
+\Abstract{The COM-Poisson distribution is a two-parameter generalization
+  of Poisson distribution can deal with under-, equi- and overdispersed
+  count data. Its location parameter does not correspond to the
+  expectation, which complicates the interpretation of regression models
+  specified using this distribution. In this paper, we propose a
+  straightforward reparametrization of the COM-Poisson distribution
+  based on an approximation to the expectation of this distribution. The
+  main advantage of our new parametrization is the interpretation of the
+  regression coefficients in terms of the expectation of the count
+  response variable, as usual in the context of generalized linear
+  models. Furthermore, the estimation and inference for the
+  reparametrized COM-Poisson regression models can be done based on the
   likelihood paradigm. We carried out simulation studies to verify the
   finite sample properties of the maximum likelihood estimators. The
-  results from our simulation study show that the maximum likeli-hood
+  results from our simulation study show that the maximum likelihood
   estimators are unbiased and consistent for both regression and
-  dispersion parameters. We observed that the empirical correlation
-  between the regression and dispersion parameter estimators is close to
-  zero, which suggests that these parameters are orthogonal. We
-  illustrate the application of the proposed model through the analysis
-  of three data sets with over-, under- and equidispersed count data.
-  The study of distribution properties through a consideration of
-  dispersion, zero-inflated and heavy tail indexes, together with the
-  results of data analysis show the flexibility over standard
-  approaches. Therefore, we encourage the application of the new
-  parametrization for the analysis of count data in the context of
-  COM-Poisson regression models.  The computational routines for fitting
-  the original and new version of the COM-Poisson regression model and
-  the analyzed data sets are available in the supplementary material.
-}
+  dispersion parameters. The empirical correlation between the
+  regression and dispersion parameter estimators and deviance surfaces
+  suggests that these parameters are orthogonal. We illustrate the
+  application of the proposed model through the analysis of three data
+  sets with over-, under- and equidispersed count data. The study of
+  distribution properties through a consideration of dispersion,
+  zero-inflated and heavy tail indexes, together with the results of
+  data analysis show the flexibility over standard approaches.  The
+  computational routines for fitting the original and new version of the
+  COM-Poisson regression model and the analyzed data sets are available
+  in the supplementary material.  }
 
 %-------------------------------------------
 % Key-words
@@ -139,9 +130,9 @@ distribution has only one parameter, which represents both the
 expectation and variance of the count random variable.  This restriction
 on the relationship between the expectation and variance induced by the
 Poisson distribution is referred as equidispersion.  However, in
-practical data analysis such a restriction can be unsuitable, since the
+practical data analysis such restriction can be unsuitable, since the
 observed data can present  variance both smaller or larger than the
-expectation, leading to the cases of under and overdispersion,
+expectation, leading to the cases of under- and overdispersion,
 respectively.  The main problem of the application of the Poisson
 regression model to non-equidispersed count data is that the standard
 errors associated with the regression coefficients are inconsistently
@@ -167,8 +158,8 @@ component observations, such as maxima of Poisson distributed
 counts~\citep{Steutel1989}.
 
 The strategies for constructing alternative count distributions are
-related with the causes of the non-equidispersion. Specfically for the
-overdispersion case Poisson mixture models are widely applied.  One
+related with the causes of the non-equidispersion. Specifically for the
+overdispersion, Poisson mixture models are widely applied.  One
 popular example of this approach is the negative-binomial model, where
 the expectation of the Poisson distribution is assumed to be gamma
 distributed.  However, other distributions can be used to represent the
@@ -183,23 +174,25 @@ distribution is obtained by a generalization of the Poisson distribution
 allowing for a non-linear decrease in the ratios of successive
 probabilities~\citep{Shmueli2005}.
 
-The COM-Poisson distribution is a member of the exponential family and
-it has the Poisson and geometric distributions as special cases, as well
-as the Bernoulli distribution as a limiting case. It can deal with both
-under and overdispersed count data.  Some recently applications of the
-COM-Poisson distribution include \citet{Lord2010} for the analysis of
-traffic crash data, \citet{Sellers2010} for the modelling of airfreight
-breakage and book purchases, and \citet{Huang2017} to the analysis of
-attendance data, takeover birds and cotton boll counts.  The main
-disadvantage of the COM-Poisson regression model as presented
-in~\citet{Sellers2010} is that its location parameter does not
-correspond to the expectation of the distribution, which complicates the
-interpretation of regression models and means that they are not
-comparable with standard approaches such as the Poisson and negative
-binomial regression models. \citet{Huang2017} proposed a
-mean-parametrization of the COM-Poisson distribution in order to avoid
-such an issue.  In this approach the mean parameter is obtained by
-solving an non-linear equation defined as an infinite sum.
+The COM-Poisson distribution has the Poisson and geometric distributions
+as special cases, as well as the Bernoulli distribution as a limiting
+case. It can deal with both under- and overdispersed count data.  Some
+recently applications of the COM-Poisson distribution include
+\citet{Lord2010} for the analysis of traffic crash data,
+\citet{Sellers2010} for the modelling of airfreight breakage and book
+purchases, \citet{Huang2017} to the analysis of attendance data,
+takeover birds and cotton boll counts, and \citet{Chatla2018} to model
+counts from bike sharing systems. Theoretical results and approximations
+derived from this distribution is discussed by \citet{Shmueli2005},
+\citet{Daly2016} and \citet{Gaunt2017}. The main disadvantage of the
+COM-Poisson regression model as presented in~\citet{Sellers2010} is that
+its location parameter does not correspond to the expectation of the
+distribution, which complicates the interpretation of regression models
+and means that they are not comparable with standard approaches such as
+the Poisson and negative binomial regression models. \citet{Huang2017}
+proposed a mean-parametrization of the COM-Poisson distribution in order
+to avoid such an issue.  In this approach the mean parameter is obtained
+by solving an non-linear equation defined as an infinite sum.
 Consequently, it is computationally demanding and liable to numerical
 problems.
 
@@ -207,19 +200,19 @@ The main goal of this article is to propose a novel COM-Poisson
 parametrization based on the mean approximation presented by
 \citet{Shmueli2005}. In this parametrization, the probability mass
 function is written in terms of $\mu$ and $\phi$, where $\mu$ is the
-expectation and $\phi$ is a dispersion parameter. In contrast to the
-original parametrization, the proposed parametrization leads to
-regression coefficients directly associated with the expectation of the
-response variable, as usual in the context of generalized linear models.
-Consequently, the obtained regression coefficients are comparable with
-the ones obtained by standard approaches, such as the Poisson and
-negative binomial regression models.  Furthermore, our novel COM-Poisson
-parametrization is simpler than the strategy proposed
-by~\cite{Huang2017}, since it does not require any numerical method for
-solving non-linear equations, and we show the attractive properties like
-the orthogonality between dispersion and regression parameters and
-consistency and asymptotic normality of the maximum likelihood
-estimators are retained.
+approximated expectation and $\phi$ is a dispersion parameter. In
+contrast to the original parametrization, the proposed parametrization
+leads to regression coefficients directly associated with the
+expectation of the response variable, as usual in the context of
+generalized linear models.  Consequently, the obtained regression
+coefficients are comparable with the ones obtained by standard
+approaches, such as the Poisson and negative binomial regression models.
+Furthermore, our novel COM-Poisson parametrization is simpler than the
+strategy proposed by~\cite{Huang2017}, since it does not require any
+numerical method for solving non-linear equations, and we show the
+attractive properties like the orthogonality between dispersion and
+regression parameters and consistency and asymptotic normality of the
+maximum likelihood estimators are retained.
 
 This paper is organized as follows. In \autoref{background} we present
 the COM-Poisson distribution and the strategy proposed
@@ -323,7 +316,7 @@ COM-Poisson distribution in a suitable parametrization. In the
 parameter $\lambda$ as a function of $\mu$ and $\nu$, is given by the
 solution to
 \begin{equation*}
-  \sum_{j=0}^{\infty} (j - \mu) \frac{\lambda^j}{(y!)^\nu} = 0\,.
+  \sum_{j=0}^{\infty} (j - \mu) \frac{\lambda^j}{(j!)^\nu} = 0\,.
 \end{equation*}
 Thus the mean-parametrized COM-Poisson regression model is $\log(\mu_i)
 = \bm{x}_i^\top \bm{\beta}$. In this article, we propose an alternative
@@ -339,9 +332,9 @@ the mean approximation (\autoref{eqn:mean-approx}). We introduced a new
 parameter $\mu$, using this approximation,
 \begin{equation}
   \label{eqn:repar-cmp}
-  \mu = h(\lambda, \nu) = \lambda^{1/\nu} - \frac{\nu - 1}{2\nu}
+  \mu = h_\nu(\lambda) = \lambda^{1/\nu} - \frac{\nu - 1}{2\nu}
   \quad \Rightarrow \quad
-  \lambda = h^{-1}(\mu, \nu) = \left (\mu +
+  \lambda = h_\nu^{-1}(\mu) = \left (\mu +
     \frac{(\nu - 1)}{2\nu} \right )^\nu.
 \end{equation}
 The dispersion parameter is taken on the log scale for computational
@@ -356,12 +349,14 @@ distribution as a special case.
 
 In order to assess the accuracy of the moment approximations
 (\autoref{eqn:mean-approx}), \autoref{fig:approx-plot} presents the
-quadratic errors for (a) expectation  and (b) variance.  The
-quadratic errors were obtained by $[\mu - \text{E}(Y)]^2$ for the
-expectation and by $[ \mu \exp(-\phi) - \text{Var}(Y)]^2$ for the
-variance. In both cases $\text{E}(Y)$ and Var$(Y)$ were computed
-numerically. The dotted lines represent the border between the regions
-$\nu \leq 1$ and $\lambda > 10^\nu$, in the $\mu$ and $\phi$ scale.
+quadratic errors for (a) expectation and (b) variance.  The quadratic
+errors were obtained by $[\mu - \text{E}(Y)]^2$ for the expectation and
+by $[ \mu \exp(-\phi) - \text{Var}(Y)]^2$ for the variance. In both
+cases $\text{E}(Y)$ and Var$(Y)$ were computed numerically\footnote{We
+  compute E$(Y) = \sum_{y=0}^{500}yp(y)$ and
+  E$(Y^2) = \sum_{y=0}^{500}y^2p(y)$.}. The dotted lines represent the
+border between the regions $\nu \leq 1$ and $\lambda > 10^\nu$, in the
+$\mu$ and $\phi$ scale.
 
 <<approx-plot, fig.height=3, fig.width=6, out.width=".8\\textwidth", fig.cap="Quadratic errors for the approximation of the (a) expectation and (b) variance. Dotted lines represent the restriction for suitable approximations given by \\cite{Shmueli2005}.">>=
 @
@@ -386,12 +381,18 @@ distribution takes the form
   \left ( \mu +\frac{ e^\phi-1}{2e^\phi} \right )^{ye^\phi}
   \frac{(y!)^{-e^\phi}}{Z(\mu, \phi)},
   \qquad y = 0, 1, 2, \ldots\,,
-\end{equation} where $\mu > 0$. We denote this distribution as
+\end{equation}
+where $\mu > 0$. We denote this distribution as
 COM-Poisson$_\mu$. In \autoref{fig:pmf-cmp}, we show the shapes of
 COM-Poisson$_\mu$ distribution.
 
 <<pmf-cmp, fig.height=3, fig.width=7, fig.cap="Shapes of the COM-Poisson distribution for different parameter values.">>=
 @
+
+The constraint $\mu>0$ imposes an undesirable restriction in the
+original parameter space, $\lambda^\nu>(\nu-1)/(2\nu)$. However, this
+restricted region is related to small underdispersed counts (averages
+smaller than 0.1 and $\nu>1$) a parameter region unexplored in practice.
 
 In order to explore the flexibility of the COM-Poisson model to deal
 with real count data, we compute indexes for dispersion (DI),
@@ -440,7 +441,7 @@ overdispersion ($\phi < 0$). On the other hand, for $\phi > 0$
 (underdispersion) this distribution is suitable to deal with
 zero-deflated counts. Heavy-tail indexes in
 \autoref{fig:indexes-plot}(d) indicate the distribution is in general a
-light-tailed distribution, i.e. $HT \to 0$ for $y \to \infty$.
+light-tailed distribution, i.e. $\text{HT} \to 0$ for $y \to \infty$.
 
 \section{Estimation and Inference}
 \label{estimation-and-inference}
@@ -478,13 +479,13 @@ the infinite sum is slow.
 
 Parameter estimation requires the numerical maximization of
 \autoref{eqn:ll-rcmp}. Since the derivatives of $\ell$ cannot be
-obtained in closed forms, we adopted the \texttt{BFGS}
-algorithm~\citep{Nocedal1995} as implemented in the function
-\texttt{optim()} for the statistical software \texttt{R}
-\citep{Rcore2017}. Standard errors for the regression coefficients are
-obtained based on the observed information matrix
-$\mathcal{I}(\bm{\theta})$, where
-$\mathcal{I}(\bm{\theta}) = -\mathcal{H}(\bm{\theta})$ (hessian matrix)
+obtained in closed forms, we obtain the Hessian matrix by central finite
+differences. We adopted the \texttt{BFGS} algorithm~\citep{Nocedal1995}
+as implemented in the function \texttt{optim()} for the statistical
+software \texttt{R} \citep{Rcore2017}. Standard errors for the
+regression coefficients are obtained based on the observed information
+matrix $\mathcal{I}(\bm{\theta})$, where
+$\mathcal{I}(\bm{\theta}) = -\mathcal{H}(\bm{\theta})$ (Hessian matrix)
 is computed numerically. Confidence intervals for $\hat{\mu}_i$ are
 obtained by using the delta method~\citep[p. 89]{Pawitan2001}.
 
@@ -514,15 +515,15 @@ regression model to deal with non-equidispersed count data.
 We considered average counts varying from $3$ to $27$ according to a
 regression model with a continuous and a categorical covariate. The
 continuous covariate~($\bm{x}_1$) was generated as a sequence from $0$
-to $1$ and of length equal to the sample size.  Similarly, the categorical
-covariate~($\bm{x}_2$) was generated as a sequence of three values each
-one repeated $n/3$ times (rounding up when required), where $n$ denotes
-the sample size. Thus, the expectation of the COM-Poisson random
-variable is given by
+to $1$ and of length equal to the sample size.  Similarly, the
+categorical covariate~($\bm{x}_2$) was generated as a sequence of three
+values each one repeated $n/3$ times (rounding up when required), where
+$n$ denotes the sample size. The parameter $\mu$ of the reparametrized
+COM-Poisson random variable is given by
 $\bm{\mu} = \exp(\beta_0 + \beta_1 \bm{x}_1 + \beta_{21} \bm{x}_{21} +
 \beta_{22} \bm{x}_{22})$,
-where $\bm{x}_{21}$ and $\bm{x}_{22}$ are dummy representing the levels
-of $\bm{x}_2$.  The regression coefficients were fixed at the values,
+where $\bm{x}_{21}$ and $\bm{x}_{22}$ are dummy representing the levels of
+$\bm{x}_2$.  The regression coefficients were fixed at the values,
 $\beta_0 = 2$, $\beta_1 = 0.5$, $\beta_{21} = 0.8$ and
 $\beta_{22} = -0.8$.
 
@@ -537,45 +538,6 @@ maximum likelihood estimators in extreme situations, such as high counts
 and low dispersion, and low counts and high dispersion, but also in the
 standard case of equidispersion.
 
-%-----------------------------------------------------------------------
-% Explain the simulation
-% \begin{algorithm}
-% \caption{Steps in simulation study.}
-% \label{alg:simulation}
-%   \Begin{
-%   $\bm{\beta} = \begin{bmatrix} \beta_0 & \beta_1 & \beta_{21} &
-%     \beta_{22} \end{bmatrix}^\top = \begin{bmatrix} 2.0 &
-%     0.5 & 0.8 & -0.8 \end{bmatrix}^\top$\;
-%   \For{$n \in \{50, 100, 300, 1000\}$}{
-%     set $\bm{x}_1$ as a sequence, with $n$ elements, between $0$ and
-%     $1$\;
-%     set $\bm{x}_2$ as a repetition, with $n$ elements, of three
-%     categories\;
-%     compute $\bm{\mu}$ using $\bm{\mu} = \exp(\beta_0 + \beta_1 \bm{x}_1
-%     +  \beta_{21} \bm{x}_{21} + \beta_{22} \bm{x}_{22})$, where
-%     $\bm{x}_{21}$ and $\bm{x}_{22}$ are \textit{dummy} variable for
-%     $\bm{x}_2$\;
-%     \For{$\phi \in \{-1.6, -1.0, 0.0, 1.8\}$}{
-%       \Repeat{$1000$ times}{
-%         simulate $\bm{y}$ from COM-Poisson distribution with $\bm{\mu}$
-%         and $\phi$ parameters\;
-%         fit COM-Poisson$_\mu$ regression model to $\bm{y}$ data with
-%         $\bm{X} = \begin{bmatrix} \bm{1} & \bm{x}_1 & \bm{x}_{21} &
-%           \bm{x}_{22} \end{bmatrix}$ design matrix\;
-%         get $\hat{\bm{\theta}} = \begin{bmatrix} \hat{\phi} & \hat{\beta}_0 &
-%           \hat{\beta}_1 & \hat{\beta}_{21} & \hat{\beta}_{22}
-%         \end{bmatrix}^\top$\;
-%         get confidence intervals for $\hat{\bm{\theta}}$ by quadratic
-%         approximation at the maximum likelihood estimate
-%         (assumes $\hat{\bm{\theta}} \sim \mathcal{N}(\hat{\bm{\theta}},
-%         \sqrt{-\bm{v}})$, where $\bm{v}$ is a diagonal of the inverse of
-%         the Hessian matrix)\;
-%       }
-%     }
-%   }
-% }
-% \end{algorithm}
-
 <<load-simulation, cache=TRUE>>=
 @
 
@@ -584,13 +546,16 @@ standard case of equidispersion.
 
 In order to check the consistency of the estimators we considered four
 different sample sizes: $50$, $100$, $300$ and $1000$; generating $1000$
-data sets in each case.  In \autoref{fig:bias-plot}, we show the bias of
-the estimators for each simulation scenario (combination between values
-of the dispersion parameter and samples sizes) along with the confidence
-intervals calculated as average bias plus and minus $\Phi(0.975)$ times
-the average standard error. The scales are standardized for each
-parameter by dividing the average bias by the average standard error
-obtained for the sample of size $50$.
+data sets in each case. For sample sizes 50 and 100, we have 29 and 8
+simulations of the 1000 where algorithm did not converge. These non
+convergence situations occurred for $\phi=-1.6$. In
+\autoref{fig:bias-plot}, we show the bias of the estimators for each
+simulation scenario (combination between values of the dispersion
+parameter and samples sizes) along with the confidence intervals
+calculated as average bias plus and minus $\Phi(0.975)$ times the
+average standard error. The scales are standardized for each parameter
+by dividing the average bias by the average standard error obtained for
+the sample of size $50$.
 
 <<bias-data, cache=TRUE>>=
 @
@@ -650,12 +615,14 @@ parameters. The shapes of the deviance function show that the proposed
 parametrization is better for both computation and asymptotic
 (normal-based) inference. Furthermore, it is interesting to note that
 the deviance function shape under strong overdispersion ($\phi=-1.6$) is
-not as well behaved as the others; this is due to the difficulty of the
-distribution in dealing with strong overdispersion in low counts (see
-dispersion index plot in the \autoref{fig:indexes-plot}). This also
-explains the results of Cov$(\hat{\beta}_{22}, \phi)$ in the first panel
-of \autoref{fig:ortho-plot}, since $\beta_{22}$ is negative and
-associated with low counts.
+not as well behaved as the others; this is due to the accurary of mean
+approximation \autoref{fig:approx-plot}. Although the reparametrized
+model is always valid, $\mu$ and $\phi$ are orthogonal only when $\mu$
+is the expectation of the distribution, in other words, when
+approximation $\lambda - (\nu-1)/(2\nu)$ is accurate. This also explains
+the results of Cov$(\hat{\beta}_{22}, \phi)$ in the first panel of
+\autoref{fig:ortho-plot}, since $\beta_{22}$ is negative and associated
+with low counts.
 
 \section{Case studies}
 \label{case-studies}
@@ -681,9 +648,11 @@ replicates. This data set was analyzed by~\citet{Zeviani2014} using the
 Gamma-Count distribution.
 
 Following~\citet{Zeviani2014}, the linear predictor is given by
-$$\log(\mu_{ij}) = \beta_0 + \beta_{1j} \texttt{def}_i + \beta_{2j}
+$$\eta_i = \beta_0 + \beta_{1j} \texttt{def}_i + \beta_{2j}
 \texttt{def}_i^2$$
-where $\mu_{ij}$ is the expected number of cotton bolls for the $i$-th
+where $\eta_i = \log(\lambda_i)$ for the original COM-Poisson and
+$\eta_i = \log(\mu_{ij})$ for COM-Poisson$_\mu$. The parameter $\mu_i$
+is the (approximated) expected number of cotton bolls for the $i$-th
 defoliation level ($i=$ 1: 0\%, 2: 25\%, 3: 50\%, 4: 75\% e 5: 100\%)
 and $j$-th growth stage ($j$ = 1: vegetative, 2: flower bud, 3: blossom,
 4: boll, 5: boll open), i.e. we have a second order effect of
@@ -783,7 +752,7 @@ original one.
 \begingroup\small
 \begin{tabular}{lrrrrrr}
   \toprule
-<<cres-coton, results="asis">>=
+<<cres-cotton, results="asis">>=
 @
 \end{tabular}
 \endgroup
@@ -817,7 +786,7 @@ yet removed).
 For the analysis of this data set based on the descriptive analysis
 (\autoref{fig:desc-soy}), we proposed the following linear predictor
 $$
-\log(\mu_{ijk}) = \beta_0 + \gamma_i + \tau_j +
+\eta_i = \beta_0 + \gamma_i + \tau_j +
   \beta_{1}\texttt{K}_k + \beta_{2}\texttt{K}_k^2 +
   \beta_{3j}\texttt{K}_k
 $$
@@ -827,9 +796,11 @@ dm$^{-3}$, where $\gamma_i$ is the effect of $i$-th block ($i=$1: block
 II, 2: block III, 3: block IV and 4: block V), $\tau_j$ is the effect of
 $j$-th moisture level ($j=$1: 50\% and 2: 62.5\%) and $\beta_{3j}$ is
 interaction of the first order potassium effect (\texttt{K}) for the
-$j$-th moisture level (\texttt{umid}). \autoref{tab:coef-soy} presents
-the estimates, ratio between estimate and standard error and
-goodness-of-fit measures for the alternative models.
+$j$-th moisture level (\texttt{umid}); The predictor $\eta_i$ is
+$\log(\lambda_i)$ for the original COM-Poisson and $\log(\mu_{ij})$ for
+COM-Poisson$_\mu$.\autoref{tab:coef-soy} presents the estimates, ratio
+between estimate and standard error and goodness-of-fit measures for the
+alternative models.
 
 The results in \autoref{tab:coef-soy} show that the two parametrization
 of COM-Poisson model presented very similar goodness-of-fit measures and
@@ -935,13 +906,15 @@ was recorded.
 For this data set we consider three models with linear predictors,
 \begin{center}
 \begin{minipage}{12cm}
-Linear: $\log(\mu_i) = \beta_0 + \beta_1 \texttt{dose}_i$\\
-Quadratic: $\log(\mu_i) = \beta_0 + \beta_1 \texttt{dose}_i +
+Linear: $\eta_i = \beta_0 + \beta_1 \texttt{dose}_i$\\
+Quadratic: $\eta_i = \beta_0 + \beta_1 \texttt{dose}_i +
              \beta_2 \texttt{dose}_i^2$\\
-Cubic: $\log(\mu_i) = \beta_0 + \beta_1 \texttt{dose}_i +
+Cubic: $\eta_i = \beta_0 + \beta_1 \texttt{dose}_i +
              \beta_2 \texttt{dose}_i^2 + \beta_3 \texttt{dose}_i^3$.
 \end{minipage}
 \end{center}
+where $\eta_i = \log(\lambda_i)$ for the original COM-Poisson and
+$\eta_i = \log(\mu_{ij})$ for COM-Poisson$_\mu$.
 
 \begin{table}[!ht]
 \centering \small
@@ -1050,45 +1023,47 @@ respectively.
 In this paper, we presented and characterized a novel parametrization of
 the COM-Poisson distribution and the associated regression model. The
 novel parametrization was based on a simple asymptotic approximation for
-the expectation and variance of the COM-Poisson distribution. The main
-advantage of the proposed reparametrization is the simple interpretation
-of the regression coefficients in terms of the expectation of the
-response variable as usual in the generalized linear models
-context. Thus, it is possible to compare the results of the COM-Poisson
-model with the ones from standard approaches as the Poisson and
-quasi-Poisson regression models. Furthermore, in the novel
-parametrization the COM-Poisson distribution is indexed by the
-expectation $\mu$ and an extra dispersion parameter $\phi$ which our
-data analysis suggest being orthogonal. This is similar to
-\Citeauthor{Huang2017}'s (\citeyear{Huang2017}) parametrization but is
-simpler, because the $\mu$ is obtained from simple algebra.
+the expectation of the COM-Poisson distribution. The main advantage of
+the proposed reparametrization is the simple interpretation of the
+regression coefficients in terms of the expectation of the response
+variable as usual in the generalized linear models context. Thus, it is
+possible to compare the results of the COM-Poisson model with the ones
+from standard approaches as the Poisson and quasi-Poisson regression
+models. Furthermore, in the novel parametrization the COM-Poisson
+distribution is indexed by $\mu$ and an extra dispersion parameter
+$\phi$ which our data analysis suggest being orthogonal. This is similar
+to \Citeauthor{Huang2017}'s (\citeyear{Huang2017}) parametrization but
+is simpler, because the $\mu$ is obtained from simple algebra.
 
-We evaluated the accuracy of the asymptotic approximations for the
-expectation and variance of the COM-Poisson distribution by considering
-quadratic approximation errors.  The results showed that the
-approximations are accurate for a large part of the parameter space,
-which in turn support our reparametrization. Moreover, we discuss the
-properties and flexibility of the distribution to deal with count data
-although dispersion, zero-inflation and heavy-tail indexes. We carried
-out a simulation study to assess the properties of the reparametrized
-COM-Poisson model to deal with different levels of dispersion as well as
-the properties of the maximum likelihood estimators. The results of our
-simulation study suggested that the maximum likelihood estimators of the
-regression and dispersion parameters are unbiased and consistent.  The
-empirical coverage rates of the confidence intervals computed based on
-the asymptotic distribution of the maximum likelihood estimators are
-close to the nominal level for sample size greater than $100$.  The
-worst scenario is when we have small sample sizes and strong
-overdispersed counts.  In general, we recommend the use of the
-asymptotic confidence intervals for computational simplicity.
+The proposed parametrization is always valid, only the interpretation of
+$\mu$ parameter, as expectation of the distribution, depends on the
+accuracy of the approximation. We evaluated the accuracy of the
+approximations for the expectation and variance of the COM-Poisson
+distribution by considering quadratic approximation errors.  The results
+showed that the approximation for the expectation is accurate for a
+large part of the parameter space, which in turn support our
+reparametrization. Moreover, we discuss the properties and flexibility
+of the distribution to deal with count data although dispersion,
+zero-inflation and heavy-tail indexes. We carried out a simulation study
+to assess the properties of the reparametrized COM-Poisson model to deal
+with different levels of dispersion as well as the properties of the
+maximum likelihood estimators. The results of our simulation study
+suggested that the maximum likelihood estimators of the regression and
+dispersion parameters are unbiased and consistent.  The empirical
+coverage rates of the confidence intervals computed based on the
+asymptotic distribution of the maximum likelihood estimators are close
+to the nominal level for sample size greater than $100$.  The worst
+scenario is when we have small sample sizes and strong overdispersed
+counts.  In general, we recommend the use of the asymptotic confidence
+intervals for computational simplicity.
 
 The data analyses have shown that the COM-Poisson regression model is a
 suitable choice to deal with dispersed count data.  The observed
 empirical correlation between the regression and dispersion parameter
-estimators suggest orthogonality between $\mu$ and $\phi$ in
-COM-Poisson$_\mu$ distribution. Thus, the computational procedure based
-on the proposed reparametrization is faster than in the original
-parametrization.
+estimators and deviance surfaces suggest orthogonality between $\mu$ and
+$\phi$ in COM-Poisson$_\mu$ distribution. Thus, the computational
+procedure based on the proposed reparametrization is faster than in the
+original parametrization.
 
 In general, the results presented by the reparametrized COM-Poisson
 models were satisfactory and comparable to the conventional approaches.
@@ -1100,12 +1075,12 @@ material\textsuperscript{\ref{papercompanion}}.
 There are many possible extensions to the model discussed in this paper,
 including simulation studies to assess the model robustness against
 model misspecification and to assess the theoretical approximations for
-$Z(\lambda, \nu)$ (or $Z(\mu,\phi))$. Another simple extension of the
-proposed model is to model both $\mu$ and $\phi$ parameters as functions
-of covariate in a double generalized linear models framework.  Finally,
-the reparametrized version of the COM-Poisson model also encourages the
-specification of generalized linear mixed models using this
-distribution.
+$Z(\lambda, \nu)$ (or $Z(\mu,\phi))$ \citep{Gaunt2017}. Another simple
+extension of the proposed model is to model both $\mu$ and $\phi$
+parameters as functions of covariate in a double generalized linear
+models framework.  Finally, the reparametrized version of the
+COM-Poisson model also encourages the specification of generalized
+linear mixed models using this distribution.
 
 %-----------------------------------------------------------------------
 \bibliography{references.bib}
