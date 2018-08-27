@@ -1,0 +1,796 @@
+\documentclass[10pt]{beamer}
+
+%=======================================================================
+% General packages
+\usepackage[british]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{multicol}
+\usepackage{mathtools} %% Funcionalidades (como \dcases)
+\usepackage{dsfont}    %% Para \mathds{1} Indicadora
+\usepackage{bm}
+
+%=======================================================================
+% For figures
+\usepackage{graphicx}
+\usepackage[export]{adjustbox}
+
+%% ======================================================================
+%% Fontes
+\usepackage{mathpazo}
+\usepackage{inconsolata}
+\usepackage{verbatim}
+
+\usefonttheme{professionalfonts}
+\usefonttheme{serif}
+
+%=======================================================================
+% For tables
+\usepackage[bottom]{footmisc}
+\usepackage{booktabs}
+\usepackage{threeparttable}
+\usepackage{tabularx}
+\usepackage{colortbl}
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\DeclareRobustCommand{\rchi}{{\mathpalette\irchi\relax}}
+\newcommand{\irchi}[2]{\raisebox{\depth}{$#1\chi$}}
+\usepackage{float}
+\makeatletter
+\def\@xfootnote[#1]{%
+  \protected@xdef\@thefnmark{#1}%
+  \@footnotemark\@footnotetext}
+\makeatother
+
+%% ======================================================================
+%% Cores para links
+\definecolor{url}{HTML}{000080}
+\definecolor{run}{HTML}{4A0082}
+\definecolor{col}{HTML}{6180A6}
+\hypersetup{colorlinks, allcolors=., urlcolor=url, runcolor=run}
+
+\setbeamercolor{bibliography entry author}{fg=black}
+\usepackage{natbib}
+\bibliographystyle{agsm}
+
+%=======================================================================
+% Algorithms
+\usepackage[english, vlined, ruled]{algorithm2e}
+\SetAlCapSty{}
+\SetAlCapFnt{\footnotesize\color{col}}
+\SetAlCapNameFnt{\footnotesize}
+
+% Customize captions styles
+\usepackage{caption}
+\captionsetup{
+  font=footnotesize,
+  labelfont={color=col}
+}
+
+%% ======================================================================
+%% Tema e cores do documento
+\usetheme{CambridgeUS}
+\setbeamertemplate{itemize items}[triangle]
+\setbeamertemplate{navigation symbols}{}
+
+\setbeamertemplate{frametitle}{
+  \nointerlineskip
+  \begin{beamercolorbox}[sep=0.3cm, ht=1.8em,
+    wd=\paperwidth]{frametitle}
+    \vbox{}\vskip-2ex%
+    \strut\hspace*{3ex}\Large\bfseries\insertframetitle\strut
+    \vskip-0.8ex%
+  \end{beamercolorbox}
+}
+
+%% Slides em geral
+\setbeamercolor{frametitle}{bg=white, fg=col}
+\setbeamercolor{structure}{fg=col}
+\setbeamercolor{palette primary}{bg=gray!30, fg=col}
+\setbeamercolor{palette tertiary}{bg=col, fg=white}
+\setbeamercolor{footlinecolor}{fg=white,bg=col}
+\setbeamercolor{caption name}{fg=col}
+
+% \setbeamertemplate{frametitle continuation}{[\insertcontinuationcount]}
+\setbeamertemplate{frametitle continuation}{}
+
+%% Slide Inicial
+\setbeamertemplate{title page}[default]
+\setbeamercolor{title}{fg=col}
+\setbeamercolor{author}{fg=black!70}
+\setbeamercolor{institute}{fg=black!70}
+\setbeamercolor{date}{fg=black!70}
+\setbeamerfont{title}{series=\bfseries, size=\Large}
+
+%% ======================================================================
+%% Definição do cabeçalho e rodapé
+\setbeamerfont{headline}{size=\fontsize{5}{5}\selectfont}
+\setbeamertemplate{headline}{\bfseries
+  \leavevmode%
+  \hbox{%
+    \begin{beamercolorbox}[wd=.5\paperwidth, ht=2.2ex, dp=1ex, right,
+      rightskip=1em]{section in head/foot}
+      \hspace*{2ex}\insertsectionhead
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.5\paperwidth, ht=2.2ex, dp=1ex, left,
+      leftskip=1em]{subsection in head/foot}
+      \insertsubsectionhead\hspace*{2ex}
+    \end{beamercolorbox}}
+  \vskip0pt
+}
+
+\setbeamerfont{footline}{size=\fontsize{5}{5}\selectfont}
+\makeatletter
+\setbeamertemplate{footline}{\bfseries
+  \leavevmode%
+  \hbox{%
+    \begin{beamercolorbox}[wd=.3\paperwidth, ht=2.4ex, dp=1ex, right,
+      rightskip=1em]{footlinecolor}
+      \centering \insertshortauthor%
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.6\paperwidth, ht=2.4ex, dp=1ex, left,
+      leftskip=1em]{footlinecolor}
+      \hfill\insertshorttitle%
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.1\paperwidth, ht=2.4ex, dp=1ex, left,
+      leftskip=1em]{footlinecolor}
+      \centering Slide \insertframenumber
+    \end{beamercolorbox}}
+  \vskip0pt
+}
+\makeatother
+
+%% ======================================================================
+%% Layout do tableofcontents
+\setbeamertemplate{section in toc}{
+  {\color{col} \bfseries\inserttocsectionnumber.}~
+  {\leftskip=0.5em\color{black}\inserttocsection\par}
+}
+
+\setbeamertemplate{subsection in toc}{
+  {\color{col!80}
+  \bfseries\inserttocsectionnumber.\inserttocsubsectionnumber}~
+  \leftskip=2em{\color{black}\inserttocsubsection\par}
+}
+
+%% ======================================================================
+%% Formatando slides para seções e subseções
+\AtBeginSection[]{
+  \begin{frame}[c, allowframebreaks, noframenumbering]
+    \begin{center}
+      \textcolor{col}{\thesection} \\ \vspace{0.3cm}
+      \parbox{0.6\textwidth}{
+        \centering \textcolor{col}{\LARGE \bf \insertsection}}\\
+    \end{center}
+  \end{frame}
+}
+
+\AtBeginSubsection{
+  \begin{frame}[c, allowframebreaks, noframenumbering]
+    \begin{center}
+      \textcolor{col}{\thesection.\thesubsection} \\ \vspace{0.3cm}
+      \parbox{0.6\textwidth}{
+        \centering \textcolor{col!80}{\large \insertsection}\\
+        \centering \textcolor{col}{\Large \bf \insertsubsection}}\\
+    \end{center}
+  \end{frame}
+}
+
+%% ======================================================================
+%% Metadados não disponíveis no YAML com o atual default.tex template
+
+\title[Reparametrization of COM-Poisson Regression Models]{
+  Reparametrization of COM-Poisson Regression Models with Applications
+  in the Analysis of Experimental Count Data \vspace{-0.4cm}}
+
+\author[Clarice Garcia Borges Demétrio]{
+  Eduardo Elias Ribeiro Junior \inst{1} \inst{2} \\
+  Walmes Marques Zeviani \inst{1} \\
+  Wagner Hugo Bonat \inst{1} \\
+  Clarice Garcia Borges Demétrio \inst{2} \\
+  John Hinde \inst{3}
+}
+
+\institute{
+  \inst{1} Statistics and Geoinformation Laboratory (LEG-UFPR) \\
+  \inst{2} Department of Exact Sciences (ESALQ-USP) \\
+  \inst{3} School of Mathematics, Statistics and Applied Mathematics (NUI-Galway)
+}
+
+\date{\small 10th July 2018 \\
+  \url{jreduardo@usp.br} | \url{edujrrib@gmail.com}}
+
+<<setup, include=FALSE>>=
+
+library(knitr)
+library(xtable)
+options(digits = 3, OutDec = ".",
+        xtable.caption.placement = "top",
+        xtable.booktabs = TRUE,
+        xtable.sanitize.text.function = identity,
+        xtable.sanitize.colnames.function = identity)
+
+opts_chunk$set(
+    warning = FALSE,
+    message = FALSE,
+    echo = FALSE,
+    results = "asis",
+    ## dev = "tikz",
+    fig.width = 7,
+    fig.height = 5,
+    out.width = "0.99\\textwidth",
+    fig.align = "center",
+    fig.pos = "h",
+    dev.args = list(family = "Palatino"))
+
+thm = knit_theme$get("dusk")
+knit_theme$set(thm)
+
+@
+
+\begin{document}
+
+\begin{frame}[plain, noframenumbering]
+  \begin{center}
+    \bfseries
+    XXIX\textsuperscript{TH} INTERNATIONAL BIOMETRIC CONFERENCE\\
+    Barcelona, Spain, 8-13 July 2018
+  \end{center}
+  \vspace{-0.5cm}
+  \titlepage
+\end{frame}
+
+\begin{frame}[noframenumbering]{Outline}
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+\section{Background}
+
+\begin{frame}{Count data}
+
+  Number of times an event occurs in the observation unit.\\[0.3cm]
+
+  Random variables that assume non-negative integer values.\\[0.3cm]
+
+  Let $Y$ be a counting random variable, so that $y=0,1,2,\ldots$\\[0.5cm]
+
+  Examples in experimental researches:
+
+  \begin{itemize}
+    \item number of grains produced by a plant;
+    \item number of fruits produced by a tree;
+    \item number of insects on a particular cell;
+    \item others.
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Poisson model and limitations}
+
+  \begin{itemize}
+    \item[] {\bf GLM framework \citep{Nelder1972}}
+    \item Provide suitable distribution for a counting random variables;
+    \item Efficient algorithm for estimation and inference;
+    \item Implemented in many software.
+      \vspace{0.5cm}
+    \item[] {\bf Poisson model}
+    \item Relationship between mean and variance,
+      $\text{E}(Y)=\text{Var}(Y)$;
+      \vspace{0.5cm}
+    \item[] {\bf Main limitations}
+    \item Overdispersion (more common),
+      $\text{E}(Y)<\text{Var}(Y)$
+    \item Underdispersion (less common),
+      $\text{E}(Y)>\text{Var}(Y)$
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{COM-Poisson distribution}
+
+  \begin{itemize}
+    \itemsep7.5pt\parskip0pt\parsep0pt
+  \item Probability mass function \citep{Shmueli2005} takes the form \\
+    \begin{equation*} \small
+    \label{eqn:pmf-cmp}
+    \Pr(Y = y \mid \lambda, \nu) =
+      \frac{\lambda^y}{(y!)^\nu Z(\lambda, \nu)}\,,
+    \qquad Z(\lambda, \nu) = \sum_{j=0}^\infty
+      \frac{\lambda^j}{(j!)^\nu}\,,
+  \end{equation*}
+    where $\lambda > 0$ and $\nu \geq 0$.
+  \item Moments are not available in closed form;
+  \item Expectation and variance can be closely approximated by
+    \begin{equation*}
+      \label{eqn:mean-aprox}
+      \text{E}(Y) \approx \lambda^{1/\nu} - \frac{\nu - 1}{2\nu} \qquad
+      \textrm{and} \qquad
+      \text{Var}(Y) \approx \frac{\lambda^{1/\nu}}{\nu}
+    \end{equation*}
+    with accurate approximations for $\nu \leq 1$ or $\lambda > 10^\nu$
+    \citep{Shmueli2005, Sellers2012}.
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{COM-Poisson regression models}
+
+\begin{itemize}
+  \item[] {\bf Model definition}
+  \item Modelling the relationship between
+    $\text{E}(Y_i)$ and $\bm{x}_i$ indirectly
+    \citep{Sellers2010}; \\[-0.5cm]
+    \begin{align*}
+      Y_i \mid & \,\bm{x}_i \sim
+                 \textrm{COM-Poisson}(\lambda_i,\, \nu) \\
+               &\eta(E(Y_i \mid \bm{x}_i)) =
+                 \log(\lambda_i) = \bm{x}_i^\top\bm{\beta} &
+    \end{align*}
+\end{itemize}
+\vspace{0.3cm}
+
+\begin{itemize}
+  \item[] {\bf Main goals}
+  \item Study distribution properties in terms of i) modelling real
+    count data and ii) inference aspects.
+  \item Propose a reparametrization in order to model the expectation of
+    the response variable as a function of the covariate values
+    directly.
+\end{itemize}
+
+\end{frame}
+
+\section{Reparametrization}
+
+\begin{frame}{Reparametrized COM-Poisson}
+
+\begin{itemize}
+  \item[] {\bf Reparametrization}
+  \item Introduced new parameter $\mu$, using the mean
+    approximation\\[-0.2cm]
+    \begin{equation*}
+      \label{eqn:repar-cmp}
+      \mu = \lambda^{1/\nu} - \frac{\nu - 1}{2\nu}
+      \quad \Rightarrow \quad
+      \lambda = \left (\mu +
+        \frac{(\nu - 1)}{2\nu} \right )^\nu;
+    \end{equation*}
+  \item Precision parameter is taken on the log scale to avoid
+    restrictions on the parameter space\\[-0.3cm]
+    $$\phi = \log(\nu) \Rightarrow \phi \in \mathbb{R};$$\\[0.3cm]
+  \item[] {\bf Probability mass function}
+  \item Replacing $\lambda$ and $\nu$ as function of $\mu$ and $\phi$ in
+    the pmf of COM-Poisson\\[-0.2cm]
+    \begin{equation*}
+      \label{eqn:pmf-cmpmu}
+      \Pr(Y=y \mid \mu, \phi) =
+      \left ( \mu +\frac{ e^\phi-1}{2e^\phi} \right )^{ye^\phi}
+      \frac{(y!)^{-e^\phi}}{Z(\mu, \phi)}.
+    \end{equation*}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Study of the moments approximations}
+
+<<approx-plot, fig.height=3, fig.width=6, out.width=".9\\textwidth", fig.cap="Quadratic errors for the approximation of the (a) expectation and (b) variance. Dotted lines represent the restriction for suitable approximations given by \\cite{Shmueli2005}.">>=
+include_graphics("figure/approx-plot-1.pdf")
+@
+
+\end{frame}
+
+\begin{frame}{COM-Poisson$_\mu$ distribution}
+
+<<pmf-cmp, fig.height=3, fig.width=7, fig.cap="Shapes of the COM-Poisson distribution for different parameter values.">>=
+include_graphics("figure/pmf-cmp-1.pdf")
+@
+
+\end{frame}
+
+\begin{frame}{Properties of COM-Poisson distribution}
+  To explore the flexibility of the COM-Poisson distribution, we
+  consider the follow indexes:
+  \begin{itemize}
+  \item \textbf{Dispersion index:}\quad\:\;
+    $\text{DI} = \text{Var}(Y)/\text{E}(Y);$\\
+  \item \textbf{Zero-inflation index:}\;
+    $\text{ZI} = 1 + \log \Pr(Y = 0)/\text{E}(Y);$
+  \item \textbf{Heavy-tail index:}\quad\:\;\,
+    $\text{HT} = \Pr(Y=y+1)/\Pr(Y=y),\:
+    \text{for}\: y \to \infty.$\\
+  \end{itemize}
+  \vspace{0.4cm}
+
+  These indexes are interpreted in relation to the Poisson distribution:
+  \begin{itemize}
+  \item
+    over- ($\text{DI} > 1$), under- ($\text{DI} < 1$) and
+    equidispersion ($\text{DI} = 1$);\\
+  \item
+    zero-inflation ($\text{ZI} > 0$) and zero-deflation ($\text{ZI} <
+    0$) and
+  \item
+    heavy-tail distribution for $\text{HT} \to 1$ when $y \to
+    \infty$.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Properties of COM-Poisson distribution}
+
+<<indexes-plot, fig.width=9.5, fig.height=4, fig.cap="Indexes for COM-Poisson distribution. (a) Mean and variance relationship, (b--d) dispersion, zero-inflation and heavy-tail indexes for different parameter values. Dotted lines represents the Poisson special case.">>=
+include_graphics("figure/indexes-plot-1")
+@
+
+\end{frame}
+
+\begin{frame}{COM-Poisson$_\mu$ regression models}
+
+\begin{itemize}
+\item[] Let $y_i$ a set of independent observations from the COM-Poisson
+  and $\bm{x}_i^\top = (x_{i1},\, x_{i2},\, \ldots,\, x_{ip})$ is a
+  vector of known covariates, $i=1,2,\ldots,n$.
+  \vspace{0.3cm}
+
+\item[] {\bf Model definition}
+\item Modelling relationship between $E(Y_i)$ and $\bm{x}_i$
+  directly\\[-0.5cm]
+  \begin{align*}
+    Y_i \mid & \,\bm{x}_i \sim
+               \textrm{COM-Poisson}_\mu(\mu_i,\, \phi) \\
+             &\log(E(Y_i \mid \bm{x}_i)) =
+               \log(\mu_i) = \bm{x}_i^\top\bm{\beta} &
+  \end{align*}
+  \vspace{-0.2cm}
+\item[] {\bf Log-likelihood function
+    ($\ell = \ell(\bm{\beta},\, \phi \mid \bm{y})$)}
+  \vspace{0.05cm}
+\item
+  $
+    \begin{aligned}[t]
+    &\ell = e^\phi \left [
+      \sum_{i=1}^n y_i
+      \log \left( \mu_i + \frac{e^\phi-1}{2e^\phi} \right )
+      -\sum_{i=1}^n \log(y_i!) \right ]
+      -\sum_{i=1}^n \log(Z(\mu_i, \phi))\\
+      &\text{\small where }\:
+      \mu_i = \exp(\bm{x}_i^\top\bm{\beta})
+      \end{aligned}
+  $
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Estimation and inference}
+
+  The estimation and inference is based on the method of maximum
+  likelihood. Let $\bm{\theta} = (\bm{\beta}, \phi)$ the model
+  parameters. \vspace{0.2cm}
+  \begin{itemize}
+  \item Parameter estimates are obtained by numerical maximization of
+    the log-likelihood function (by BFGS algorithm);\\[0.1cm]
+    $\ell(\hat{\bm{\theta}}) =
+    \text{max}\,\ell(\bm{\theta}),\:
+    \bm{\theta} \in \mathbb{R}^{p+1}$;
+    \vspace{0.2cm}
+  \item Standard errors for regression coefficients are obtained based
+    on the observed information matrix;\\[0.1cm]
+    $\text{Var}(\hat{\bm{\theta}}) = -\mathcal{H}^{-1}$, where
+    $\mathcal{H}$ is the matrix of second partial derivatives at
+    $\hat{\bm{\theta}}$; \vspace{0.2cm}
+  \item Confidence intervals for $\hat{\mu}_i$ are obtained by delta
+    method.\\[0.1cm]
+    $\text{Var}[g(\hat{\bm{\theta}})] \doteq \bm{G}\,
+    \text{Var}(\hat{\bm{\theta}}) \bm{G}^\top $,
+    where
+    $\bm{G}^\top = (\partial g / \partial \beta_1,
+    \ldots, \partial g / \partial \beta_p)^\top$;
+  \item The Hessian matrix $\mathcal{H}$ is obtained numerically by
+    finite differences.
+  \end{itemize}
+
+\end{frame}
+
+\section{Simulation study}
+
+\begin{frame}{Definitions on the simulation study}
+  \small
+
+  \textbf{Objective:} assess the properties of maximum likelihood
+  estimators and orthogonality in the reparametrized model;
+  \vspace{0.2cm}
+
+  \textbf{Simulation:} we consider counts generated according a
+  regression model with a continuous and categorical covariates and
+  different dispersion scenarios.
+  \vspace{-0.1cm}
+
+  \begin{center}
+  \begin{minipage}{0.9\textwidth}
+  \begin{algorithm}[H]
+    \footnotesize
+    \caption{Steps in simulation study.}
+      \For{$n \in \{50, 100, 300, 1000\}$}{ set $\bm{x}_1$ as a
+        sequence, with $n$ elements, between $0$ and $1$\; set
+        $\bm{x}_2$ as a repetition, with $n$ elements, of three
+        categories\;
+        compute $\bm{\mu}$ using
+        $\bm{\mu} = \exp(\beta_0 + \beta_1 \bm{x}_1 + \beta_{21}
+        \bm{x}_{21} + \beta_{22} \bm{x}_{22})$\;
+        \For{$\phi \in \{-1.6, -1.0, 0.0, 1.8\}$}{
+          \Repeat{$1000$ times}{
+            simulate $\bm{y}$ from COM-Poisson distribution with
+            $\bm{\mu}$ and $\phi$ parameters\;
+            fit COM-Poisson$_\mu$ regression model to simulated
+            $\bm{y}$\;
+            get $\hat{\bm{\theta}} = (\hat{\phi},\;
+              \hat{\beta}_0,\; \hat{\beta}_1,\; \hat{\beta}_{21},\;
+              \hat{\beta}_{22})$\;
+            get confidence intervals for $\hat{\bm{\theta}}$ based on
+            the observed information matrix.
+          }
+        }
+      }
+  \end{algorithm}
+  \end{minipage}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Definitions on the simulation study}
+
+<<justpars, fig.height=4, fig.width=9, fig.cap="Average counts (left) and dispersion indexes (right) for each scenario considered in the simulation study.">>=
+include_graphics("figure/justpars-1")
+@
+
+\end{frame}
+
+\begin{frame}{Bias of the estimators}
+
+\vspace{-0.5cm}
+<<bias-plot, out.width="0.9\\textwidth", fig.height=6.5, fig.width=8.5, fig.cap="Distributions of standardized bias (gray box-plots) and average with confidence intervals (black segments) by different sample sizes and dispersion levels.">>=
+include_graphics("figure/bias-plot-1")
+@
+
+\end{frame}
+
+\begin{frame}{Coverage rate of the confidence intervals}
+
+<<coverage-plot, fig.height=4, fig.width=9, fig.cap="Coverage rate based on confidence intervals obtained by quadratic approximation for different sample sizes and dispersion levels.">>=
+include_graphics("figure/coverage-plot-1")
+@
+
+\end{frame}
+
+\begin{frame}{Orthogonality property of the MLEs}
+\vspace{-0.3cm}
+<<ortho-surf, fig.height=5, fig.width=9, fig.cap="Deviance surfaces contour plots under original and proposed parametrization. The ellipses are confidence regions (90, 95 and 99\\%), dotted lines are the maximum likelihood estimates, and points are the real parameters used in the simulation.">>=
+include_graphics("figure/ortho-surf-1")
+@
+
+\end{frame}
+
+\section{Case studies}
+
+\begin{frame}[t]{Motivating data sets and data analysis}
+
+  \begin{itemize}
+    \item Three illustrative examples of count data analysis are
+      reported.
+      \begin{itemize} \normalsize
+      \item Assessing toxicity of nitrofen in aquatic systems, an
+        equidispersed example;
+      \item Soil moisture and potassium doses on soybean culture, an
+        overdispersed example; and
+      \item Artificial defoliation in cotton phenology, an
+        underdispersed example.
+      \end{itemize}
+    \item In the data analysis, we consider the COM-Poisson model in the
+      two forms (original and new parametrization) and the quasi-Poisson
+      regression model as alternative models for the standard Poisson
+      regression model.
+  \end{itemize}
+\end{frame}
+
+\subsection{Artificial defoliation in cotton phenology}
+
+\begin{frame}{Cotton bolls data}
+
+  \begin{columns}
+    \begin{column}{0.4\textwidth}
+      \begin{figure}
+        \includegraphics[scale=0.25]{./images/defoliation}
+      \end{figure}
+    \end{column}
+    \begin{column}{0.6\textwidth}
+      {\bf Aim:} to assess the effects of five defoliation levels on the
+      bolls produced at five growth stages;\\[0.2cm]
+      {\bf Design:} factorial 5 $\times$ 5, with 5 replicates;\\[0.2cm]
+      {\bf Experimental unit:} a plot with 2 plants;\\[0.2cm]
+      {\bf Factors:}
+      \begin{itemize} \small
+        \item Artificial defoliation (\texttt{des}):
+        \item Growth stage (\texttt{est}):
+      \end{itemize}\vspace{0.1cm}
+      {\bf Response variable:} Total number of cotton bolls;\\
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+\begin{frame}{Model specification}
+
+  {\bf Linear predictor:} {\small following \citet{Zeviani2014}}
+  \begin{itemize}
+    \item $\log(\mu_{ij}) = \beta_0 + \beta_{1j} \textrm{def}_i +
+      \beta_{2j} \textrm{def}_i^2$\\[0.1cm]
+    {\small
+    $i$ varies in the levels of artificial defoliation;\\
+    $j$ varies in the levels of growth stages.}
+  \end{itemize}
+
+  \vspace{0.5cm}
+
+  {\bf Alternative models:}
+  % {\bf Modelling strategies:}
+  \begin{itemize}
+    \item Poisson ($\mu_{ij}$);
+    \item COM-Poisson ($\lambda_{ij}=\eta(\mu_{ij})\,,\,\phi$)
+    \item COM-Poisson$_\mu$ ($\mu_{ij}\,,\,\phi$)
+    \item Quasi-Poisson (var$(Y_{ij})=\sigma\mu_{ij}$)
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Parameter estimates}
+
+  \vspace{-0.6cm}
+\begin{table}[!ht]
+\centering \footnotesize
+\caption{Parameter estimates (Est) and ratio between estimate and
+  standard error (SE).}
+\vspace{-0.1cm}
+\label{tab:coef-cotton}
+\begin{tabular}{lrrrrrrrr}
+  \toprule
+  & \multicolumn{2}{c}{Poisson} &
+    \multicolumn{2}{c}{COM-Poisson} &
+    \multicolumn{2}{c}{COM-Poisson$_\mu$} &
+    \multicolumn{2}{c}{Quasi-Poisson} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7} \cmidrule(lr){8-9}
+% latex table generated in R 3.4.4 by xtable 1.8-2 package
+% Tue Jun 26 13:34:54 2018
+ & Est & Est/SE & Est & Est/SE & Est & Est/SE & Est & Est/SE \\
+  \midrule
+  \rowcolor{col!30}
+$\phi\,,\,\sigma$ &  &  & 1.585 & 12.417 & 1.582 & 12.392 & 0.241 &  \\
+  $\beta_0$ & 2.190 & 34.572 & 10.897 & 7.759 & 2.190 & 74.640 & 2.190 & 70.420 \\
+  $\beta_{11}$ & 0.437 & 0.847 & 2.019 & 1.770 & 0.435 & 1.819 & 0.437 & 1.726 \\
+  $\beta_{12}$ & 0.290 & 0.571 & 1.343 & 1.211 & 0.288 & 1.223 & 0.290 & 1.162 \\
+  $\beta_{13}$ & $-$1.242 & $-$2.058 & $-$5.750 & $-$3.886 & $-$1.247 & $-$4.420 & $-$1.242 & $-$4.192 \\
+  $\beta_{14}$ & 0.365 & 0.645 & 1.595 & 1.298 & 0.350 & 1.328 & 0.365 & 1.314 \\
+  $\beta_{15}$ & 0.009 & 0.018 & 0.038 & 0.035 & 0.008 & 0.032 & 0.009 & 0.036 \\
+  $\beta_{21}$ & $-$0.805 & $-$1.379 & $-$3.725 & $-$2.775 & $-$0.803 & $-$2.961 & $-$0.805 & $-$2.809 \\
+  $\beta_{22}$ & $-$0.488 & $-$0.861 & $-$2.265 & $-$1.805 & $-$0.486 & $-$1.850 & $-$0.488 & $-$1.754 \\
+  $\beta_{23}$ & 0.673 & 0.989 & 3.135 & 2.084 & 0.679 & 2.135 & 0.673 & 2.015 \\
+  $\beta_{24}$ & $-$1.310 & $-$1.948 & $-$5.894 & $-$3.657 & $-$1.288 & $-$4.095 & $-$1.310 & $-$3.967 \\
+  $\beta_{25}$ & $-$0.020 & $-$0.036 & $-$0.090 & $-$0.076 & $-$0.019 & $-$0.074 & $-$0.020 & $-$0.074 \\
+   \specialrule{0.01em}{0.3em}{0.3em}
+ LogLik & \multicolumn{2}{c}{$-255.803$} & \multicolumn{2}{c}{$-208.250$} & \multicolumn{2}{c}{$-208.398$} & \multicolumn{2}{c}{$  -$}\\
+ AIC & \multicolumn{2}{c}{$533.606$} & \multicolumn{2}{c}{$440.500$} & \multicolumn{2}{c}{$440.795$} & \multicolumn{2}{c}{$  -$}\\
+ BIC & \multicolumn{2}{c}{$564.718$} & \multicolumn{2}{c}{$474.440$} & \multicolumn{2}{c}{$474.735$} & \multicolumn{2}{c}{$  -$} \\
+ \bottomrule
+\end{tabular}
+\end{table}
+\end{frame}
+
+\begin{frame}{Fitted curves}
+
+<<pred-cotton, fig.height=3.5, fig.width=8.5, fig.cap="Scatterplots of the observed data and curves of fitted values with 95\\% confidence intervals as functions of the defoliation level for each growth stage.">>=
+include_graphics("figure/pred-cotton-1")
+@
+
+\end{frame}
+
+\subsection*{Additional results}
+
+\begin{frame}{Computational times and orthogonality property}
+
+  To compare the computational times on the two parametrizations we
+  repeat the fitting 50 times.
+  \vspace{-0.2cm}
+
+<<comp-times, fig.height=4, fig.width=8, fig.cap="Computational times to fit the models under original and reparametrized versions based on the fifty repetitions.">>=
+include_graphics("figure/comp-times-1")
+@
+
+\end{frame}
+
+\section{Final remarks}
+
+\begin{frame}{Concluding remarks}
+
+  {\bf Summary}
+
+  \begin{itemize}
+    \item Over/under-dispersion needs caution;
+    \item COM-Poisson is a suitable choice for these situations;
+    \item The proposed reparametrization, COM-Poisson$_\mu$ has some
+      advantages:
+      \begin{itemize}
+        \item Simple transformation of the parameter space;
+        \item Leads to the orthogonality of the parameters (seen
+          empirically);
+        \item Full parametric approach;
+        \item Empirical correlation between the estimators was
+          practically null;
+        \item Faster for fitting;
+        \item Allows interpretation of the coefficients directly (like
+          GLM-Poisson model).
+      \end{itemize}
+  \end{itemize}
+
+  {\bf Future work}
+
+  \begin{itemize}
+    \item Simulation study to assess model robustness against
+      distribution miss specification;
+    \item Assess theoretical approximations for $Z(\lambda, \nu)$
+      (or $Z(\mu, \phi)$), in order to avoid the selection of sum's
+      upper bound;
+    \item Propose a mixed GLM based on the COM-Poisson$_\mu$ model.
+  \end{itemize}
+\end{frame}
+
+\section*{Notes}
+
+\begin{frame}
+
+\begin{itemize}
+  \item \begin{columns}[c]
+      \column{.1\linewidth}
+      \begin{flushright}
+        \includegraphics[height=0.9cm,valign=c]{./images/arxiv}
+      \end{flushright}
+      \column{.8\linewidth}
+      \hspace*{-0.7cm} Full-text article is available on arXiv\\
+      \hspace*{-0.7cm} \url{https://arxiv.org/abs/1801.09795}
+    \end{columns}
+  \item \begin{columns}[c]
+      \column{.1\linewidth}
+      \begin{flushright}
+        \includegraphics[height=0.9cm,valign=c]{./images/github-logo}
+      \end{flushright}
+      \column{.8\linewidth}
+      \hspace*{-0.7cm} All codes (in R) and source files are available
+      on GitHub\\
+      \hspace*{-0.7cm} \url{https://github.com/jreduardo/article-reparcmp}
+    \end{columns}
+\end{itemize}
+
+\vspace{0.5cm}
+
+{\bf Acknowledgements}
+
+\begin{itemize}
+    \item \begin{columns}[c]
+      \column{.1\linewidth}
+      \begin{flushright}
+        \includegraphics[height=0.9cm,valign=c]{./images/cnpq-logo}
+      \end{flushright}
+      \column{.8\linewidth} \vspace{-0.3cm}
+      \hspace*{-0.7cm}\begin{minipage}[c]{\textwidth}
+       National Council for Scientific and Technological Development
+       (CNPq), for their support.\\
+      \end{minipage}
+    \end{columns}
+\end{itemize}
+
+\end{frame}
+
+\section*{Bibliography}
+\begin{frame}[allowframebreaks]{References}
+  \small
+  \vspace*{-0.5cm}
+  \bibliography{../../references.bib}
+\end{frame}
+
+\end{document}
