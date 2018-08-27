@@ -1,5 +1,6 @@
-\documentclass[12pt, a4paper]{article}
-\usepackage[margin=2cm]{geometry}
+\documentclass[a4paper]{article}
+\usepackage[left=2.2cm, right=2.2cm,
+            top=2.2cm, bottom=2.5cm]{geometry}
 
 % Language
 \usepackage[utf8]{inputenc}
@@ -13,7 +14,7 @@
 \usepackage{booktabs}
 
 % Fonts
-\usepackage{mathpazo}
+%\usepackage{mathpazo}
 \setlength\parindent{0pt}
 
 % Utils
@@ -74,7 +75,7 @@ knitr::read_chunk("review.R")
   it is not.}
 \vspace{0.3cm}
 
-\textbf{\underline{Response}:} We appreciate the referee for his
+\textbf{\underline{Response}:} We appreciate the referee for her/his
 revision. All suggestions have been taken into account. Regarding the
 referees' main comment, we propose a reparametrization of the
 COM-Poisson model that is always valid. Only the interpretation of the
@@ -90,39 +91,45 @@ discussed at the end of Section 3 through the study of the dispersion
     approximation for normalizing constant $Z(\lambda, \nu)$ from which
     the expressions for both mean and variance will be derived. Please
     refer to the Gaunt et al. (2016) for the latest results.}\\[0.1cm]
-  \textbf{\underline{Response:}}
+  \textbf{\underline{Response:}} Thanks for this reference. We have
+  cited the paper published in the Annals of the Institute of
+  Statistical Mathematics \cite{Gaunt2017}.
 \item \textit{It seems that the paper missing some latest literature on
     CMP distribution. For example, the distributional properties of CMP
     were found in Daly and Gaunt (2015).}\\[0.1cm]
-  \textbf{\underline{Response:}}
+  \textbf{\underline{Response:}} Thanks for this reference. We have
+  cited the paper published in the ALEA, Latin American Journal of
+  Probability and Mathematical Statistics \cite{Daly2016}.
 \item \textit{The likelihood equation (4.1) needs more details. Can we
     derive score equations? It seems like the likelihood has become even
     more complicated. Some of the nice properties of the CMP likelihood
     such as the canonical link are lost.}\\[0.1cm]
   \textbf{\underline{Response:}} The log-likelihood function cannot be
-  derived in any parametrization. We obtain the Hessian matrix by
-  central finite differences (as said in ...). Regarding the expression
-  of reparametrized log-likelihood (Equation 3.1), although it seems
-  more complicated, this function is better behaved than the function
-  expressed in the original form (see Figure 8). Consider the
-  exponential family of distributions, with density given by
+  derived in relation ti the dispersion parameter using any
+  parametrization. We obtained the Hessian matrix by central finite
+  differences using the Richardson method implemented in
+  \texttt{R}. Although the expression of reparametrized log-likelihood
+  (Equation 3.1) seems more complicated, this function is better behaved
+  than the function expressed in the original form (see Figure
+  8). Consider the exponential family of distributions, with probability
+  function given by
   $$f(y) = \exp\{\sigma[\theta y - b(\theta)] - c(y, \phi)\},$$
   the COM-Poisson belongs to this family with $\sigma=1$,
   $\theta = \log(\lambda)$, $b(\theta) = \log(Z(\lambda, \nu))$ and
   $c(y, \phi)=-\nu\log(y!)$, only if $\nu$ is known. Since we don't have
   $b'(\theta) = \partial b(\theta)/\partial \theta$ in closed form, the
-  canonical link function has no an important rule. In this case, the
-  link function just maps $\theta$ in the parameter space of $\lambda$.
-  In the reparametrized version of the COM-Poisson, we adopted log link
-  function to map the parameter space and to have good interpretations
-  (in terms of rate ratios).
+  canonical link function has no important rule here. In this case, the
+  link function maps $\theta$ in the parameter space of $\lambda$.  In
+  the reparametrized version of the COM-Poisson, the log link function
+  maps the parameter space and provide simple interpretations (in terms
+  of rate ratios).
 \item \textit{For model fitting, the authors used general purpose
     optimization function in R. Did you observe any non convergence
     situations during your numerical studies.}\\[0.1cm]
   \textbf{\underline{Response:}} Yes, we have 37 situations where the
   algorithm did not converge in the simulation study (see table
   below). This occurred only for strong overdispersion and small sample
-  size. We report these situations in the updated version of the paper.
+  sizes. We reported these situations in the updated version of the paper.
   \begin{table}[H]
     \centering
     \begin{tabular}{lcccc}
@@ -140,15 +147,28 @@ discussed at the end of Section 3 through the study of the dispersion
     prone to errors. It would be good to have a computation times from
     the method for different sample sizes and dispersion
     levels.}\\[0.1cm]
-  \textbf{\underline{Response:}}
+  \textbf{\underline{Response:}} We have computed the times to fit the
+  models for the case studies in the paper, they have different
+  dispersion levels and sample sizes. However, the Figure below show the
+  times to fit in the simulation study. The results show that it took
+  more time to fit the models under equidispersion. This result is due
+  to choose of start values and normalizing constant upper bound. We
+  set, for all models, the upper bound 500 and we start the algorithm
+  from the real parameters.
+
+  \hspace*{-1cm}
+\begin{minipage}{\textwidth}
+<<simul-times, fig.width=9, fig.height=3.5>>=
+@
+\end{minipage}
 
 \item \textit{In Section 5, the simulated counts are ranging from 3 to
     27. This is too limited. Please increase the range.}\\[0.1cm]
   \textbf{\underline{Response}:} The simulation study was performed with
-  averages varying from 3 to 27. Therefore, considering the different
-  scenarios ($\phi=-1.6, \phi=-1, \phi=0$ and $\phi=1.8$), we cover a
-  wide range of counts. The Figure below shows the variation of the
-  counts for $\mu=27$ in the different scenarios.
+  expectations varying from 3 to 27. Therefore, considering the
+  different scenarios ($\phi=-1.6, \phi=-1, \phi=0$ and $\phi=1.8$), we
+  cover a wide range of counts. The Figure below shows the variation of
+  the counts for $\mu=27$ for the different scenarios.
 
   \hspace*{-1cm}
 \begin{minipage}{\textwidth}
@@ -163,9 +183,9 @@ discussed at the end of Section 3 through the study of the dispersion
     to Chatla and Shmueli (2018).}\\[0.1cm]
   \textbf{\underline{Response:}} We simulated data according to the
   original parametrization. The steps in the simulation study were i)
-  obtain the $\mu_i = \exp(\bm{x}_i^\top\bm{\beta})$; ii) Back to the
+  obtain the $\mu_i = \exp(\bm{x}_i^\top\bm{\beta})$; ii) back to the
   original parametrization $\lambda = (\mu + (\nu - 1)/(2\nu))^\nu$
-  (Equation 3.1); and iii) simulate data according COM-Poisson
+  (Equation 3.1); and iii) simulate data according to the COM-Poisson
   distribution using the probability integral transform theorem as
   implemented in \texttt{compoisson} package \citep{compoisson2012}.
 
@@ -186,13 +206,13 @@ discussed at the end of Section 3 through the study of the dispersion
   of the original parameters $\lambda$ and $\nu$. We showed that the new
   parameter space has nice properties like i) the orthogonality between
   $\mu$ and $\phi$ (and consequently between $\beta_j$ and $\phi$ in a
-  regression setting), leading to better both computation and asymptotic
+  regression setting), leading to better computation and asymptotic
   (normal-based) inference \citep{Ross1970}; and ii) interpretability of
   the $\beta_j$ in terms of the rate ratios since
   $\mu_i\approx \text{E}(Y_i)$. Moreover, we characterized the
   COM-Poisson distribution in terms of the dispersion, zero-inflation
   and heavy-tail indexes that illustrate its applicability in the real
-  count data. These are the methodological novelties of the article
+  count data. These are the methodological novelties of the paper
   besides the exploration of the results. However, in the updated
   version of the paper, we provided a better discussion of the case
   studies.
@@ -232,13 +252,14 @@ version.
   behaved...'', p. 19, etc.). This needs to be addressed.}\\[0.3cm]
 \textbf{\underline{Response:}} We thanks the referee for exploring this
 point. However, we didn't use the approximation of variance
-($a\text{Var}(Y_i)$) to repametrize or fit the COM-Poisson model. To
-compute de variances, that is showed in the Figure 3(a) and (b) we used
-$Var(Y)=\sum_{y=0}^{500} y^2p(y) - [\sum_{y=0}^{500} y p(y)]^2$. As
-highlighted in the Figure 1(b), the approximation is not accurate,
+($a\text{Var}(Y_i)$) to reparametrize or fit the COM-Poisson model. To
+compute the variances, that is showed in the Figure 3(a) and (b) we used
+$\text{Var}(Y)=\sum_{y=0}^{500} y^2p(y) - [\sum_{y=0}^{500} y
+p(y)]^2$.
+As highlighted in the Figure 1(b), the approximation is not accurate,
 mainly for overdispersion ($\phi<0$). The Figure (a) and (b) below shows
-the behaviour of $a\text{Var}(Y_i)$ function by fixing $\mu$ and $\phi$,
-repectivaly, illustrating the referees' statement. The $a\text{Var}(Y)$
+the behavior of $a\text{Var}(Y_i)$ function by fixing $\mu$ and $\phi$,
+respectively, illustrating the referees' statement. The $a\text{Var}(Y)$
 leads to negative values for variance for small $\mu$ and $\phi<0$ that
 shows that the approximation is not reasonable for this region of the
 parameter space.
@@ -250,14 +271,13 @@ parameter space.
 \end{minipage}
 \vspace{0.3cm}
 
-The results shown in Figures 7 and 8 reflect that orthogonality property
-is slightly lost for strong overdispersion and small $\mu$. This is
-related to accuracy of the $aE(Y_i)$. When $aE(Y_i)$ is accurate, $\mu$
-represents the expectation of the $Y_i$ and, consequently, $\mu$ and
-$\phi$ (or $\beta_j$ and $\phi$ in a regression setting) are
-orthogonal. We improved the discussion about this in the current version
-of the article.
-\vspace{0.4cm}
+The results shown in Figures 7 and 8 reflect that the orthogonality
+property is slightly lost for strong overdispersion and small
+$\mu$. This is related to the accuracy of the $aE(Y_i)$. When $aE(Y_i)$
+is accurate, $\mu$ represents the expectation of the $Y_i$ and,
+consequently, $\mu$ and $\phi$ (or $\beta_j$ and $\phi$ in a regression
+setting) are orthogonal. We improved the discussion about this in the
+current version of the paper.  \vspace{0.4cm}
 
 \textbf{\underline{Fifth paragraph}:} \textit{This last point also hints
   that a quasi-Poisson model based on the assumption that
@@ -268,11 +288,11 @@ of the article.
 second-moment assumptions (expectation and variance). As highlighted in
 Figure 3(a) (and in referee's previous comment), the mean-variance
 relationship for COM-Poisson is linear. Therefore, is suitable to
-analyse data generated according to the COM-Poisson distribution, using
-the assumption $Var(Y_i)\propto \mu_i$. The advantage of the COM-Poisson
-approach is it corresponds to a fully specified probability model
-allowing to compute the likelihood and its resulting results (deviance,
-AIC, BIC).
+analyze data generated according to the COM-Poisson distribution, using
+the assumption $\text{Var}(Y_i)\propto \mu_i$. The advantage of the
+COM-Poisson approach is that it corresponds to a fully specified
+probability model allowing to compute the likelihood and some useful
+measures like deviance, AIC, BIC, LRT, etc.
 \vspace{0.4cm}
 
 \textbf{\underline{Sixth paragraph}:} \textit{Consider the example of
@@ -286,19 +306,19 @@ AIC, BIC).
   error results seem to indicate (see Fig 1), then the ML estimates of
   $\beta$ would be very similar. Exactly what models are being fitted
   here? This needs clarification.}\\[0.1cm]
-\textbf{\underline{Response:}} Note the $\lambda_i$ does not represente
-the expectation, nor approximately. The quadratic erros in Figure 1(a)
-is obtained by $[a\text{E(Y)} - \sum_{y=0}^{500}y p(y)]^2$.  The models
-fitted in the case studies are
+\textbf{\underline{Response:}} Note that the $\lambda_i$ does not
+represent the expectation, nor approximately. The quadratic errors in
+Figure 1(a) is obtained by $[a\text{E(Y)} - \sum_{y=0}^{500}y p(y)]^2$.
+The models fitted in the case studies are
 $[\text{COMPo}(\lambda_i, \nu), \log(\lambda_i) = \beta^\top x_i]$ and
 $[\text{COMPo}(\mu_i, \phi), \log(\mu_i) = \beta^\top x_i]$. Therefore,
-the $\beta$ estimates are only comparable if $\phi=0$ (Poisson special
-case) otherwise the $\beta$ estimates are on different scales. We make
-it clear which parameters are being placed the linear predictor in
-the current version of the paper. To understand the relationship of the
-coefficients, consider $\log(\lambda_i) = \beta^o$ and $\log(\mu_i) =
-\beta^*$, so $\beta^*$ expressed in terms of $\beta^o$ is
-$\beta^* = \exp(\beta^o) \exp{-\phi} - (\exp(\phi) - 1)/(2\exp(\phi))$.
+the $\beta$'s estimates are comparable only if $\phi=0$ (Poisson special
+case) otherwise they are on different scales. We make it clear in which
+parameter the linear predictor is placed in the current version of the
+paper. To understand the relationship of the coefficients, consider
+$\log(\lambda_i) = \beta^o$ and $\log(\mu_i) = \beta^*$, so $\beta^*$
+expressed in terms of $\beta^o$ is
+$\beta^* = \exp(\beta^o-\phi) - (\exp(\phi) - 1)/(2\exp(\phi))$.
 \vspace{0.4cm}
 
 \textbf{\underline{Specific reviewer's comments}:}
@@ -309,12 +329,14 @@ $\beta^* = \exp(\beta^o) \exp{-\phi} - (\exp(\phi) - 1)/(2\exp(\phi))$.
     $\nu$. Is this reasonable?}\\[0.1cm]
   \textbf{\underline{Response:}} The constraint $\mu>0$ implies that
   $\lambda > [(\nu-1)/(2\nu)]^\nu$. The Figure below show (a) the
-  constraint parameter space; and (b) the expectated values
+  constraint border in the parameter space; and (b) the expected values
   (obtained by $\sum y p(y)$). The constraint lies on the very small
   $\lambda$ and $\nu>1$ (underdispersion). This parameter region is
   related to small expected values (smaller than 0.1) and
   underdispersion. Therefore, although this constraint is undesirable,
-  it does not prejudice the application of the model.
+  it does not prejudice the application of the model. We thank the
+  referee for highlighting this point. We have discussed it in the
+  updated version.
 
 \hspace*{-1.0cm}
 \begin{minipage}{\textwidth}
@@ -322,9 +344,6 @@ $\beta^* = \exp(\beta^o) \exp{-\phi} - (\exp(\phi) - 1)/(2\exp(\phi))$.
 @
 \end{minipage}
 \vspace{0.3cm}
-
-We thank the referee for highlighting this point. We have discussed it
-in the updated version.
 
 \item \textit{The Shmueli approximations to the mean and variance hold
     under certain conditions. Are those conditions met in practice? For
@@ -336,7 +355,7 @@ in the updated version.
   gives by \cite{Shmueli2005} ($\phi \leq 0$ and
   $\mu > 10 - (\exp(\phi) - 1)/(2\exp(\phi))$. Except for
   counts with small averages (close to 0), the reparametrized model fits
-  well. For examples presented in the article, the parameter estimates
+  well. For examples presented in the paper, the parameter estimates
   are summarizes below.
 
 <<contraints-case-studies, results="asis", cache=TRUE>>=
@@ -350,14 +369,16 @@ in the updated version.
     former.}\\[0.1cm]
   \textbf{\underline{Response:}} Thank you for advertising this
   misunderstanding. At the bottom of page 14 the $\bm{\mu}$ is
-  $a\text{E}(\bm{Y})$. We keep symbol $\mu$ to the introduced parameter
+  $a\text{E}(\bm{Y})$. We keep symbol $\mu$ for the introduced parameter
   in order to highlight that it is related to the expectation. However,
   we make clear that $\mu_i = a\text{E}(Y_i)$ to avoid misunderstanding.
 
 \item \textit{The abstract could be improved by making it more concise
     (shorter).  It should be written from the third-person perspective
     as well.}\\[0.1cm]
-\textbf{\underline{Response:}}
+  \textbf{\underline{Response:}} We have written a more concise
+  abstract. We keep it from a first-person perspective, like other
+  papers published by the journal.
 
 \item \textit{I assume that the “38\% faster” algorithm means that,
     e.g., instead of 10 seconds it takes just 6.2 seconds. As this is
@@ -365,10 +386,10 @@ in the updated version.
     change to the “simpler” parameterization given that this latter
     parameterization models $aE(Y_i)$ rather than $E(Y_i)$.}\\[0.1cm]
   \textbf{\underline{Response:}} The time to fit the
-  COM-Poisson$(\mu_i, \phi)$ model was compared to the time to fit the
-  COM-Poisson$(\lambda_i, \phi)$ model. The computational times for 50
-  repetitions of fit of the models in the three case studies are
-  presented in Figure below.
+  COM-Poisson$(\mu_i, \phi)$ models were compared to the time to fit the
+  COM-Poisson$(\lambda_i, \phi)$ models in the paper. The computational
+  times for 50 repetitions of fit of the models in the three case
+  studies are presented in Figure below.
 
 \hspace*{-1.0cm}
 \begin{minipage}{\textwidth}
@@ -377,12 +398,12 @@ in the updated version.
 \end{minipage}
 \vspace{0.3cm}
 
-The times to adjust under the proposed parameterization are 110\% faster
-than the original, in the overdispersed case. In addition, the nice
-properties induced by the new parameterization like the orthogonality
-between $\mu$ and $\phi$ and interpretation of $\mu$ are the main
-advantages to warrant the use of the new parameterization besides
-computational times.
+The computation times under the proposed parametrization are 110\%
+faster than the original, in the overdispersed case. In addition, the
+nice properties induced by the new parametrization like the
+orthogonality between $\mu$ and $\phi$ and interpretation of $\mu$ are
+the main advantages to warrant the use of the new parametrization
+besides computational times.
 
 \end{enumerate}
 

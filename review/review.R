@@ -9,7 +9,8 @@ options(digits = 3, OutDec = ".",
         xtable.booktabs = TRUE,
         xtable.sanitize.text.function = identity,
         xtable.size = "small",
-        xtable.math.style.negative = TRUE)
+        xtable.math.style.negative = TRUE,
+        xtable.table.placement = "H")
 opts_chunk$set(
     warning = FALSE,
     message = FALSE,
@@ -31,6 +32,28 @@ library(purrr)
 library(dplyr)
 library(tidyr)
 cols <- trellis.par.get("superpose.line")$col
+
+## ---- simul-times
+phis <- c(0, -1.6, -1, 1.8)
+names(phis) <- sprintf("phi=%s", phis)
+sizes <- c(50, 100, 300, 1000)
+names(sizes) <- sprintf("n=%s", sizes)
+readRDS("../codes/simultimes.rds") %>%
+    mutate(size = factor(sizes[size], levels = sizes),
+           phi = factor(phi, levels = names(phis)[c(2, 3, 1, 4)])) %>%
+    na.omit() %>%
+    bwplot(time ~ size | phi,
+           # groups = phi,
+           layout = c(4, 1),
+           scales = list(y = "free"),
+           ylab = "Time (seconds)",
+           xlab = "Sample size",
+           axis = axis.grid,
+           strip = strip.custom(
+               factor.levels = parse(
+                   text = gsub("=", "==", levels(.$phi)))
+           ),
+           data = .)
 
 ## ---- counts-ranging
 rcmp <- Vectorize(FUN = function(n, mu, phi) {
@@ -222,6 +245,7 @@ xlabs <- expression("COMPo"(lambda[i], phi),
                     "COMPo"(mu[i], phi))
 bwplot(time/10e6 ~ expr | case,
        ylab = "Time (seconds)",
+       axis = axis.grid,
        scales = list(
            y = list(relation = "free"),
            x = list(at = 1:2, labels = xlabs)
