@@ -81,34 +81,38 @@ results <- mclapply(sizes, function(n) {
     lapply(phis, function(phi) {
         lapply(1:B, function(i) {
             y <- rcmp(1, mu, phi)
-            fit <- try(fitcm(y ~ x1 + x2, start = c(phi, beta),
-                             model = "CP2", sumto = 200))
-                if (! class(fit) == "try-error") {
-                    ll <- -fit@min
-                    vc <- fit@vcov
-                    co <- fit@coef
-                    ci <- confint(fit, method = "quad")
-                } else {
-                    ll <- NA
-                    vc <- matrix(NA, ncol = length(beta) + 1,
-                                 nrow = length(beta) + 1)
-                    co <- rep(NA, length(beta) + 1)
-                    ci <- matrix(NA, nrow = length(beta) + 1, ncol = 2)
-                }
+            ti <- system.time(
+                fit <- try(fitcm(y ~ x1 + x2, start = c(phi, beta),
+                                 model = "CP2", sumto = 200))
+            )
+            if (! class(fit) == "try-error") {
+                ll <- -fit@min
+                vc <- fit@vcov
+                co <- fit@coef
+                ci <- confint(fit, method = "quad")
+            } else {
+                ll <- NA
+                vc <- matrix(NA, ncol = length(beta) + 1,
+                             nrow = length(beta) + 1)
+                co <- rep(NA, length(beta) + 1)
+                ci <- matrix(NA, nrow = length(beta) + 1, ncol = 2)
+            }
             colnames(ci) <- c("lwr", "upr")
-            out <- list("coef" = co, "cint" = ci,
-                        "loglik" = ll, "vcov" = vc)
+            out <- list("coef" = co,
+                        "cint" = ci,
+                        "loglik" = ll,
+                        "vcov" = vc,
+                        "ctime" = ti)
             return(out)
         }) # Close replicate
     }) # Close phi
-}, mc.cores = 3) # Close sizes
-str(results)
-
+}, mc.cores = 4) # Close sizes
 saveRDS(results, "simulation.rds", compress = FALSE)
 
 #-------------------------------------------
 # Load the results
 results <- readRDS("simulation.rds")
+results_time <- readRDS("simulation2.rds")
 
 #-----------------------------------------------------------------------
 # Compute bias
@@ -305,7 +309,8 @@ coverage$phi <- ordered(coverage$phi, c("phi=-1.6", "phi=-1", "phi=0",
                                         "phi=1.8"))
 coverage$n <- as.numeric(gsub("n=([0-9]+)", "\\1", coverage$n))
 
-covdata <- aggregate(coverage ~ n + phi + param, data = coverage,
+covdata <- aggregate(coverage ~ n + phi + param,
+                     data = coverage,
                      function(x) sum(x == 0) / length(x))
 
 fl <- parse(text = gsub("=", "==", levels(bias$phi)))
@@ -401,7 +406,6 @@ useOuterStrips(
 
 #-----------------------------------------------------------------------
 # Obtain the covariance between dispersion and regression parameters
-
 aux <- ldply(
     lapply(results, function(x) {
     ind <- names(x); names(ind) <- ind
@@ -461,6 +465,36 @@ useOuterStrips(
     strip.left = strip.custom(
         factor.levels = c("Covariance", "Correlation"))
 )
+
+#-------------------------------------------
+# Times to fit
+library(purrr)
+datime <-
+    map_dfr(results_time, .id = "size", function(datan) {
+        map_dfr(datan, .id = "phi", function(datap) {
+            map_dfr(datap, function(sims) {
+                tibble::tibble(time = sims[["ctime"]]["elapsed"])
+            })
+        })
+    })
+saveRDS(datime, "simultimes.rds")
+
+datime %>%
+    mutate(size = factor(sizes[size], levels = sizes),
+           phi = factor(phi, levels = names(phis)[c(2, 3, 1, 4)])) %>%
+    na.omit() %>%
+    bwplot(time ~ size | phi,
+           # groups = phi,
+           layout = c(4, 1),
+           scales = list(y = "free"),
+           ylab = "Time (seconds)",
+           xlab = "Sample size",
+           axis = axis.grid,
+           strip = strip.custom(
+               factor.levels = parse(
+                   text = gsub("=", "==", levels(.$phi)))
+           ),
+           data = .)
 
 #-----------------------------------------------------------------------
 # Likelihood surfaces (simulation with simple no covariate case)

@@ -81,3 +81,22 @@ bench3 <- microbenchmark(
 #  CMP   1.125297 1.143321 1.189389 1.160909 1.237385 1.357786    50   b
 #  CMPmu 1.034631 1.041504 1.091136 1.071659 1.128976 1.258067    50  a
 #-------------------------------------------
+
+#-----------------------------------------------------------------------
+# Organize results
+benchs <- list("Cotton (under)" = bench1,
+               "Soybean (over)" = bench2,
+               "Nitrofen (equi)" = bench3)
+benchs <- purrr::map_dfr(benchs, identity, .id = "case")
+
+class(benchs) <- "data.frame"
+saveRDS(benchs, "comparetimes.rds")
+
+xlabs <- expression("COM-Poisson", "COM-Poisson"[mu])
+bwplot(time ~ expr | case,
+       ylab = "Time (seconds)",
+       scales = list(
+           y = list(relation = "free"),
+           x = list(at = 1:2, labels = xlabs)
+       ),
+       data = benchs)
