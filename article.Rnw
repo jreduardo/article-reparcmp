@@ -491,8 +491,8 @@ the regression coefficients are obtained based on the observed
 information matrix $\mathcal{I}(\bm{\theta})$, where
 $\mathcal{I}(\bm{\theta}) = -\mathcal{H}(\bm{\theta})$ (Hessian matrix)
 is computed numerically by central finite differences. Standard errors
-for $\hat{\mu}_i$ and hence confidence intervals are obtained by using
-the delta method~\citep[p. 89]{Pawitan2001}.
+for $\hat{\eta}_i = \log(\hat{\mu}_i)$ and hence confidence intervals
+are obtained by using the delta method~\citep[p. 89]{Pawitan2001}.
 
 Parameter estimation for the COM-Poisson regression model in the
 original parametrization is analogous to that presented for the
@@ -604,7 +604,7 @@ and dispersion parameter estimators for each simulation scenario, on the
 correlation scale. The correlations are gnerally close to zero in all
 cases suggesting the orthogonality property for the reparametrized
 model. Interestingly, results in the first panel show that
-corr($\hat{\beta}_{22}, \hat{\phi}$) is not very close to zero (values
+Corr($\hat{\beta}_{22}, \hat{\phi}$) is not very close to zero (values
 between $-0.4$ and $0.2$) for strong overdispersion ($\phi = -1.6$).
 
 <<ortho-plot, fig.height=4.5, fig.width=9, fig.cap="Empirical correlations between regression and dispersion parameters by different sample sizes and dispersion levels.">>=
@@ -625,7 +625,7 @@ mean approximation \autoref{fig:approx-plot}(a). Although the
 reparametrized model is always valid, $\mu$ and $\phi$ are orthogonal
 only when $\mu$ is the expectation of the distribution, in other words,
 when the approximation $\lambda - (\nu-1)/(2\nu)$ is accurate. This also
-explains the results of corr$(\hat{\beta}_{22}, \phi)$ in the first
+explains the results of Corr$(\hat{\beta}_{22}, \phi)$ in the first
 panel of \autoref{fig:ortho-plot}, since $\beta_{22}$ is negative and
 associated with low counts.
 
@@ -653,10 +653,10 @@ set was previously analyzed by~\citet{Zeviani2014} using the Gamma-Count
 distribution.
 
 Following~\citet{Zeviani2014}, the linear predictor is given by
-$$\eta_i = \beta_0 + \beta_{1j} \texttt{def}_i + \beta_{2j}
+$$\eta_{ij} = \beta_0 + \beta_{1j} \texttt{def}_i + \beta_{2j}
 \texttt{def}_i^2$$
-where $\eta_i = \log(\lambda_i)$ for the original COM-Poisson and
-$\eta_i = \log(\mu_{ij})$ for COM-Poisson$_\mu$. The parameter
+where $\eta_{ij} = \log(\lambda_{ij})$ for the original COM-Poisson and
+$\eta_{ij} = \log(\mu_{ij})$ for COM-Poisson$_\mu$. The parameter
 $\mu_{ij}$ is the (approximated) expected number of cotton bolls for the
 $i$-th defoliation level ($i=$ 1: 0\%, 2: 25\%, 3: 50\%, 4: 75\% e 5:
 100\%) and $j$-th growth stage ($j$ = 1: vegetative, 2: flower bud, 3:
@@ -792,7 +792,7 @@ removed).
 For the analysis of this data set, based on the descriptive analysis
 (\autoref{fig:desc-soy}), we proposed the following linear predictor
 $$
-\eta_i = \beta_0 + \gamma_i + \tau_j +
+\eta_{ijk} = \beta_0 + \gamma_i + \tau_j +
   \beta_{1}\texttt{K}_k + \beta_{2}\texttt{K}_k^2 +
   \beta_{3j}\texttt{K}_k
 $$
@@ -803,10 +803,11 @@ give the baseline quadratic response over potassium levels \texttt{K}
 ($k=$1: 0.0, 2: 0.3, 3: 0.6, 4: 1.2, 5: 1.8 100mg dm$^{-3}$) and
 $\beta_{3j}$ is interaction of the first order potassium effect
 (\texttt{K}) for the $j$-th moisture level (\texttt{umid}); The
-predictor $\eta_i$ is $\log(\lambda_i)$ for the original COM-Poisson and
-$\log(\mu_{ij})$ for COM-Poisson$_\mu$. \autoref{tab:coef-soy} presents
-the estimates, ratio between estimate and standard error, and
-goodness-of-fit measures for the alternative models.
+predictor $\eta_{ijk}$ is $\log(\lambda_{ijk})$ for the original
+COM-Poisson and $\log(\mu_{ijk})$ for
+COM-Poisson$_\mu$. \autoref{tab:coef-soy} presents the estimates, ratio
+between estimate and standard error, and goodness-of-fit measures for
+the alternative models.
 
 The results in \autoref{tab:coef-soy} show that the two parametrizations
 of the COM-Poisson model presented very similar goodness-of-fit measures
@@ -909,18 +910,19 @@ offspring was recorded.
 <<fit-ovos, cahe=TRUE, include=FALSE>>=
 @
 
-For this data set we consider three models with linear predictors,
-\begin{center}
-\begin{minipage}{12cm}
-Linear: $\eta_i = \beta_0 + \beta_1 \texttt{dose}_i$\\
-Quadratic: $\eta_i = \beta_0 + \beta_1 \texttt{dose}_i +
-             \beta_2 \texttt{dose}_i^2$\\
-Cubic: $\eta_i = \beta_0 + \beta_1 \texttt{dose}_i +
-             \beta_2 \texttt{dose}_i^2 + \beta_3 \texttt{dose}_i^3$.
-\end{minipage}
-\end{center}
+For this data set we consider three models with linear
+predictors,\\[\parskip]
+\hspace*{1.5\parskip}
+\begin{tabular}{ll}
+  Linear:     & $\eta_i = \beta_0 + \beta_1 \texttt{dose}_i$,\\
+  Quadratic: & $\eta_i = \beta_0 + \beta_1 \texttt{dose}_i +
+               \beta_2 \texttt{dose}_i^2$ e\\
+  Cubic:     & $\eta_i = \beta_0 + \beta_1 \texttt{dose}_i +
+               \beta_2 \texttt{dose}_i^2 + \beta_3 \texttt{dose}_i^3$,
+\end{tabular}
+
 where $\eta_i = \log(\lambda_i)$ for the original COM-Poisson and
-$\eta_i = \log(\mu_{ij})$ for COM-Poisson$_\mu$.
+$\eta_i = \log(\mu_i)$ for COM-Poisson$_\mu$.
 
 \begin{table}[!ht]
 \centering \small
@@ -929,24 +931,24 @@ $\eta_i = \log(\mu_{ij})$ for COM-Poisson$_\mu$.
 \label{tab:anova-ovos}
 \begin{tabularx}{\textwidth}{lCCCCCrC}
   \toprule
- Poisson & np & $\ell$ & AIC & 2(diff $\ell$) & diff np & P($>\rchi^2$) & \\
+ Poisson & $\#p$ & $\ell$ & AIC & 2(diff $\ell$) & diff $\#p$ & P($>\rchi^2$) & \\
  \midrule
 <<anova-ovos1, results="asis">>=
 @
 \specialrule{0em}{0.5em}{0em} %% Apenas para espaçamento
-  COM-Poisson & np & $\ell$ & AIC & 2(diff $\ell$) & diff np &
+  COM-Poisson & $\#p$ & $\ell$ & AIC & 2(diff $\ell$) & diff $\#p$ &
   P($>\rchi^2$) & $\hat{\phi}$ \\
   \midrule
 <<anova-ovos2, results="asis">>=
 @
 \specialrule{0em}{0.5em}{0em} %% Apenas para espaçamento
-  COM-Poisson$_\mu$ & np & $\ell$ & AIC & 2(diff $\ell$) & diff np &
+  COM-Poisson$_\mu$ & $\#p$ & $\ell$ & AIC & 2(diff $\ell$) & diff $\#p$ &
   P($>\rchi^2$) & $\hat{\phi}$ \\
   \midrule
 <<anova-ovos3, results="asis">>=
 @
 \specialrule{0em}{0.5em}{0em} %% Apenas para espaçamento
-  Quasi-Poisson & np & QDev & AIC & F & diff np & P($>F$) & $\hat{\sigma}$ \\
+  Quasi-Poisson & $\#p$ & QDev & AIC & F & diff $\#p$ & P($>F$) & $\hat{\sigma}$ \\
   \midrule
 <<anova-ovos4, results="asis">>=
 @
