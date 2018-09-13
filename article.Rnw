@@ -1094,6 +1094,12 @@ model framework.  Finally, the reparametrized version of the COM-Poisson
 model would also be highly suitable for the specification of generalized
 linear mixed COM-Poisson models.
 
+\section*{Acknowledgments}
+
+The authors wish to thank the anonymous referees for many comments from
+which this paper has benefited. This work was partially supported by
+CNPq, a Brazilian science funding agency.
+
 %-----------------------------------------------------------------------
 \bibliography{references.bib}
 
