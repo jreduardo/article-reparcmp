@@ -352,26 +352,25 @@ distribution as a special case.
 
 In order to assess the accuracy of the moment approximations
 (\autoref{eqn:mean-approx}), \autoref{fig:approx-plot} presents the
-squared errors for (a) expectation and (b) variance.  The squared errors
-are $[\mu - \text{E}(Y)]^2$ for the expectation and
-$[ \mu \exp(-\phi) - \text{Var}(Y)]^2$ for the variance. In both cases
-$\text{E}(Y)$ and Var$(Y)$ were computed numerically using 500
-terms\footnote{ E$(Y) \approx \sum_{y=0}^{500}yp(y)$ and
+errors for (a) expectation ($\mu - \text{E}(Y)$) and (b) variance
+($\mu \exp(-\phi) - \text{Var}(Y)$). In both cases $\text{E}(Y)$ and
+Var$(Y)$ were computed numerically using 500 terms\footnote{
+  E$(Y) \approx \sum_{y=0}^{500}yp(y)$ and
   E$(Y^2) \approx \sum_{y=0}^{500}y^2p(y)$.}. The dotted lines represent
 the border between the regions $\nu \leq 1$ and $\lambda > 10^\nu$, in
 the $\mu$ and $\phi$ scale.
 
-<<approx-plot, fig.height=3, fig.width=6, out.width=".8\\textwidth", fig.cap="Squared errors for the approximation of the (a) expectation and (b) variance. Dotted lines represent the restriction for suitable approximations given by \\cite{Shmueli2005}.">>=
+<<approx-plot, fig.height=3, fig.width=6, out.width=".8\\textwidth", fig.cap="Errors for the approximation of the (a) expectation and (b) variance. Dotted lines represent the restriction for suitable approximations given by \\cite{Shmueli2005}.">>=
 @
 
 The results in \autoref{fig:approx-plot} show that the mean
-approximation is accurate, the largest squared error, for the parameter
-values evaluated, is $0.038$.  For the variance approximation, the
-largest squared error was $XXX$ and it occurs for negative values of
-$\phi$. Interestingly, the errors for the variance are larger for
-negative values of $\phi$ and present no clear relation with $\mu$, as
-opposed to the regions gives by \citet{Shmueli2005} ($\phi \leq 0$ and
-$\mu > 10 - \frac{\exp(\phi) - 1}{2\exp(\phi)}$).
+approximation is accurate, the largest (absolute) error, for the
+parameter values evaluated, is $-0.197$.  For the variance
+approximation, the largest error was $8.4$ and it occurs for negative
+values of $\phi$. Interestingly, the errors for the variance are larger
+for negative values of $\phi$ and present no clear relation with $\mu$,
+as opposed to the regions gives by \citet{Shmueli2005} ($\phi \leq 0$
+and $\mu > 10 - (\exp(\phi) - 1)/(2\exp(\phi))$).
 
 The results presented in \autoref{fig:approx-plot}(a) support the
 proposed reparametrization. Replacing $\lambda$ and $\nu$ as functions of
@@ -437,8 +436,8 @@ parameter $\phi$. In terms of moments, this leads to a specification
 indistinguishable from the quasi-Poisson regression model. The
 dispersion indexes in \autoref{fig:indexes-plot}(b) show that the
 distribution is suitable to deal to dispersed counts, of course. For the
-parameter values evaluated the largest DI was $XXX$ and smallest was
-$XXX$. \autoref{fig:indexes-plot}(c) shows the COM-Poisson can handle
+parameter values evaluated the largest DI was $4.21$ and smallest was
+$0.168$. \autoref{fig:indexes-plot}(c) shows the COM-Poisson can handle
 a limited amount of zero-inflation, in cases of overdispersion
 ($\phi < 0$). On the other hand, for $\phi > 0$ (underdispersion) this
 distribution is suitable to deal with zero-deflated counts. Heavy-tail

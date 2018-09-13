@@ -52,6 +52,7 @@ cols <- trellis.par.get("superpose.line")$col
 
 # Useful packages
 library(bbmle)
+library(methods)
 library(multcomp)
 library(plyr)
 library(tidyr)
@@ -83,7 +84,6 @@ grid$z <- apply(grid, 1, function(par) {
 })
 
 xt <- xtabs(z ~ nu + lambda, data = grid)
-
 
 ## ----results-Z
 caption <- paste(
@@ -119,53 +119,58 @@ print(xtable(xt2, digits = -2,
 # Mean and variance relationship
 aux <- expand.grid(
     mu = seq(3, 30, length.out = 55),
-    phi = seq(-1.5, 1.8, length.out = 50))
+    phi = seq(-1.5, 1.8, length.out = 50),
+    KEEP.OUT.ATTRS = FALSE)
 
-moments <- mapply(FUN = calc_moments,
-                  mu = aux$mu,
-                  phi = aux$phi,
-                  MoreArgs = list(sumto = 300),
-                  SIMPLIFY = FALSE)
-grid <- cbind(aux, t(do.call(cbind, moments)))
-grid <- transform(grid, va = mu / exp(phi))
+grid <- with(aux, t(calc_moments(mu, phi))) %>%
+    as.data.frame() %>%
+    cbind(aux, .) %>%
+    transform(va = mu / exp(phi)) %>%
+    transform(emu = (mu - mean),
+              eva = (va - var))
 
+maemu <- max(abs(grid$emu))
+maeva <- max(abs(grid$eva))
 
 ## ----approx-plot
 # Errors in approximations for E[Y] and V[Y]
-grid <- transform(grid,
-                  emu = (mu - mean)^2,
-                  eva = (va - var)^2)
 
-myreg <- colorRampPalette(c("gray90",  "gray20"))
-xy1 <- levelplot(emu ~ phi + mu, data = grid,
-                 aspect = "fill",
-                 col.regions = myreg,
-                 xlab = expression(phi),
-                 ylab = expression(mu),
-                 sub = "(a)",
-                 colorkey = list(space = "top"),
-                 par.settings = ps2,
-                 panel = function(x, y, z, ...) {
-                     panel.levelplot(x, y, z, ...)
-                     panel.curve(10 - (exp(x) - 1)/(2 * exp(x)),
-                                 lty = 2)
-                     panel.abline(v = 0, lty = 2)
-                 })
+myreg <- colorRampPalette(c("gray20", "gray95"))
+xy1 <-
+    levelplot(emu ~ phi + mu, ,
+              aspect = "fill",
+              xlab = expression(phi),
+              ylab = expression(mu),
+              sub = "(a)",
+              at = seq(-0.2, 0.07, length.out = 18),
+              par.settings = ps2,
+              colorkey = list(space = "top"),
+              col.regions = myreg,
+              panel = function(x, y, z, ...) {
+                  panel.levelplot(x, y, z, ...)
+                  panel.curve(10 - (exp(x) - 1)/(2 * exp(x)),
+                              lty = 2)
+                  panel.abline(v = 0, lty = 2)
+              },
+              data = grid)
 
-xy2 <- levelplot(eva ~ phi + mu, data = grid,
-                 aspect = "fill",
-                 col.regions = myreg,
-                 xlab = expression(phi),
-                 ylab = expression(mu),
-                 sub = "(b)",
-                 colorkey = list(space = "top"),
-                 par.settings = ps2,
-                 panel = function(x, y, z, ...) {
-                     panel.levelplot(x, y, z, ...)
-                     panel.curve(10 - (exp(x) - 1)/(2 * exp(x)),
-                                 lty = 2)
-                     panel.abline(v = 0, lty = 2)
-                 })
+xy2 <-
+    levelplot(eva ~ phi + mu, ,
+              aspect = "fill",
+              xlab = expression(phi),
+              ylab = expression(mu),
+              sub = "(b)",
+              at = seq(-0.15, 10, length.out = 18),
+              par.settings = ps2,
+              colorkey = list(space = "top"),
+              # col.regions = myreg,
+              panel = function(x, y, z, ...) {
+                  panel.levelplot(x, y, z, ...)
+                  panel.curve(10 - (exp(x) - 1)/(2 * exp(x)),
+                              lty = 2)
+                  panel.abline(v = 0, lty = 2)
+              },
+              data = grid)
 
 print(xy1, split = c(1, 1, 2, 1), more = TRUE)
 print(xy2, split = c(2, 1, 2, 1), more = FALSE)
