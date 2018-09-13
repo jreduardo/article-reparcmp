@@ -1,5 +1,6 @@
 # =====================================================================
-#  Analysis of Artificial Defoliation in Cotton Plants
+# Analysis of number of grains in Soyabean under Soil Moisture and
+# Potassium Doses
 #                                                        Eduardo Junior
 #                                                    edujrrib@gmail.com
 #                                                            2017-08-05
@@ -7,48 +8,50 @@
 
 #-----------------------------------------------------------------------
 # Load package and functions
+source("helper01_general-functions.R")
+source("helper02_lattice-panels.R")
+
+library(plyr)
+library(tidyr)
 library(bbmle)
-library(multcomp)
-library(dplyr)
-source("lattice-panels.R")
-source("functions.R")
 
 # Colors for legends
 cols <- trellis.par.get("superpose.line")$col
 
 #-----------------------------------------------------------------------
 # Load data
-# data(cottonBolls, package = "cmpreg")
-cottonBolls <- read.table("../data/cottonBolls.txt",
-                          header = TRUE, sep = "\t")
-str(cottonBolls)
+# data(soyaBeans, package = "cmpreg")
+soyaBeans <- read.table("../data/soyaBeans.txt",
+                        header = TRUE, sep = "\t")
+soyaBeans$umid <- as.factor(soyaBeans$umid)
+soyaBeans <- soyaBeans[-74, ] ## Incorrect observation
+soyaBeans <- transform(soyaBeans, K = K / 100)
 
 #-----------------------------------------------------------------------
 # Exploratory analysis
 
-# Scatter plot with a beewarm taste
-xy1 <- xyplot(ncap ~ des | est,
-              data = cottonBolls,
-              layout = c(2, 3),
-              as.table = TRUE,
-              grid = TRUE,
-              type = c("p", "smooth"),
-              xlab = "Artificial defoliation level",
-              ylab = "Number of bolls produced",
-              spread = 0.05,
-              panel = panel.beeswarm)
+# Scatter plot
+xy1 <- xyplot(ngra ~ K | umid,
+              data = soyaBeans,
+              xlab = "Potassium fertilization level",
+              ylab = "Number of grains per pot",
+              type = c("p", "g", "smooth"),
+              as.table =  TRUE,
+              layout = c(2, 2),
+              strip = strip.custom(
+                  strip.names = TRUE, var.name = "humidity",
+                  factor.levels = paste0(levels(soyaBeans$umid), "%")))
 
 # Sample variance vs sample mean (evidence in favor of the
-# underdispersion).
-mv <- cottonBolls %>%
-    group_by(est, des) %>%
-    summarise(mu = mean(ncap), va = var(ncap))
+# overdispersion).
+mv <- soyaBeans %>%
+    group_by(K, umid) %>%
+    summarise(mu = mean(ngra), va = var(ngra))
 xlim <- ylim <- extendrange(c(mv$mu, mv$va), f = 0.05)
 
 xy2 <- xyplot(va ~ mu,
               data = mv,
-              grid = TRUE,
-              type = c("p", "r"),
+              type = c("p", "r", "g"),
               xlim = xlim,
               ylim = ylim,
               xlab = expression("Sample"~"mean"~(bar(y))),
@@ -65,95 +68,99 @@ print(xy2, split = c(2, 1, 2, 1), more = FALSE)
 # Fit models
 mnames <- c("PO", "C1", "C2", "QP")
 
-# Predictor, following Zeviani et al. (2014)
-form1 <- ncap ~ est:(des + I(des^2))
+# Predictor
+form2 <-  ngra ~ bloc + umid * K + I(K^2)
 
-m1PO <- glm(form1, data = cottonBolls, family = poisson)
+m2PO <- glm(form2, data = soyaBeans, family = poisson)
 system.time(
-    m1C1 <- fitcm(form1, data = cottonBolls, model = "CP", sumto = 50)
+    m2C1 <- fitcm(form2, data = soyaBeans, model = "CP", sumto = 700)
 )
 system.time(
-    m1C2 <- fitcm(form1, data = cottonBolls, model = "CP2", sumto = 50)
+    m2C2 <- fitcm(form2, data = soyaBeans, model = "CP2", sumto = 700)
 )
-m1QP <- glm(form1, data = cottonBolls, family = quasipoisson)
+m2QP <- glm(form2, data = soyaBeans, family = quasipoisson)
 
-models.ncap <- list(m1PO, m1C1, m1C2, m1QP)
-names(models.ncap) <- mnames
+models.ngra <- list(m2PO, m2C1, m2C2, m2QP)
+names(models.ngra) <- mnames
 
-# Numbers of calls to loglik and numerical gradient
-models.ncap$C1@details$counts
-models.ncap$C2@details$counts
+## Numbers of calls to loglik and numerical gradient
+models.ngra$C1@details$counts
+models.ngra$C2@details$counts
 
 #-----------------------------------------------------------------------
 # LRT and profile extra parameter
 
 # LRT between Poisson and COM-Poisson (test: phi == 0)
-getAnova(m1PO, m1C2)
+getAnova(m2PO, m2C2)
 
-profs.ncap <- lapply(list(c(m1C1, "phi"), c(m1C2, "phi2")),
+profs.ngra <- lapply(list(c(m2C1, "phi"), c(m2C2, "phi2")),
                      function(x) myprofile(x[[1]], x[[2]]))
-profs.ncap <- do.call("rbind", profs.ncap)
+profs.ngra <- do.call("rbind", profs.ngra)
 
 # Plot profile extra parameter
 snames <- parse(text = c("'COM-Poisson'~(phi)",
                          "'COM-Poisson'[mu]~(phi)"))
-xyprofile(profs.ncap, namestrip = snames,
+xyprofile(profs.ngra, namestrip = snames,
           ylim = extendrange(c(0, 3)),
-          xlab = "Precision parameter")
+          xlab = "Precision parameter",
+          scales.x = NULL)
 
 #-----------------------------------------------------------------------
 # Goodness of fit measures and estimate parameters
 
 # GoF measures
-measures.ncap <- sapply(models.ncap, function(x)
+measures.ngra <- sapply(models.ngra, function(x)
     c("LogLik" = logLik(x), "AIC" = AIC(x), "BIC" = BIC(x)))
-measures.ncap
+measures.ngra
 
 # Get the estimates
-est <- lapply(models.ncap, FUN = function(x) getCoefs(x))
-est.ncap <- do.call(cbind, est)
-est.ncap
+est <- lapply(models.ngra, FUN = function(x) getCoefs(x))
+est.ngra <- do.call(cbind, est)
+est.ngra
 
 #-----------------------------------------------------------------------
 # Prediction
 
 # Data for prediction
-pred <- with(cottonBolls,
+pred <- with(soyaBeans,
              expand.grid(
-                 est = levels(est),
-                 des = seq(min(des), max(des), l = 20)
+                 bloc = factor(levels(bloc)[1], levels = levels(bloc)),
+                 umid = levels(umid),
+                 K = seq(min(K), max(K), l = 20)
              ))
 qn <- qnorm(0.975) * c(fit = 0, lwr = -1, upr = 1)
 
 # Design matrix for prediction
-X <- model.matrix(update(form1, NULL~.), pred)
+X <- model.matrix(update(form2, NULL ~ .), pred)
+bl <- attr(X, "assign") == 1
+X[, bl] <- X[, bl] + 1/(sum(bl) + 1)
 
 # Considering Poisson
 aux <- exp(confint(
-    glht(m1PO, linfct = X), calpha = univariate_calpha())$confint)
+    glht(m2PO, linfct = X), calpha = univariate_calpha())$confint)
 colnames(aux) <- c("fit", "lwr", "upr")
 aux <- data.frame(modelo = "Poisson", aux)
-predPO.ncap <- cbind(pred, aux)
+predPO.ngra <- cbind(pred, aux)
 
 # Considering COM-Poisson
-aux <- predictcm(m1C1, newdata = X)
+aux <- predictcm(m2C1, newdata = X)
 aux <- data.frame(modelo = "COM-Poisson", aux)
-predC1.ncap <- cbind(pred, aux)
+predC1.ngra <- cbind(pred, aux)
 
 # Considering COM-Poisson (mean parametrization)
-aux <- predictcm(m1C2, newdata = X)
+aux <- predictcm(m2C2, newdata = X)
 aux <- data.frame(modelo = "COM-Poisson2", aux)
-predC2.ncap <- cbind(pred, aux)
+predC2.ngra <- cbind(pred, aux)
 
 # Considering Quasi-Poisson
 aux <- exp(confint(
-    glht(m1QP, linfct = X), calpha = univariate_calpha())$confint)
+    glht(m2QP, linfct = X), calpha = univariate_calpha())$confint)
 colnames(aux) <- c("fit", "lwr", "upr")
 aux <- data.frame(modelo = "Quasi-Poisson", aux)
-predQP.ncap <- cbind(pred, aux)
+predQP.ngra <- cbind(pred, aux)
 
 # Representing the confidence intervals
-pred.ncap <- rbind(predPO.ncap, predC1.ncap, predC2.ncap, predQP.ncap)
+pred.ngra <- rbind(predPO.ngra, predC1.ngra, predC2.ngra, predQP.ngra)
 
 # Legend
 key <- list(columns = 2,
@@ -161,33 +168,31 @@ key <- list(columns = 2,
             text = list(parse(
                 text = c("'Poisson'", "'COM-Poisson'",
                          "'COM-Poisson'[mu]", "'Quasi-Poisson'"))
-                ))
+                )
+            )
 
 # Graph
-update(xy1, layout = c(NA, 1), type = c("g", "p"),
+update(xy1, layout = c(NA, 1), type = c("p", "g"),
        alpha = 0.6, key = key) +
     as.layer(
-        xyplot(fit ~ des | est,
-               auto.key = TRUE,
-               data = pred.ncap,
+        xyplot(fit ~ K | umid,
+               data = pred.ngra,
                groups = modelo,
                type = "l",
-               layout = c(NA, 1),
-               as.table = TRUE,
                col = 1,
-               ly = pred.ncap$lwr,
-               uy = pred.ncap$ upr,
+               ly = pred.ngra$lwr,
+               uy = pred.ngra$upr,
                cty = "bands",
                fill = "gray80",
                alpha = 0.1,
                panel = panel.superpose,
                panel.groups = panel.cbH,
-               prepanel = prepanel.cbH,
+               prepanel = cmpreg::prepanel.cbH,
                lty = rev(1:4))
     )
 
 #-----------------------------------------------------------------------
 # Correlation between estimates
-corr.ncap <- purrr::map_df(models.ncap[c("C1", "C2")],
+corr.ngra <- purrr::map_df(models.ngra[c("C1", "C2")],
                            function(x) cov2cor(vcov(x))[1, -1])
-round(corr.ncap, 5)
+round(corr.ngra, 5)

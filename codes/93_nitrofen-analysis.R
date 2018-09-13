@@ -8,11 +8,12 @@
 
 #-----------------------------------------------------------------------
 # Load package and functions
+source("helper01_general-functions.R")
+source("helper02_lattice-panels.R")
+
+library(plyr)
+library(tidyr)
 library(bbmle)
-library(multcomp)
-library(dplyr)
-source("lattice-panels.R")
-source("functions.R")
 
 # Colors for legends
 cols <- trellis.par.get("superpose.line")$col

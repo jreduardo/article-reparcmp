@@ -7,8 +7,10 @@
 
 #-----------------------------------------------------------------------
 # Load package and functions
-source("functions.R")
-source("lattice-panels.R")
+source("helper01_general-functions.R")
+source("helper02_lattice-panels.R")
+
+library(dplyr)
 
 #-----------------------------------------------------------------------
 # Convergence of Z(lambda, nu) constant
@@ -39,54 +41,59 @@ xt
 
 # Parameters
 aux <- expand.grid(
-    mu = seq(2, 30, length.out = 50),
-    phi = seq(log(0.3), log(2.5), length.out = 50))
+    mu = seq(3, 30, length.out = 55),
+    phi = seq(-1.5, 1.8, length.out = 50),
+    KEEP.OUT.ATTRS = FALSE)
 
-# Compute approximately and numerically moments
-moments <- mapply(FUN = calc_moments,
-                  mu = aux$mu,
-                  phi = aux$phi,
-                  MoreArgs = list(sumto = 300),
-                  SIMPLIFY = FALSE)
-grid <- cbind(aux, t(do.call(cbind, moments)))
-grid <- transform(grid, va = mu / exp(phi))
+grid <- with(aux, t(calc_moments(mu, phi))) %>%
+    as.data.frame() %>%
+    cbind(aux, .) %>%
+    transform(va = mu / exp(phi)) %>%
+    transform(emu = (mu - mean),
+              eva = (va - var))
+
+max(abs(grid$emu))
+max(abs(grid$eva))
 
 #-------------------------------------------
 # Errors in approximations for E[Y] and V[Y]
-grid <- transform(grid,
-                  emu = (mu - mean)^2,
-                  eva = (va - var)^2)
 
-myreg <- colorRampPalette(c("gray90",  "gray20"))
-xy1 <- levelplot(emu ~ phi + mu, data = grid,
-                 aspect = "fill",
-                 col.regions = myreg,
-                 xlab = expression(phi),
-                 ylab = expression(mu),
-                 sub = "(a)",
-                 colorkey = list(space = "top"),
-                 par.settings = ps2,
-                 panel = function(x, y, z, ...) {
-                     panel.levelplot(x, y, z, ...)
-                     panel.curve(10 - ( exp(x) - 1)/(2 * exp(x)),
-                                 lty = 2)
-                     panel.abline(v = 0, lty = 2)
-                 })
+myreg <- colorRampPalette(c("gray20", "gray95"))
+xy1 <-
+    levelplot(emu ~ phi + mu, ,
+              aspect = "fill",
+              xlab = expression(phi),
+              ylab = expression(mu),
+              sub = "(a)",
+              at = seq(-0.2, 0.07, length.out = 18),
+              par.settings = ps2,
+              colorkey = list(space = "top"),
+              col.regions = myreg,
+              panel = function(x, y, z, ...) {
+                  panel.levelplot(x, y, z, ...)
+                  panel.curve(10 - (exp(x) - 1)/(2 * exp(x)),
+                              lty = 2)
+                  panel.abline(v = 0, lty = 2)
+              },
+              data = grid)
 
-xy2 <- levelplot(eva ~ phi + mu, data = grid,
-                 aspect = "fill",
-                 col.regions = myreg,
-                 xlab = expression(phi),
-                 ylab = expression(mu),
-                 sub = "(b)",
-                 colorkey = list(space = "top"),
-                 par.settings = ps2,
-                 panel = function(x, y, z, ...) {
-                     panel.levelplot(x, y, z, ...)
-                     panel.curve((10 - ( exp(x) - 1)/
-                                  (2 * exp(x)))/exp(x), lty = 2)
-                     panel.abline(v = 0, lty = 2)
-                 })
+xy2 <-
+    levelplot(eva ~ phi + mu, ,
+              aspect = "fill",
+              xlab = expression(phi),
+              ylab = expression(mu),
+              sub = "(b)",
+              at = seq(-0.15, 10, length.out = 18),
+              par.settings = ps2,
+              colorkey = list(space = "top"),
+              # col.regions = myreg,
+              panel = function(x, y, z, ...) {
+                  panel.levelplot(x, y, z, ...)
+                  panel.curve(10 - (exp(x) - 1)/(2 * exp(x)),
+                              lty = 2)
+                  panel.abline(v = 0, lty = 2)
+              },
+              data = grid)
 
 print(xy1, split = c(1, 1, 2, 1), more = TRUE)
 print(xy2, split = c(2, 1, 2, 1), more = FALSE)
@@ -177,7 +184,9 @@ xy1 <- xyplot(var ~ mean | "Mean-Variance",
 
 #-------------------------------------------
 # Dispersion index (DI)
-xy2 <- xyplot(var / mean ~ mu | "Dispersion index",
+grid <- transform(grid,
+                  dispersion_index = var / mean)
+xy2 <- xyplot(dispersion_index ~ mu | "Dispersion index",
               groups = phi,
               data = grid,
               type = "l",
@@ -266,7 +275,7 @@ aux2 <- grid[c("mu", "phi")][rep(1:nrow(grid), each = length(x)), ]
 heavy_data <- cbind(aux1, aux2)
 
 # Choose one specific mu of unique(grid$mu)
-choosemu <- 18
+choosemu <- 25
 xy4 <- xyplot(heavy_index ~ x | "Heavy-tail index",
               groups = phi,
               # data = heavy_data,

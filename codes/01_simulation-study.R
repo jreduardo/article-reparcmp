@@ -7,8 +7,9 @@
 
 ##----------------------------------------------------------------------
 ## Load package and functions
-source("lattice-panels.R")
-source("functions.R")
+source("helper01_general-functions.R")
+source("helper02_lattice-panels.R")
+
 library(plyr)
 library(tidyr)
 library(bbmle)
@@ -25,7 +26,7 @@ rcmp <- Vectorize(FUN = function(n, mu, phi) {
 B <- 1000
 
 beta <- c("b0" = 2, "b1" = 0.5, "b21" = 0.8, "b22" = -0.8)
-phis <- c(0, -1.6, -1, 1.8)
+phis <- c(-1.6, -1, 0, 1.8)
 names(phis) <- sprintf("phi=%s", phis)
 
 sizes <- c(50, 100, 300, 1000)
@@ -59,6 +60,7 @@ xy1 <- xyplot(mu ~ x1, groups = x2,
 xy2 <- xyplot(di ~ x1 | phi, groups = x2,
               type = c("g", "l"),
               lwd = 2,
+              as.table = TRUE,
               # scales = "free",
               layout = c(2, 2),
               xlab = "Continous variable",
@@ -479,6 +481,7 @@ datime <-
     })
 saveRDS(datime, "simultimes.rds")
 
+datime <- readRDS("simultimes.rds")
 datime %>%
     mutate(size = factor(sizes[size], levels = sizes),
            phi = factor(phi, levels = names(phis)[c(2, 3, 1, 4)])) %>%

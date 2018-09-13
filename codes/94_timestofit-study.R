@@ -7,10 +7,11 @@
 
 #-----------------------------------------------------------------------
 # Load package and functions
+source("helper01_general-functions.R")
+source("helper02_lattice-panels.R")
+
 library(bbmle)
 library(microbenchmark)
-source("lattice-panels.R")
-source("functions.R")
 
 # Colors for legends
 cols <- trellis.par.get("superpose.line")$col
@@ -71,8 +72,8 @@ bench2 <- microbenchmark(
 
 # Times to the second case study
 bench3 <- microbenchmark(
-    "CMP  " = fitcm(form3, data = data3, model = "CP" , sumto = 700),
-    "CMPmu" = fitcm(form3, data = data3, model = "CP2", sumto = 700),
+    "CMP  " = fitcm(form3, data = data3, model = "CP" , sumto = 100),
+    "CMPmu" = fitcm(form3, data = data3, model = "CP2", sumto = 100),
     times = 50)
 
 #-------------------------------------------
