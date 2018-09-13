@@ -61,84 +61,53 @@ llcmp2 <- function (params, y, X, offset = NULL, sumto = NULL) {
 
 #=======================================================================
 # Probability mass function (mean parametrization)
-dcmp <- Vectorize(FUN = function(y, mu, phi, sumto = 100) {
-    exp(-llcmp2(c(phi, log(mu)), y = y, X = 1, sumto = sumto))
-}, vectorize.args = c("y", "mu", "phi"))
+dcmp <- function(y, mu, phi, sumto = 500L) {
+    nu <- exp(phi)
+    k0 <- nu * log(mu + (nu - 1)/(2 * nu))
+    j <- 1:sumto
+    Z <- 1 + sum(exp(j * k0 - nu * lfactorial(j)))
+    l <- y * k0 - nu * lfactorial(y) - log(Z)
+    return(exp(l))
+}
 
 #=======================================================================
 # Compute momentes mean and variance
-compute_mean <- function(mu, phi, sumto = NULL, tol = 1e-5) {
-    # Faz com que os parâmetros sejam vetores de mesmo tamanho.
+compute_mean <- function(mu, phi, sumto = NULL, upto = 500) {
+    y <- 0:upto
     names(mu) <- NULL
     names(phi) <- NULL
     pars <- data.frame(mu = mu, phi = phi)
-    # Calcula o ymax usando mu + 5 (sqrt(sigma)) aproximados
-    nu <- exp(phi)
-    sigma <- (1 / nu) * mu
-    ymax <- ceiling(max(mu + 5 * sqrt(sigma)))
-    # Agora verifica se a prob(ymax) é de fato pequena, se não, soma 1.
-    mumax <- max(pars$mu)
-    phimin <- min(pars$phi)
-    pmax <- dcmp(y = ymax, mu = mumax, phi = phimin, sumto = sumto)
-    while (pmax > tol) {
-        ymax <- ymax + 1
-        pmax <- dcmp(y = ymax, mumax, phimin, sumto = sumto)
-    }
-    # Define o vetor onde avaliar a densidade COM-Poisson.
-    y <- 1:ymax
-    estmean <- mapply(mu = pars$mu,
-                      phi = pars$phi,
-                      MoreArgs = list(y = y, sumto = sumto),
-                      FUN = function(mu, phi, y, sumto) {
-                          py <- dcmp(y, mu, phi, sumto)
-                          sum(y * py)
-                      },
-                      SIMPLIFY = TRUE)
-    names(estmean) <- NULL
-    return(estmean)
+    apply(pars, 1L, function(p) {
+        py <- dcmp(y, p[1L], p[2L])
+        sum(y * py)
+    })
 }
 
-compute_variance <- function(mu, phi, sumto = NULL, tol = 1e-5) {
-    # Faz com que os parâmetros sejam vetores de mesmo tamanho.
+compute_variance <- function(mu, phi, sumto = NULL, upto = 500) {
+    y <- 0:upto
     names(mu) <- NULL
     names(phi) <- NULL
     pars <- data.frame(mu = mu, phi = phi)
-    # Calcula o ymax usando mu + 5 (sqrt(sigma)) aproximados
-    nu <- exp(phi)
-    sigma <- (1 / nu) * mu
-    ymax <- ceiling(max(mu + 5 * sqrt(sigma)))
-    # Agora verifica se a prob(ymax) é de fato pequena, se não, soma 1.
-    mumax <- max(pars$mu)
-    phimin <- min(pars$phi)
-    pmax <- dcmp(y = ymax, mu = mumax, phi = phimin, sumto = sumto)
-    while (pmax > tol) {
-        ymax <- ymax + 1
-        pmax <- dcmp(y = ymax, mumax, phimin, sumto = sumto)
-    }
-    # Define o vetor onde avaliar a densidade COM-Poisson.
-    y <- 1:ymax
-    estvar <- mapply(mu = pars$mu,
-                      phi = pars$phi,
-                      MoreArgs = list(y = y, sumto = sumto),
-                      FUN = function(mu, phi, y, sumto) {
-                          py <- dcmp(y, mu, phi, sumto)
-                          diff(c(sum(y * py)^2, sum(y^2 * py)))
-                      },
-                      SIMPLIFY = TRUE)
-    names(estvar) <- NULL
-    return(estvar)
+    apply(pars, 1L, function(p) {
+        py <- dcmp(y, p[1L], p[2L])
+        ey <- sum(y * py)
+        sum((y - ey)^2 * py)
+    })
 }
 
-calc_moments <- Vectorize(FUN = function(mu, phi, sumto = NULL) {
-    # pars <- mu2lambda(mu, phi)
-    # mu <- cmpreg::calc_mean_cmp(log(pars[["lambda"]]), phi)
-    # va <- cmpreg::calc_var_cmp(log(pars[["lambda"]]), phi)
-    # mu <- do.call(compoisson::com.mean, pars)
-    # va <- do.call(compoisson::com.var, pars)
-    mu <- compute_mean(mu, phi, sumto = sumto)
-    va <- compute_variance(mu, phi, sumto = sumto)
-    c("mean" = mu, "var" = va)
-}, vectorize.args = c("mu", "phi"))
+calc_moments <- function(mu, phi, sumto = 500, upto = 500) {
+    y <- 0:upto
+    names(mu) <- NULL
+    names(phi) <- NULL
+    pars <- data.frame(mu = mu, phi = phi)
+    apply(pars, 1L, function(p) {
+        py <- dcmp(y, p[1L], p[2L], sumto = sumto)
+        ey <- sum(y * py)
+        e2 <- sum(y^2 * py)
+        vy <- e2 - ey^2
+        c("mean" = ey, "var" = vy)
+    })
+}
 
 #=======================================================================
 # Framework for fit count models (using bbmle::mle2 function)
