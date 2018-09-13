@@ -243,7 +243,7 @@ benchs <- readRDS("../codes/comparetimes.rds") %>%
     mutate(case = forcats::fct_inorder(case))
 xlabs <- expression("COMPo"(lambda[i], phi),
                     "COMPo"(mu[i], phi))
-bwplot(time/10e6 ~ expr | case,
+bwplot(time/10e8 ~ expr | case,
        ylab = "Time (seconds)",
        axis = axis.grid,
        scales = list(

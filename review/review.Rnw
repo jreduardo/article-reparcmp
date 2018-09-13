@@ -105,31 +105,33 @@ discussed at the end of Section 3 through the study of the dispersion
     more complicated. Some of the nice properties of the CMP likelihood
     such as the canonical link are lost.}\\[0.1cm]
   \textbf{\underline{Response:}} The log-likelihood function cannot be
-  derived in relation ti the dispersion parameter using any
+  derived in relation to the dispersion parameter using any
   parametrization. We obtained the Hessian matrix by central finite
-  differences using the Richardson method implemented in
-  \texttt{R}. Although the expression of reparametrized log-likelihood
-  (Equation 3.1) seems more complicated, this function is better behaved
-  than the function expressed in the original form (see Figure
-  8). Consider the exponential family of distributions, with probability
-  function given by
+  differences using the Richardson method as implemented in R. Although
+  the expression of reparametrized log-likelihood (Equation 3.1) seems
+  more complicated, this function is better behaved than the function
+  expressed in the original form (see Figure 8). Consider the
+  exponential family of distributions, with probability function given
+  by
   $$f(y) = \exp\{\sigma[\theta y - b(\theta)] - c(y, \phi)\},$$
   the COM-Poisson belongs to this family with $\sigma=1$,
   $\theta = \log(\lambda)$, $b(\theta) = \log(Z(\lambda, \nu))$ and
   $c(y, \phi)=-\nu\log(y!)$, only if $\nu$ is known. Since we don't have
   $b'(\theta) = \partial b(\theta)/\partial \theta$ in closed form, the
-  canonical link function has no important rule here. In this case, the
+  canonical link function has no important role here. In this case, the
   link function maps $\theta$ in the parameter space of $\lambda$.  In
-  the reparametrized version of the COM-Poisson, the log link function
-  maps the parameter space and provide simple interpretations (in terms
+  the reparametrized version of the COM-Poisson the log link function
+  maps the parameter space and provides simple interpretations (in terms
   of rate ratios).
+
 \item \textit{For model fitting, the authors used general purpose
     optimization function in R. Did you observe any non convergence
     situations during your numerical studies.}\\[0.1cm]
   \textbf{\underline{Response:}} Yes, we have 37 situations where the
   algorithm did not converge in the simulation study (see table
   below). This occurred only for strong overdispersion and small sample
-  sizes. We reported these situations in the updated version of the paper.
+  sizes. We reported these situations in the updated version of the
+  paper.
   \begin{table}[H]
     \centering
     \begin{tabular}{lcccc}
@@ -152,15 +154,16 @@ discussed at the end of Section 3 through the study of the dispersion
   dispersion levels and sample sizes. However, the Figure below show the
   times to fit in the simulation study. The results show that it took
   more time to fit the models under equidispersion. This result is due
-  to choose of start values and normalizing constant upper bound. We
-  set, for all models, the upper bound 500 and we start the algorithm
-  from the real parameters.
+  to choice of starting values and normalizing constant upper bound. We
+  set, for all models, the upper bound as 500 and we start the algorithm
+  from the true parameters.
 
   \hspace*{-1cm}
 \begin{minipage}{\textwidth}
 <<simul-times, fig.width=9, fig.height=3.5>>=
 @
 \end{minipage}
+\vspace{0.1cm}
 
 \item \textit{In Section 5, the simulated counts are ranging from 3 to
     27. This is too limited. Please increase the range.}\\[0.1cm]
@@ -168,7 +171,7 @@ discussed at the end of Section 3 through the study of the dispersion
   expectations varying from 3 to 27. Therefore, considering the
   different scenarios ($\phi=-1.6, \phi=-1, \phi=0$ and $\phi=1.8$), we
   cover a wide range of counts. The Figure below shows the variation of
-  the counts for $\mu=27$ for the different scenarios.
+  the counts for $\mu=27$ for the four different scenarios.
 
   \hspace*{-1cm}
 \begin{minipage}{\textwidth}
@@ -211,11 +214,10 @@ discussed at the end of Section 3 through the study of the dispersion
   the $\beta_j$ in terms of the rate ratios since
   $\mu_i\approx \text{E}(Y_i)$. Moreover, we characterized the
   COM-Poisson distribution in terms of the dispersion, zero-inflation
-  and heavy-tail indexes that illustrate its applicability in the real
-  count data. These are the methodological novelties of the paper
-  besides the exploration of the results. However, in the updated
-  version of the paper, we provided a better discussion of the case
-  studies.
+  and heavy-tail indexes that illustrate its applicability to real count
+  data. These are the methodological novelties of the paper besides the
+  exploration of the results. However, in the updated version of the
+  paper, we provided a better discussion of the case studies.
 \end{enumerate}
 
 \section{Replies to Referee 2}
@@ -250,12 +252,12 @@ version.
   sample analyses reflect this (e.g. Fig 3, Fig 6-8, ``deviance function
   shape under strong overdispersion $\phi=-1.6$ is not as well
   behaved...'', p. 19, etc.). This needs to be addressed.}\\[0.3cm]
-\textbf{\underline{Response:}} We thanks the referee for exploring this
+\textbf{\underline{Response:}} We thank the referee for exploring this
 point. However, we didn't use the approximation of variance
 ($a\text{Var}(Y_i)$) to reparametrize or fit the COM-Poisson model. To
-compute the variances, that is showed in the Figure 3(a) and (b) we used
-$\text{Var}(Y)=\sum_{y=0}^{500} y^2p(y) - [\sum_{y=0}^{500} y
-p(y)]^2$.
+compute the variances, that are shown in the Figures 3(a) and (b) we
+used
+$\text{Var}(Y)=\sum_{y=0}^{500} y^2p(y) - [\sum_{y=0}^{500} y p(y)]^2$.
 As highlighted in the Figure 1(b), the approximation is not accurate,
 mainly for overdispersion ($\phi<0$). The Figure (a) and (b) below shows
 the behavior of $a\text{Var}(Y_i)$ function by fixing $\mu$ and $\phi$,
@@ -277,7 +279,8 @@ $\mu$. This is related to the accuracy of the $aE(Y_i)$. When $aE(Y_i)$
 is accurate, $\mu$ represents the expectation of the $Y_i$ and,
 consequently, $\mu$ and $\phi$ (or $\beta_j$ and $\phi$ in a regression
 setting) are orthogonal. We improved the discussion about this in the
-current version of the paper.  \vspace{0.4cm}
+current version of the paper.
+\vspace{0.4cm}
 
 \textbf{\underline{Fifth paragraph}:} \textit{This last point also hints
   that a quasi-Poisson model based on the assumption that
@@ -287,13 +290,13 @@ current version of the paper.  \vspace{0.4cm}
 \textbf{\underline{Response:}} The quasi-Poisson model is specified by
 second-moment assumptions (expectation and variance). As highlighted in
 Figure 3(a) (and in referee's previous comment), the mean-variance
-relationship for COM-Poisson is linear. Therefore, is suitable to
-analyze data generated according to the COM-Poisson distribution, using
-the assumption $\text{Var}(Y_i)\propto \mu_i$. The advantage of the
-COM-Poisson approach is that it corresponds to a fully specified
-probability model allowing to compute the likelihood and some useful
-measures like deviance, AIC, BIC, LRT, etc.
-\vspace{0.4cm}
+relationship for COM-Poisson is linear. Therefore, it can be appropriate
+to analyze under-, equi-, and overdispersed data generated according to
+the COM-Poisson distribution, using the assumption
+$\text{Var}(Y_i)\propto \mu_i$. The advantage of the COM-Poisson
+approach is that it corresponds to a fully specified probability model
+allowing to compute the likelihood and some useful measures like
+deviance, AIC, BIC, LRT, etc.  \vspace{0.4cm}
 
 \textbf{\underline{Sixth paragraph}:} \textit{Consider the example of
   Section 6.1. If I understand matters correctly, it is surprising that
@@ -307,9 +310,9 @@ measures like deviance, AIC, BIC, LRT, etc.
   $\beta$ would be very similar. Exactly what models are being fitted
   here? This needs clarification.}\\[0.1cm]
 \textbf{\underline{Response:}} Note that the $\lambda_i$ does not
-represent the expectation, nor approximately. The quadratic errors in
-Figure 1(a) is obtained by $[a\text{E(Y)} - \sum_{y=0}^{500}y p(y)]^2$.
-The models fitted in the case studies are
+represent the expectation, nor approximately. The errors in Figure 1(a)
+is obtained by $[a\text{E(Y)} - \sum_{y=0}^{500}y p(y)]^2$.  The models
+fitted in the case studies are
 $[\text{COMPo}(\lambda_i, \nu), \log(\lambda_i) = \beta^\top x_i]$ and
 $[\text{COMPo}(\mu_i, \phi), \log(\mu_i) = \beta^\top x_i]$. Therefore,
 the $\beta$'s estimates are comparable only if $\phi=0$ (Poisson special
@@ -328,15 +331,15 @@ $\beta^* = \exp(\beta^o-\phi) - (\exp(\phi) - 1)/(2\exp(\phi))$.
     (3.2). What constraints does this impose on the $\lambda$ and
     $\nu$. Is this reasonable?}\\[0.1cm]
   \textbf{\underline{Response:}} The constraint $\mu>0$ implies that
-  $\lambda > [(\nu-1)/(2\nu)]^\nu$. The Figure below show (a) the
+  $\lambda > [(\nu-1)/(2\nu)]^\nu$. The Figures below show (a) the
   constraint border in the parameter space; and (b) the expected values
-  (obtained by $\sum y p(y)$). The constraint lies on the very small
-  $\lambda$ and $\nu>1$ (underdispersion). This parameter region is
-  related to small expected values (smaller than 0.1) and
-  underdispersion. Therefore, although this constraint is undesirable,
-  it does not prejudice the application of the model. We thank the
-  referee for highlighting this point. We have discussed it in the
-  updated version.
+  (obtained by $\sum y p(y)$). The constraint applies to very small
+  values of $\lambda$ when $\nu>1$ (underdispersion). This infeasible
+  parameter region is related to small expected values (smaller than
+  0.1) and underdispersion. Therefore, although this constraint is
+  undesirable, it does not prejudice the application of the model. We
+  thank the referee for highlighting this point and we have discussed it
+  in the updated version.
 
 \hspace*{-1.0cm}
 \begin{minipage}{\textwidth}
@@ -350,16 +353,37 @@ $\beta^* = \exp(\beta^o-\phi) - (\exp(\phi) - 1)/(2\exp(\phi))$.
     your examples?}\\[0.1cm]
   \textbf{\underline{Response:}} We used only the mean approximation
   given by Shmueli to reparametrize the COM-Poisson model. Moreover, as
-  discussed in Figure 1(a), the the errors are close to 0 for the
-  parameter grid evaluated and present no clear relation with regions
-  gives by \cite{Shmueli2005} ($\phi \leq 0$ and
-  $\mu > 10 - (\exp(\phi) - 1)/(2\exp(\phi))$. Except for
-  counts with small averages (close to 0), the reparametrized model fits
-  well. For examples presented in the paper, the parameter estimates
-  are summarizes below.
+  discussed in Figure 1(a), the errors are close to 0 for the parameter
+  grid evaluated and present no clear relation with regions gives by
+  \cite{Shmueli2005} ($\phi \leq 0$ and
+  $\mu > 10 - (\exp(\phi) - 1)/(2\exp(\phi))$. The paper proposal is a
+  parameterization, so it is always valid (except for the parameter
+  constraint imposed by the transformation). Only the interpretation of
+  the $\mu$ parameter depends on the approximation accuracy. For
+  examples presented in the paper, the parameter estimates (on the
+  original parametrization) are summarized below. The approximation is
+  good and therefore the $\beta$'s estimates for the Poisson model are
+  close to the $\beta$'s estimates for the reparametrized COM-Poisson
+  model.
 
-<<contraints-case-studies, results="asis", cache=TRUE>>=
-@
+% latex table generated in R 3.4.4 by xtable 1.8-2 package
+% Tue Aug 21 00:57:24 2018
+\begin{table}[H]
+\centering
+\begingroup\small
+\begin{tabular}{lrrrrr}
+  \toprule
+ & & & \multicolumn{3}{c}{$\hat{\lambda}_i$}\\
+ \cmidrule(lr){4-6}
+Case study & $\hat{\phi}$ & $\hat{\nu}$ & Minimun & Median & Maximum \\
+  \midrule
+  Cotton experiment   & 1.58 & 4.86 & 3.50 & 8.44 & 9.48 \\
+  Soybean experiment  & $-$0.78 & 0.46 &116.87 & 174.98 & 252.29 \\
+  Nitrofen experiment & 0.05 & 1.05 & 5.94 & 28.00 & 32.36 \\
+   \bottomrule
+\end{tabular}
+\endgroup
+\end{table}
 
 \item \textit{The symbol $\mu$ is used to represent both $E(Y)$ and the
     parameter $\lambda^{1/\nu}-(\nu-1)/(2\nu) = aE(Y)$. This causes
