@@ -2,5 +2,6 @@
 
 > Eduardo Elias Ribeiro Junior (LCE-ESALQ USP / LEG-UFPR) \
 > Walmes Marques Zeviani (DEST-UFPR / LEG-UFPR) \
-> Wagner Hugo Bonat (DEST-UFPR / LEG-UFPR)
-> Clarice Garcia Borges Demétrio (LCE-ESALQ USP)
+> Wagner Hugo Bonat (DEST-UFPR / LEG-UFPR) \
+> Clarice Garcia Borges Demétrio (LCE-ESALQ USP) \
+> John Hinde (NUI Galway)
