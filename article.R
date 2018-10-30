@@ -44,8 +44,8 @@ divide_matrix <- function(mat, divide) {
     return(list(mat1, mat2))
 }
 
-source("./codes/lattice-panels.R")
-source("./codes/functions.R")
+source("./codes/helper01_general-functions.R")
+source("./codes/helper02_lattice-panels.R")
 
 # Colors for legends
 cols <- trellis.par.get("superpose.line")$col
