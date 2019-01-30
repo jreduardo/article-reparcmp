@@ -705,7 +705,7 @@ estimates are quite similar to those obtained for the Poisson model,
 whereas estimates from the original COM-Poisson model are on a different
 and not easily interpreted scale.  The ratios between estimates and
 their respective standard errors for the two COM-Poisson models are very
-close to ratios from the y quasi-Poisson model. However, it is important
+close to ratios from the quasi-Poisson model. However, it is important
 to note that COM-Poisson model is a full parametric approach, i.e. there
 is a probability distribution associated to the counts, while the
 quasi-Poisson model is based only on second-moment assumptions.
